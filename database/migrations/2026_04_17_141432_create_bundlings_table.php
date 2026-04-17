@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('bundlings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('menu_id')->constrained('menus');
+            $table->foreignId('menu_non_bundling_id')->constrained('menus');
+            $table->decimal('harga', 10, 2);
             $table->timestamps();
         });
     }

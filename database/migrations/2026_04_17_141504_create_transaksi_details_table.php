@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('transaksi_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('transaksi_id')->constrained('transaksis');
+            $table->foreignId('menu_id')->constrained('menus');
+            $table->integer('jumlah');
+            $table->decimal('harga', 10, 2);
+            $table->decimal('subtotal', 10, 2);
             $table->timestamps();
         });
     }
