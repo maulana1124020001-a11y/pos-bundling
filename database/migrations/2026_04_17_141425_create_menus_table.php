@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
            
-            $table->foreignId('kategori_id')->constrained('kategoris');
+            $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('cascade');
             $table->string('nama');
             $table->decimal('modal', 10, 2);
             $table->decimal('harga', 10, 2);
