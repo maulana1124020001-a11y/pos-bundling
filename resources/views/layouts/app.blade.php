@@ -47,6 +47,13 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('bundling.index') }}">
+                <i class="fas fa-cash-register"></i>
+                <span>Bundling</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="#">
                 <i class="fas fa-cash-register"></i>
                 <span>Transaksi</span>
