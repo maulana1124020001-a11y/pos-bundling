@@ -24,8 +24,8 @@
     <td>{{ $u->email }}</td>
     <td>{{ $u->role->nama_role }}</td>
     <td>
-        
-        <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">
+
+        <a href="{{ route('user.edit', $u->id) }}" class="btn btn-warning btn-sm">
             <i class="fas fa-edit"></i>
         </a>
 
