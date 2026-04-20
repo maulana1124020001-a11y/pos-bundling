@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>POS Kafe</title>
+    <title>Titik Temu</title>
 
     <!-- SB Admin CSS -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
@@ -71,7 +71,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <span class="ml-3 font-weight-bold">Dashboard POS Kafe</span>
+                <span class="ml-3 font-weight-bold">Dashboard Titik Temu</span>
 
             </nav>
             <!-- END TOPBAR -->
@@ -97,7 +97,7 @@
         <!-- FOOTER -->
         <footer class="sticky-footer bg-white">
             <div class="container text-center">
-                <span>© POS Kafe 2026</span>
+                <span>© Titik Temu 2026</span>
             </div>
         </footer>
 
