@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BundlingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,3 +13,4 @@ Route::get('/', function () {
 Route::resource('kategori', KategoriController::class);
 Route::resource('menu', MenuController::class);
 Route::resource('user', UserController::class);
+Route::resource('bundling', BundlingController::class);
