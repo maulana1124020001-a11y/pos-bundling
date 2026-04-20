@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Titik Temu</title>
 
-    <!-- SB Admin CSS -->
-    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
 
+    <!-- SB Admin -->
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+    <!-- DataTables -->
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 </head>
 
 <body id="page-top">
@@ -21,17 +26,15 @@
     <!-- SIDEBAR -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-        <!-- BRAND -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
             <div class="sidebar-brand-icon">
                 <i class="fas fa-coffee"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">Titik temu</div>
+            <div class="sidebar-brand-text mx-3">Titik Temu</div>
         </a>
 
         <hr class="sidebar-divider">
 
-        <!-- MENU -->
         <li class="nav-item">
             <a class="nav-link" href="{{ route('kategori.index') }}">
                 <i class="fas fa-tags"></i>
@@ -55,46 +58,91 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('user.index') }}">
-                <i class="fas fa-cash-register"></i>
+                <i class="fas fa-users"></i>
                 <span>User</span>
             </a>
         </li>
 
-        <hr class="sidebar-divider">
+        <hr class="sidebar-divider d-none d-md-block">
 
     </ul>
     <!-- END SIDEBAR -->
 
 
-    <!-- CONTENT WRAPPER -->
+    <!-- CONTENT -->
     <div id="content-wrapper" class="d-flex flex-column">
-
         <div id="content">
 
-            <!-- TOPBAR -->
+            <!-- TOPBAR (INI YANG KURANG TADI) -->
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
 
-                <button id="sidebarToggleTop" class="btn btn-link d-md-none">
+                <!-- Toggle -->
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <span class="ml-3 font-weight-bold">Dashboard Titik Temu</span>
+                <!-- SEARCH -->
+                <!-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-light border-0 small"
+                               placeholder="Search...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form> -->
 
+                <!-- RIGHT MENU -->
+                <ul class="navbar-nav ml-auto">
+
+                    <!-- NOTIF -->
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge badge-danger">3</span>
+                        </a>
+                    </li>
+
+                    <!-- MESSAGE -->
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-envelope"></i>
+                            <span class="badge badge-danger">7</span>
+                        </a>
+                    </li>
+
+                    <div class="topbar-divider d-none d-sm-block"></div>
+
+                    <!-- USER -->
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                            <img class="img-profile rounded-circle"
+                                 src="https://via.placeholder.com/60">
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right shadow">
+                            <a class="dropdown-item" href="#">Profile</a>
+                            <a class="dropdown-item" href="#">Logout</a>
+                        </div>
+                    </li>
+
+                </ul>
             </nav>
             <!-- END TOPBAR -->
 
 
-            <!-- CONTENT -->
+            <!-- ISI -->
             <div class="container-fluid">
 
-                <!-- ALERT -->
                 @if(session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>
                 @endif
 
-                <!-- ISI HALAMAN -->
                 @yield('content')
 
             </div>
@@ -112,10 +160,23 @@
 
 </div>
 
+
 <!-- SCRIPT -->
 <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
 <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+<!-- DataTables -->
+<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
 
 </body>
 </html>
