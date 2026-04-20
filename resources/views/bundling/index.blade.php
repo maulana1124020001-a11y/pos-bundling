@@ -26,14 +26,17 @@
         <td>{{ $b->menuNonBundling->nama }}</td>
         <td>{{ $b->harga }}</td>
         <td>
-            <a href="{{ route('bundling.show', $b->id) }}" class="btn btn-info btn-sm">Detail</a>
 
-            <a href="{{ route('bundling.edit', $b->id) }}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{{ route('bundling.edit', $b->id) }}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i>
+            </a>
 
             <form action="{{ route('bundling.destroy', $b->id) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
-                <button class="btn btn-danger btn-sm">Hapus</button>
+                <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                    <i class="fas fa-trash"></i>
+                </button>
             </form>
         </td>
     </tr>

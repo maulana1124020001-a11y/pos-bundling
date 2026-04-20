@@ -37,17 +37,25 @@
                 @endif
             </td>
 
-            <td>{{ $m->status }}</td>
+            <td>
+                @if($m->status == 'tersedia')
+                    <span class="badge bg-success">Tersedia</span>
+                @else
+                    <span class="badge bg-danger">Tidak Tersedia</span>
+                @endif
+            </td>
 
             <td>
-                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-info btn-sm">Detail</a>
-
-                <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i>
+                </a>
 
                 <form action="{{ route('menu.destroy', $m->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-danger btn-sm">Hapus</button>
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </form>
             </td>
         </tr>
