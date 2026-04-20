@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class MenuController extends Controller
 {
@@ -79,28 +80,34 @@ class MenuController extends Controller
      */
     public function update(Request $request, Menu $menu)
     {
-        $request->validate([
-            'kategori_id' => 'required',
-            'nama' => 'required',
-            'modal' => 'required|numeric',
-            'harga' => 'required|numeric',
-            'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+     $request->validate([
+        'kategori_id' => 'required',
+        'nama' => 'required',
+        'modal' => 'required|numeric',
+        'harga' => 'required|numeric',
+        'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
+    ]);
 
-        $data = $request->all();
+    $data = $request->all();
 
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $namaFile = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images'), $namaFile);
-
-            $data['gambar'] = $namaFile;
+    if ($request->hasFile('gambar')) {
+        // Hapus gambar lama jika ada
+        if ($menu->gambar && File::exists(public_path('images/' . $menu->gambar))) {
+            File::delete(public_path('images/' . $menu->gambar));
         }
 
-        $menu->update($data);
+        // Upload gambar baru
+        $file = $request->file('gambar');
+        $namaFile = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('images'), $namaFile);
 
-        return redirect()->route('menu.index')
-            ->with('success', 'Menu berhasil diupdate');
+        $data['gambar'] = $namaFile;
+    }
+
+    $menu->update($data);
+
+    return redirect()->route('menu.index')
+        ->with('success', 'Menu berhasil diupdate');
     }
 
     /**
@@ -108,9 +115,15 @@ class MenuController extends Controller
      */
     public function destroy(Menu $menu)
     {
-        $menu->delete();
+        // Cek apakah ada file gambar dan apakah file tersebut ada di folder
+    if ($menu->gambar && File::exists(public_path('images/' . $menu->gambar))) {
+        File::delete(public_path('images/' . $menu->gambar));
+    }
 
-        return redirect()->route('menu.index')
-            ->with('success', 'Menu berhasil dihapus');
+    // Hapus data dari database
+    $menu->delete();
+
+    return redirect()->route('menu.index')
+        ->with('success', 'Menu dan gambar berhasil dihapus');
     }
 }

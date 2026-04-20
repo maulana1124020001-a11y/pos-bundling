@@ -19,22 +19,36 @@
         <th>Aksi</th>
     </tr>
 
-    @foreach($kategoris as $k)
-    <tr>
-        <td>{{ $loop->iteration }}</td>
-        <td>{{ $k->nama_kategori }}</td>
-        <td>
-            <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <tbody>
+                        @foreach($kategoris as $k)
+                        <tr>
+                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td>{{ $k->nama_kategori }}</td>
+                            <td class="text-center">
 
-            <form action="{{ route('kategori.destroy', $k->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button class="btn btn-danger btn-sm">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
+                                <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-</table>
+                                <form action="{{ route('kategori.destroy', $k->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
 
 @endsection
