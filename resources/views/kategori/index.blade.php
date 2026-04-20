@@ -8,6 +8,10 @@
     Tambah Kategori
 </a>
 
+@if(session('success'))
+    <p>{{ session('success') }}</p>
+@endif
+
 <table class="table table-bordered">
     <tr>
         <th>No</th>
