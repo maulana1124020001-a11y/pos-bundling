@@ -26,7 +26,7 @@
             <div class="sidebar-brand-icon">
                 <i class="fas fa-coffee"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">POS Kafe</div>
+            <div class="sidebar-brand-text mx-3">Titik temu</div>
         </a>
 
         <hr class="sidebar-divider">
