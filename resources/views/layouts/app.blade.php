@@ -47,9 +47,9 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('user.index') }}">
                 <i class="fas fa-cash-register"></i>
-                <span>Transaksi</span>
+                <span>User</span>
             </a>
         </li>
 
