@@ -24,12 +24,17 @@
     <td>{{ $u->email }}</td>
     <td>{{ $u->role->nama_role }}</td>
     <td>
-        <a href="{{ route('user.edit',$u->id) }}" class="btn btn-warning btn-sm">Edit</a>
+        
+        <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">
+            <i class="fas fa-edit"></i>
+        </a>
 
         <form action="{{ route('user.destroy',$u->id) }}" method="POST" style="display:inline;">
             @csrf
             @method('DELETE')
-            <button class="btn btn-danger btn-sm">Hapus</button>
+            <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                <i class="fas fa-trash"></i>
+            </button>
         </form>
     </td>
 </tr>
