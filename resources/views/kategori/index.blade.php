@@ -2,22 +2,36 @@
 
 @section('content')
 
-<h3>Data Kategori</h3>
+<div class="container-fluid">
 
-<a href="{{ route('kategori.create') }}" class="btn btn-primary mb-3">
-    Tambah Kategori
-</a>
+    <!-- Judul -->
+    <h1 class="h3 mb-3 text-gray-800">Data Kategori</h1>
 
-@if(session('success'))
-    <p>{{ session('success') }}</p>
-@endif
+    <!-- Card -->
+    <div class="card shadow mb-4">
 
-<table class="table table-bordered">
-    <tr>
-        <th>No</th>
-        <th>Nama Kategori</th>
-        <th>Aksi</th>
-    </tr>
+        <!-- Header -->
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Tabel Kategori</h6>
+
+            <a href="{{ route('kategori.create') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Tambah
+            </a>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body">
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover" id="dataTable" width="100%">
+                    
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="50">No</th>
+                            <th>Nama Kategori</th>
+                            <th width="150">Aksi</th>
+                        </tr>
+                    </thead>
 
                     <tbody>
                         @foreach($kategoris as $k)
