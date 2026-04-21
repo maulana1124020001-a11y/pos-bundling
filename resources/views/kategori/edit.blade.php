@@ -7,9 +7,9 @@
             
             <div class="card shadow-sm border-0">
                 {{-- Card Header --}}
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="mb-0 fw-bold text-dark">
-                        <i class="fas fa-edit me-2 text-warning"></i>Edit Kategori
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 font-weight-bold text-warning">
+                        <i class="fas fa-edit me-1"></i> Edit Kategori
                     </h5>
                 </div>
 
@@ -53,8 +53,8 @@
                             <a href="{{ route('kategori.index') }}" class="btn btn-outline-secondary px-4">
                                 Batal
                             </a>
-                            <button type="submit" class="btn btn-warning px-4 text-white shadow-sm">
-                                <i class="fas fa-save me-2"></i>Update Kategori
+                            <button type="submit" class="btn btn-warning px-4">
+                                <i class="fas fa-check-circle me-1"></i> Update Data
                             </button>
                         </div>
                     </form>

@@ -7,9 +7,9 @@
             
             <div class="card shadow-sm border-0">
                 {{-- Card Header --}}
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 font-weight-bold text-primary">
-                        <i class="fas fa-utensils me-1"></i> Tambah Menu Baru
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-utensils me-2 text-info"></i>Tambah Menu Baru
                     </h5>
                 </div>
 
@@ -44,15 +44,16 @@
                             @enderror
                         </div>
 
-                        {{-- Nama Menu --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Menu</label>
-                            <input type="text" name="nama" value="{{ old('nama') }}" 
-                                   class="form-control @error('nama') is-invalid @enderror" 
-                                   placeholder="Contoh: Nasi Goreng Spesial">
-                            @error('nama')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            {{-- Nama Menu --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Nama Menu</label>
+                                <input type="text" name="nama" value="{{ old('nama') }}" 
+                                       class="form-control @error('nama') is-invalid @enderror shadow-sm" 
+                                       placeholder="Misal: Nasi Goreng, Matcha Latte dll">
+                                @error('nama')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="row">
@@ -96,9 +97,11 @@
                         <hr class="text-muted">
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('menu.index') }}" class="btn btn-light border">Batal</a>
-                            <button type="submit" class="btn btn-success px-4">
-                                <i class="fas fa-save me-1"></i> Simpan Menu
+                            <a href="{{ route('menu.index') }}" class="btn btn-outline-secondary px-4">
+                                Batal
+                            </a>
+                            <button type="submit" class="btn btn-info px-4 shadow-sm">
+                                <i class="fas fa-save me-2"></i>Simpan Menu
                             </button>
                         </div>
                     </form>
