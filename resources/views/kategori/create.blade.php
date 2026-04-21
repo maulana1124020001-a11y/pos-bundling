@@ -38,7 +38,7 @@
                                    id="nama_kategori"
                                    value="{{ old('nama_kategori') }}" 
                                    class="form-control @error('nama_kategori') is-invalid @enderror shadow-sm"
-                                   placeholder="Misal: Makanan, Minuman, Dessert..."
+                                   placeholder="Misal: Makanan, Coffee, Tea dll"
                                    required>
                             @error('nama_kategori')
                                 <div class="invalid-feedback">{{ $message }}</div>

@@ -51,8 +51,8 @@
                             <td>{{ $t->metode_pembayaran }}</td>
                             <td>{{ $t->waktu }}</td>
                             <td>
-                                <a href="{{ route('transaksi.show',$t->id) }}" class="btn btn-info btn-sm">
-                                    Detail
+                                <a href="{{ route('transaksi.show', $t->id) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-info"></i>
                                 </a>
                                 <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
                                     @csrf

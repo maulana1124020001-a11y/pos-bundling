@@ -61,10 +61,10 @@
                             </td>
 
                             <td class="text-center">
-
                                 <a href="{{ route('diskon.edit', $d->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
+
 
                                 <form action="{{ route('diskon.destroy', $d->id) }}" method="POST" class="d-inline">
                                     @csrf
