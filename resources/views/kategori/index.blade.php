@@ -21,6 +21,7 @@
 
         <!-- Body -->
         <div class="card-body">
+
             <div class="table-responsive">
 
                 <table class="table table-bordered table-hover" id="dataTable" width="100%">
@@ -34,7 +35,7 @@
                     </thead>
 
                     <tbody>
-                        @foreach($kategoris as $k)
+                        @forelse($kategoris as $k)
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $k->nama_kategori }}</td>
@@ -54,7 +55,13 @@
 
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                Data kategori belum tersedia
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
@@ -64,5 +71,4 @@
     </div>
 
 </div>
-
 @endsection

@@ -19,6 +19,7 @@
     <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 </head>
 
+
 <body id="page-top">
 
 <div id="wrapper">
@@ -145,10 +146,22 @@
             <div class="container-fluid">
 
                 @if(session('success'))
-                    <div class="alert alert-success">
+                    <div id="alert-success" class="alert alert-success alert-dismissible fade show">
                         {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 @endif
+
+                <script>
+                    setTimeout(function () {
+                        let alert = document.getElementById('alert-success');
+                        if (alert) {
+                            $(alert).fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }
+                    }, 3000);
+                </script>
 
                 @yield('content')
 
@@ -184,6 +197,8 @@
         $('#dataTable').DataTable();
     });
 </script>
+
+
 
 </body>
 </html>
