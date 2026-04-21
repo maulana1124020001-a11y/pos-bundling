@@ -65,11 +65,19 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('transaksi.index') }}">
+                <i class="fas fa-envelope"></i>
+                <span>Transaksi</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('user.index') }}">
                 <i class="fas fa-users"></i>
                 <span>User</span>
             </a>
         </li>
+
 
         <hr class="sidebar-divider d-none d-md-block">
 
