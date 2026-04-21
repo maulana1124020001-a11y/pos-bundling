@@ -5,16 +5,16 @@
 <div class="container-fluid">
 
     <!-- Judul -->
-    <h1 class="h3 mb-3 text-gray-800">Data User</h1>
+    <h1 class="h3 mb-3 text-gray-800">Data Diskon</h1>
 
     <!-- Card -->
     <div class="card shadow mb-4">
 
         <!-- Header -->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel User</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Tabel Diskon</h6>
 
-            <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('diskon.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Tambah
             </a>
         </div>
@@ -31,48 +31,52 @@
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover" id="dataTable" width="100%">
+                <table class="table table-bordered table-hover" width="100%">
                     
                     <thead class="thead-light">
                         <tr>
                             <th width="50">No</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Role</th>
+                            <th>Menu</th>
+                            <th>Tipe</th>
+                            <th>Nilai Diskon</th>
+                            <th>Periode</th>
                             <th width="150">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @forelse($users as $u)
+                        @forelse($diskons as $d)
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
 
-                            <td>{{ $u->nama }}</td>
+                            <td>{{ $d->menu->nama ?? '-' }}</td>
 
-                            <td>{{ $u->email }}</td>
+                            <td>{{ $d->tipe_diskon }}</td>
 
                             <td>
-                                <span">
-                                    {{ $u->role->nama_role ?? '-' }}
-                                </span>
+                                @if($d->tipe_diskon == 'Persen')
+                                    {{ $d->diskon_persen }}%
+                                @else
+                                    Rp {{ number_format($d->diskon_nominal, 0, ',', '.') }}
+                                @endif
+                            </td>
+
+                            <td>
+                                {{ $d->mulai_diskon }} <br>
+                                s/d <br>
+                                {{ $d->akhir_diskon }}
                             </td>
 
                             <td class="text-center">
 
-                                <a href="{{ route('user.edit', $u->id) }}" 
-                                   class="btn btn-warning btn-sm">
+                                <a href="{{ route('diskon.edit', $d->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
 
-                                <form action="{{ route('user.destroy',$u->id) }}" 
-                                      method="POST" 
-                                      class="d-inline">
+                                <form action="{{ route('diskon.destroy', $d->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-
-                                    <button class="btn btn-danger btn-sm" 
-                                        onclick="return confirm('Yakin hapus user ini?')">
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -81,8 +85,8 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center">
-                                Data user belum tersedia
+                            <td colspan="6" class="text-center">
+                                Data diskon belum tersedia
                             </td>
                         </tr>
                         @endforelse

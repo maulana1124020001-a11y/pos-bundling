@@ -57,6 +57,13 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('diskon.index') }}">
+                <i class="fas fa-bell"></i>
+                <span>Diskon</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('user.index') }}">
                 <i class="fas fa-users"></i>
                 <span>User</span>

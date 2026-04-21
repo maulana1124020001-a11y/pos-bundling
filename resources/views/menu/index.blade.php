@@ -57,9 +57,9 @@
 
                             <td>
                                 @if($m->status == 'tersedia')
-                                    <span class="badge bg-success">Tersedia</span>
+                                    <span class="badge bg-success text-white">Tersedia</span>
                                 @else
-                                    <span class="badge bg-danger">Tidak Tersedia</span>
+                                    <span class="badge bg-danger text-white">Tidak Tersedia</span>
                                 @endif
                             </td>
 
