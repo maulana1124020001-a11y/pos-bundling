@@ -21,7 +21,7 @@
 
         <!-- Body -->
         <div class="card-body">
-
+            
             <div class="table-responsive">
 
                 <table class="table table-bordered table-hover" id="dataTable" width="100%">
@@ -88,5 +88,6 @@
     </div>
 
 </div>
+
 
 @endsection

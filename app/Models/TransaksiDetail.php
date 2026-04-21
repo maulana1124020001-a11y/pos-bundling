@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use \App\Models\Transaksi;
 
 class TransaksiDetail extends Model
 {
+    protected $table = 'transaksi_details';
+
     protected $fillable = [
         'transaksi_id',
         'menu_id',
@@ -16,7 +19,7 @@ class TransaksiDetail extends Model
 
     public function transaksi()
     {
-        return $this->belongsTo(Transaksi::class);
+        return $this->belongsTo(Transaksi::class, 'transaksi_id');
     }
 
     public function menu()

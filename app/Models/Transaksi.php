@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use \App\Models\TransaksiDetail;
 
 class Transaksi extends Model
 {
@@ -23,9 +24,9 @@ class Transaksi extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function details()
+    public function detail()
     {
-        return $this->hasMany(TransaksiDetail::class);
+        return $this->hasMany(TransaksiDetail::class, 'transaksi_id');
     }
 
     public function customer()
