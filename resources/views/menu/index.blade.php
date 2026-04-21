@@ -67,6 +67,9 @@
                                 <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
+                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
 
                                 <form action="{{ route('menu.destroy', $m->id) }}" method="POST" class="d-inline">
                                     @csrf
