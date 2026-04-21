@@ -28,8 +28,9 @@
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>
-                            <th>Kategori</th>
+                            
                             <th>Nama</th>
+                            <th>Kategori</th>
                             <th>Harga</th>
                             <th>Gambar</th>
                             <th>Status</th>
@@ -41,8 +42,9 @@
                         @foreach($menus as $m)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $m->kategori->nama_kategori }}</td>
                             <td>{{ $m->nama }}</td>
+                            <td>{{ $m->kategori->nama_kategori }}</td>
+                            
                             <td>Rp {{ number_format($m->harga) }}</td>
 
                             <td>
