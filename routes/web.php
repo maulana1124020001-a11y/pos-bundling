@@ -19,4 +19,3 @@ Route::resource('user', UserController::class);
 Route::resource('bundling', BundlingController::class);
 Route::resource('diskon', DiskonController::class);
 Route::resource('transaksi', TransaksiController::class);
-Route::resource('transaksi_detail', TransaksiDetailController::class);
