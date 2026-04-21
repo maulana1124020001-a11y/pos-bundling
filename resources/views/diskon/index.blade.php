@@ -24,7 +24,7 @@
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover" width="100%">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%">
                     
                     <thead class="thead-light">
                         <tr>
