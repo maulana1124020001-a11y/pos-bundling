@@ -15,7 +15,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Tabel Diskon</h6>
 
             <a href="{{ route('diskon.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah
+                <i class="fas fa-plus"></i> Tambah Diskon
             </a>
         </div>
 
@@ -24,33 +24,39 @@
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover" width="100%">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%">
                     
                     <thead class="thead-light">
                         <tr>
-                            <th width="50">No</th>
+                            <th>No</th>
                             <th>Menu</th>
                             <th>Tipe</th>
                             <th>Nilai Diskon</th>
                             <th>Periode</th>
-                            <th width="150">Aksi</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         @forelse($diskons as $d)
                         <tr>
-                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td>{{ $loop->iteration }}</td>
 
                             <td>{{ $d->menu->nama ?? '-' }}</td>
 
-                            <td>{{ $d->tipe_diskon }}</td>
+                            <td>
+                                @if($d->tipe_diskon == 'Persen')
+                                    <span class="badge bg-info text-white">Persen</span>
+                                @else
+                                    <span class="badge bg-secondary text-white">Nominal</span>
+                                @endif
+                            </td>
 
                             <td>
                                 @if($d->tipe_diskon == 'Persen')
                                     {{ $d->diskon_persen }}%
                                 @else
-                                    Rp {{ number_format($d->diskon_nominal, 0, ',', '.') }}
+                                    Rp {{ number_format($d->diskon_nominal) }}
                                 @endif
                             </td>
 
@@ -60,11 +66,12 @@
                                 {{ $d->akhir_diskon }}
                             </td>
 
-                            <td class="text-center">
+                            <td>
+                              
+
                                 <a href="{{ route('diskon.edit', $d->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-
 
                                 <form action="{{ route('diskon.destroy', $d->id) }}" method="POST" class="d-inline">
                                     @csrf
@@ -73,7 +80,6 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
-
                             </td>
                         </tr>
                         @empty
