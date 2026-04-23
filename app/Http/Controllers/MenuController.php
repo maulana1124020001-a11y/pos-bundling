@@ -80,50 +80,51 @@ class MenuController extends Controller
      */
     public function update(Request $request, Menu $menu)
     {
-     $request->validate([
-        'kategori_id' => 'required',
-        'nama' => 'required',
-        'modal' => 'required|numeric',
-        'harga' => 'required|numeric',
-        'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
-    ]);
 
-    $data = $request->all();
+        $request->validate([
+            'kategori_id' => 'required',
+            'nama' => 'required',
+            'modal' => 'required|numeric',
+            'harga' => 'required|numeric',
+            'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
+        ]);
 
-    if ($request->hasFile('gambar')) {
-        // Hapus gambar lama jika ada
-        if ($menu->gambar && File::exists(public_path('images/' . $menu->gambar))) {
-            File::delete(public_path('images/' . $menu->gambar));
+        // Ambil semua input kecuali gambar (gambar ditangani terpisah)
+        $data = $request->except('gambar');
+
+        if ($request->hasFile('gambar')) {
+            // 1. Hapus gambar lama jika ada di folder
+            if ($menu->gambar && File::exists(public_path('images/' . $menu->gambar))) {
+                File::delete(public_path('images/' . $menu->gambar));
+            }
+
+            // 2. Upload gambar baru
+            $namaFile = time() . '_' . $request->file('gambar')->getClientOriginalName();
+            $request->file('gambar')->move(public_path('images'), $namaFile);
+
+            // 3. Masukkan nama file baru ke array data
+            $data['gambar'] = $namaFile;
         }
 
-        // Upload gambar baru
-        $file = $request->file('gambar');
-        $namaFile = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('images'), $namaFile);
+        $menu->update($data);
 
-        $data['gambar'] = $namaFile;
+        return redirect()->route('menu.index')->with('success', 'Menu berhasil diupdate');
     }
 
-    $menu->update($data);
-
-    return redirect()->route('menu.index')
-        ->with('success', 'Menu berhasil diupdate');
-    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Menu $menu)
     {
-        // Cek apakah ada file gambar dan apakah file tersebut ada di folder
-    if ($menu->gambar && File::exists(public_path('images/' . $menu->gambar))) {
-        File::delete(public_path('images/' . $menu->gambar));
-    }
+        // 1. Hapus file fisik di public/images
+        if ($menu->gambar) {
+            File::delete(public_path('images/' . $menu->gambar));
+        }
 
-    // Hapus data dari database
-    $menu->delete();
+        // 2. Hapus data di database
+        $menu->delete();
 
-    return redirect()->route('menu.index')
-        ->with('success', 'Menu dan gambar berhasil dihapus');
+        return redirect()->route('menu.index')->with('success', 'Menu dan gambar terhapus');
     }
 }

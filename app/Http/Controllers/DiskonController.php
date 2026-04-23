@@ -8,99 +8,77 @@ use Illuminate\Http\Request;
 
 class DiskonController extends Controller
 {
+    /**
+     * Menampilkan daftar diskon yang ada.
+     */
     public function index()
     {
-        $diskons = Diskon::with('menu')->get();
+        $diskons = Diskon::with('menu')->latest()->get();
         return view('diskon.index', compact('diskons'));
     }
 
+    /**
+     * Menampilkan form tambah diskon.
+     */
     public function create()
     {
         $menus = Menu::all();
         return view('diskon.create', compact('menus'));
     }
 
+    /**
+     * Menyimpan data diskon baru.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
-            'tipe_diskon' => 'required|in:Persen,Nominal',
-            'diskon_persen' => 'nullable|numeric|min:0|max:100',
-            'diskon_nominal' => 'nullable|numeric|min:0',
-            'mulai_diskon' => 'required|date',
-            'akhir_diskon' => 'required|date|after:mulai_diskon'
+            'menu_id'       => 'required|exists:menus,id',
+            'tipe_diskon'   => 'required|in:Persen,Nominal',
+            'mulai_diskon'  => 'required|date',
+            'akhir_diskon'  => 'required|date|after:mulai_diskon',
+            'diskon_persen' => 'required_if:tipe_diskon,Persen|nullable|numeric|max:100',
+            'diskon_nominal'=> 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
 
-        // Validasi manual sesuai tipe
-        if ($request->tipe_diskon == 'Persen' && !$request->diskon_persen) {
-            return back()->withErrors(['diskon_persen' => 'Diskon persen wajib diisi'])->withInput();
-        }
+        Diskon::create($request->all());
 
-        if ($request->tipe_diskon == 'Nominal' && !$request->diskon_nominal) {
-            return back()->withErrors(['diskon_nominal' => 'Diskon nominal wajib diisi'])->withInput();
-        }
-
-        Diskon::create([
-            'menu_id' => $request->menu_id,
-            'tipe_diskon' => $request->tipe_diskon,
-            'diskon_persen' => $request->diskon_persen,
-            'diskon_nominal' => $request->diskon_nominal,
-            'mulai_diskon' => $request->mulai_diskon,
-            'akhir_diskon' => $request->akhir_diskon,
-        ]);
-
-        return redirect()->route('diskon.index')
-            ->with('success', 'Diskon berhasil ditambahkan');
+        return redirect()->route('diskon.index')->with('success', 'Diskon berhasil dikonfigurasi.');
     }
 
-    public function edit($id)
+    /**
+     * Menampilkan form edit diskon.
+     */
+    public function edit(Diskon $diskon)
     {
-        $diskon = Diskon::findOrFail($id);
         $menus = Menu::all();
-
         return view('diskon.edit', compact('diskon', 'menus'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Memperbarui data diskon.
+     */
+    public function update(Request $request, Diskon $diskon)
     {
-        $diskon = Diskon::findOrFail($id);
-
         $request->validate([
-            'menu_id' => 'required|exists:menus,id',
-            'tipe_diskon' => 'required|in:Persen,Nominal',
-            'diskon_persen' => 'nullable|numeric|min:0|max:100',
-            'diskon_nominal' => 'nullable|numeric|min:0',
-            'mulai_diskon' => 'required|date',
-            'akhir_diskon' => 'required|date|after:mulai_diskon'
+            'menu_id'       => 'required|exists:menus,id',
+            'tipe_diskon'   => 'required|in:Persen,Nominal',
+            'mulai_diskon'  => 'required|date',
+            'akhir_diskon'  => 'required|date|after:mulai_diskon',
+            'diskon_persen' => 'required_if:tipe_diskon,Persen|nullable|numeric|max:100',
+            'diskon_nominal'=> 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
 
-        if ($request->tipe_diskon == 'Persen' && !$request->diskon_persen) {
-            return back()->withErrors(['diskon_persen' => 'Diskon persen wajib diisi'])->withInput();
-        }
+        $diskon->update($request->all());
 
-        if ($request->tipe_diskon == 'Nominal' && !$request->diskon_nominal) {
-            return back()->withErrors(['diskon_nominal' => 'Diskon nominal wajib diisi'])->withInput();
-        }
-
-        $diskon->update([
-            'menu_id' => $request->menu_id,
-            'tipe_diskon' => $request->tipe_diskon,
-            'diskon_persen' => $request->diskon_persen,
-            'diskon_nominal' => $request->diskon_nominal,
-            'mulai_diskon' => $request->mulai_diskon,
-            'akhir_diskon' => $request->akhir_diskon,
-        ]);
-
-        return redirect()->route('diskon.index')
-            ->with('success', 'Diskon berhasil diupdate');
+        return redirect()->route('diskon.index')->with('success', 'Diskon berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    /**
+     * Menghapus diskon.
+     */
+    public function destroy(Diskon $diskon)
     {
-        $diskon = Diskon::findOrFail($id);
         $diskon->delete();
-
-        return redirect()->route('diskon.index')
-            ->with('success', 'Diskon berhasil dihapus');
+        return redirect()->route('diskon.index')->with('success', 'Diskon berhasil dihapus.');
     }
 }
