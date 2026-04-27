@@ -122,13 +122,7 @@
 
                             <div class="dropdown-menu dropdown-menu-right shadow">
                                 <a class="dropdown-item" href="#">Profile</a>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-link text-danger nav-link"
-                                        style="display:inline; cursor:pointer;">
-                                        Logout ({{ auth()->user()->nama }})
-                                    </button>
-                                </form>
+
                             </div>
                         </li>
 
