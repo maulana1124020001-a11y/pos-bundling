@@ -2,75 +2,119 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
-use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
+use App\Models\Transaksi;
+use App\Models\Menu;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
-class TransaksiController extends Controller
+class TransaksiDetailController extends Controller
 {
+    // ========================
+    // INDEX
+    // ========================
     public function index()
     {
-        $transaksis = Transaksi::with('user')->latest()->get();
-        return view('transaksi.index', compact('transaksis'));
+        $details = TransaksiDetail::with(['transaksi', 'menu'])->get();
+
+        return view('transaksi_detail.index', compact('details'));
     }
 
+    // ========================
+    // CREATE
+    // ========================
     public function create()
     {
-        // Mengambil semua menu yang tersedia
-        $menus = Menu::where('status', 'tersedia')->get();
-        return view('transaksi.create', compact('menus'));
+        $transaksis = Transaksi::all();
+        $menus = Menu::all();
+
+        return view('transaksi_detail.create', compact('transaksis', 'menus'));
     }
 
+    // ========================
+    // STORE
+    // ========================
     public function store(Request $request)
     {
         $request->validate([
-            'total_harga' => 'required|numeric',
-            'uang_bayar'  => 'required|numeric|min:' . $request->total_harga,
-            'items'       => 'required|array',
+            'transaksi_id' => 'required|exists:transaksis,id',
+            'menu_id' => 'required|exists:menus,id',
+            'jumlah' => 'required|numeric|min:1'
         ]);
 
-        DB::beginTransaction();
+        $menu = Menu::findOrFail($request->menu_id);
 
-        try {
-            // 1. Simpan Header Transaksi
-            $transaksi = Transaksi::create([
-                'user_id'           => Auth::id(),
-                'total_harga'       => $request->total_harga,
-                'uang_bayar'        => $request->uang_bayar,
-                'kembalian'         => $request->uang_bayar - $request->total_harga,
-                'status'            => 'selesai',
-                'metode_pembayaran' => $request->metode_pembayaran ?? 'cash',
-                'waktu'             => now(),
-            ]);
+        $subtotal = $menu->harga * $request->jumlah;
 
-            // 2. Simpan Detail Transaksi (Termasuk Diskon per Item)
-            foreach ($request->items as $item) {
-                $harga_asli = $item['harga'];
-                $diskon_per_item = $item['diskon'] ?? 0;
-                $jumlah = $item['jumlah'];
-                
-                // Kalkulasi subtotal: (Harga - Diskon) * Qty
-                $subtotal = ($harga_asli - $diskon_per_item) * $jumlah;
+        TransaksiDetail::create([
+            'transaksi_id' => $request->transaksi_id,
+            'menu_id' => $request->menu_id,
+            'jumlah' => $request->jumlah,
+            'harga' => $menu->harga,
+            'subtotal' => $subtotal
+        ]);
 
-                TransaksiDetail::create([
-                    'transaksi_id' => $transaksi->id,
-                    'menu_id'      => $item['menu_id'],
-                    'jumlah'       => $jumlah,
-                    'harga'        => $harga_asli,
-                    'diskon'       => $diskon_per_item,
-                    'subtotal'     => $subtotal,
-                ]);
-            }
+        return redirect()->route('transaksi_detail.index')
+            ->with('success', 'Detail transaksi berhasil ditambahkan');
+    }
 
-            DB::commit();
-            return redirect()->route('transaksi.index')->with('success', 'Transaksi Berhasil!');
+    // ========================
+    // SHOW
+    // ========================
+    public function show($id)
+    {
+        $detail = TransaksiDetail::with(['transaksi', 'menu'])->findOrFail($id);
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
-        }
+        return view('transaksi_detail.show', compact('detail'));
+    }
+
+    // ========================
+    // EDIT
+    // ========================
+    public function edit($id)
+    {
+        $detail = TransaksiDetail::findOrFail($id);
+        $transaksis = Transaksi::all();
+        $menus = Menu::all();
+
+        return view('transaksi_detail.edit', compact('detail', 'transaksis', 'menus'));
+    }
+
+    // ========================
+    // UPDATE
+    // ========================
+    public function update(Request $request, $id)
+    {
+        $detail = TransaksiDetail::findOrFail($id);
+
+        $request->validate([
+            'transaksi_id' => 'required|exists:transaksis,id',
+            'menu_id' => 'required|exists:menus,id',
+            'jumlah' => 'required|numeric|min:1'
+        ]);
+
+        $menu = Menu::findOrFail($request->menu_id);
+
+        $detail->update([
+            'transaksi_id' => $request->transaksi_id,
+            'menu_id' => $request->menu_id,
+            'jumlah' => $request->jumlah,
+            'harga' => $menu->harga,
+            'subtotal' => $menu->harga * $request->jumlah
+        ]);
+
+        return redirect()->route('transaksi_detail.index')
+            ->with('success', 'Detail transaksi berhasil diupdate');
+    }
+
+    // ========================
+    // DELETE
+    // ========================
+    public function destroy($id)
+    {
+        $detail = TransaksiDetail::findOrFail($id);
+        $detail->delete();
+
+        return redirect()->route('transaksi_detail.index')
+            ->with('success', 'Detail transaksi berhasil dihapus');
     }
 }
