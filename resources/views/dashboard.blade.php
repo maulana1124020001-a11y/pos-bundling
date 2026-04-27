@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-DASBOARD
+
+DASHBOARD
 
 @endsection

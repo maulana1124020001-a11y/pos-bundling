@@ -24,12 +24,10 @@ class KategoriController extends Controller
             'nama_kategori' => 'required|string|max:255'
         ]);
 
-        Kategori::create([
-            'nama_kategori' => $request->nama_kategori
-        ]);
+       Kategori::create($request->all());
 
         return redirect()->route('kategori.index')
-            ->with('success', 'Kategori berhasil disimpan');
+            ->with('success', 'Kategori berhasil dibuat');
     }
 
     public function edit(Kategori $kategori)
@@ -43,12 +41,10 @@ class KategoriController extends Controller
             'nama_kategori' => 'required|string|max:255'
         ]);
 
-        $kategori->update([
-            'nama_kategori' => $request->nama_kategori
-        ]);
+       $kategori->update($request->all());
 
         return redirect()->route('kategori.index')
-            ->with('success', 'Kategori berhasil diupdate');
+            ->with('success', 'Kategori berhasil diperbarui');
     }
 
     public function destroy(Kategori $kategori)

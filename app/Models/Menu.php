@@ -6,33 +6,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    protected $fillable = [
-        'kategori_id',
-        'nama',
-        'modal',
-        'harga',
-        'status',
-        'gambar'
+    protected $fillable = ['kategori_id', 'nama', 'gambar', 'modal', 'harga', 'status'];
 
-    ];
+    // INI YANG HILANG: Definisi relasi ke tabel diskons
+    public function diskons()
+    {
+        return $this->hasMany(Diskon::class);
+    }
 
+    // Relasi ke kategori (tambahan agar aman)
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
     }
 
-    public function diskon()
+    // Logika harga diskon yang tadi kita buat
+    public function getHargaDiskonAttribute()
     {
-        return $this->hasOne(Diskon::class);
-    }
+        // Sekarang $this->diskons() sudah bisa dipanggil karena sudah ada di atas
+        $diskon = $this->diskons()
+            ->where('mulai_diskon', '<=', now())
+            ->where('akhir_diskon', '>=', now())
+            ->first();
 
-    public function bundlings()
-    {
-        return $this->hasMany(Bundling::class);
-    }
-
-    public function transaksiDetails()
-    {
-        return $this->hasMany(TransaksiDetail::class);
+        if ($diskon) {
+            if ($diskon->tipe_diskon === 'Persen') {
+                return $this->harga - ($this->harga * $diskon->diskon_persen / 100);
+            } else {
+                return $this->harga - $diskon->diskon_nominal;
+            }
+        }
+        
+        return $this->harga;
     }
 }
+
