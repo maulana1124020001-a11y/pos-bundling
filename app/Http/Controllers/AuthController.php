@@ -23,7 +23,7 @@ class AuthController extends Controller
 
             // Arahkan berdasarkan role setelah login
             if (auth()->user()->role_id == 1) {
-                return redirect()->intended('/welcome');
+                return redirect()->intended(route('diskon.index'));
             }
             return redirect()->intended('/transaksi/create');
         }

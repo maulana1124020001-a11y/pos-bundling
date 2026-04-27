@@ -28,7 +28,6 @@ Route::middleware(['auth'])->group(function () {
     // Langsung panggil AdminMiddleware::class
     Route::middleware([AdminMiddleware::class])->group(function () {
        // Route::get('/dashboard', [DashboardController::class, 'index']);
-       
         Route::resource('kategori', KategoriController::class);
         Route::resource('menu', MenuController::class);
         Route::resource('user', UserController::class);
