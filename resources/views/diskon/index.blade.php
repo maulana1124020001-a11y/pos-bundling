@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<<<<<<< HEAD
 
 <div class="container-fluid">
 
@@ -90,12 +89,6 @@
 
             </div>
         </div>
-=======
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Daftar Diskon Menu</h4>
-        <a href="{{ route('diskon.create') }}" class="btn btn-primary">Tambah Diskon</a>
->>>>>>> 39627ed945561892d020686296fa88ddad0e273d
     </div>
 
     @if(session('success'))
