@@ -92,26 +92,8 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-<<<<<<< HEAD
                 <!-- RIGHT MENU -->
                 <ul class="navbar-nav ml-auto">
-=======
-                    <!-- SEARCH -->
-                    <!-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small"
-                               placeholder="Search...">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form> -->
-
-                    <!-- RIGHT MENU -->
-                    <ul class="navbar-nav ml-auto">
->>>>>>> 39627ed945561892d020686296fa88ddad0e273d
 
                         <!-- NOTIF -->
                         <li class="nav-item mx-2">
