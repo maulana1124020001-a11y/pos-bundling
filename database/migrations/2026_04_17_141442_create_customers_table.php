@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaksi_id')->constrained('transaksis');
             $table->string('nama');
             $table->string('no_hp');
             $table->timestamps();

@@ -35,7 +35,7 @@
                             {{-- Kategori --}}
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-bold text-muted small text-uppercase">Kategori</label>
-                                <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror shadow-sm">
+                                <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror shadow-sm form-control">
                                     <option value="" selected disabled>Pilih Kategori...</option>
                                     @foreach($kategoris as $k)
                                         <option value="{{ $k->id }}" {{ old('kategori_id') == $k->id ? 'selected' : '' }}>

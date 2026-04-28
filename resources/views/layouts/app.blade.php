@@ -38,7 +38,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kategori.index') }}">
-                    <i class="fas fa-tags"></i>
+                    <i class="fas fa-cat"></i>
                     <span>Kategori</span>
                 </a>
             </li>
@@ -54,14 +54,14 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('diskon.index') }}">
-                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-tags"></i>
                     <span>Diskon</span>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('transaksi.index') }}">
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-shopping-cart"></i>
                     <span>Transaksi</span>
                 </a>
             </li>
@@ -99,7 +99,7 @@
                         <li class="nav-item mx-2">
                             <a class="nav-link" href="#">
                                 <i class="fas fa-bell"></i>
-                                <span class="badge badge-danger">3</span>
+                                <span class="badge badge-danger"></span>
                             </a>
                         </li>
 
@@ -107,7 +107,7 @@
                         <li class="nav-item mx-2">
                             <a class="nav-link" href="#">
                                 <i class="fas fa-envelope"></i>
-                                <span class="badge badge-danger">7</span>
+                                <span class="badge badge-danger"></span>
                             </a>
                         </li>
 

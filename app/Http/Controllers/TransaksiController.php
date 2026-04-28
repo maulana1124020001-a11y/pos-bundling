@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Customer;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use Illuminate\Http\Request;
@@ -26,7 +27,8 @@ class TransaksiController extends Controller
     public function create()
     {
         $menus = Menu::where('status', 'tersedia')->get();
-        return view('transaksi.create', compact('menus'));
+        $customers = Customer::get();
+        return view('transaksi.create', compact('menus', 'customers'));
     }
 
     /**

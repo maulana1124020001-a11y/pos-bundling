@@ -32,7 +32,7 @@
                         {{-- Kategori --}}
                         <div class="mb-3">
                             <label class="form-label fw-bold">Kategori</label>
-                            <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror">
+                            <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror form-control">
                                 @foreach($kategoris as $k)
                                     <option value="{{ $k->id }}" {{ $menu->kategori_id == $k->id ? 'selected' : '' }}>
                                         {{ $k->nama_kategori }}
@@ -72,11 +72,11 @@
                         {{-- Status --}}
                         <div class="mb-3">
                             <label class="form-label fw-bold">Status</label>
-                            <select name="status" class="form-select">
+                            <select name="status" class="form-control">
                                 <option value="tersedia" {{ $menu->status == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
                                 <option value="tidak tersedia" {{ $menu->status == 'tidak tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
                             </select>
-                        </div>
+                        </div
 
                         {{-- Gambar & Preview --}}
                         <div class="mb-4">
