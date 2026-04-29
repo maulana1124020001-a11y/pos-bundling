@@ -58,9 +58,15 @@
                             <label class="col-sm-4">Customer</label>
                             <div class="col-sm-8">
                                 <select name="customer_id" id="customer_id" class="form-control-plaintext">
-                                    @foreach ( $customers as $customer )
-                                        <option value="{{ $customer->id }}">Nama</option>
+
+                                    <option value=""></option>
+
+                                    @foreach ($customers as $customer)
+                                        <option value="{{ $customer->id }}">
+                                            {{ $customer->nama }}
+                                        </option>
                                     @endforeach
+
                                 </select>
                             </div>
                         </div>

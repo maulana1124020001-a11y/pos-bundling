@@ -50,7 +50,7 @@
                 </a>
             </li>
 
-            
+
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('diskon.index') }}">
@@ -60,11 +60,19 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('customer.index') }}">
+                    <i class="fas fa-tags"></i>
+                    <span>Customer</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('transaksi.index') }}">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Transaksi</span>
                 </a>
             </li>
+
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('user.index') }}">
@@ -92,8 +100,8 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                <!-- RIGHT MENU -->
-                <ul class="navbar-nav ml-auto">
+                    <!-- RIGHT MENU -->
+                    <ul class="navbar-nav ml-auto">
 
                         <!-- NOTIF -->
                         <li class="nav-item mx-2">
@@ -113,15 +121,29 @@
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- USER -->
+                        <!-- LOGOUT -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    {{ auth()->user()->nama ?? 'User' }}
+                                </span>
                                 <img class="img-profile rounded-circle" src="https://via.placeholder.com/60">
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right shadow">
-                                <a class="dropdown-item" href="#">Profile</a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <!-- LOGOUT -->
+                                <a class="dropdown-item" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
 
                             </div>
                         </li>
@@ -134,7 +156,7 @@
                 <!-- ISI -->
                 <div class="container-fluid">
 
-                    @if(session('success'))
+                    @if (session('success'))
                         <div id="alert-success" class="alert alert-success alert-dismissible fade show">
                             {{ session('success') }}
                             <button type="button" class="close" data-dismiss="alert">&times;</button>

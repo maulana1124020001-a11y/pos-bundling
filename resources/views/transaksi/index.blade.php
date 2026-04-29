@@ -18,12 +18,6 @@
 
         <div class="card-body">
 
-            @if(session('success'))
-                <div id="alert-success" class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="table-responsive">
                 <table class="table table-bordered table-hover" id="dataTable">
 
@@ -35,6 +29,7 @@
                             <th>Bayar</th>
                             <th>Kembalian</th>
                             <th>Metode</th>
+                            <th>customer</th>
                             <th>Waktu</th>
                             <th>Aksi</th>
                         </tr>
@@ -49,6 +44,7 @@
                             <td>Rp {{ number_format($t->uang_bayar,0,',','.') }}</td>
                             <td>Rp {{ number_format($t->kembalian,0,',','.') }}</td>
                             <td>{{ $t->metode_pembayaran }}</td>
+                            <td>{{ $t->customer->nama ?? '-' }}</td>
                             <td>{{ $t->waktu }}</td>
                             <td>
                                 <a href="{{ route('transaksi.show', $t->id) }}" class="btn btn-info btn-sm">

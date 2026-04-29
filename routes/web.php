@@ -1,37 +1,50 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiskonController;
-// Import class Middleware-nya di sini
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminMiddleware;
 
-use App\Http\Controllers\AuthController;
-
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-
-// 1. Semua user (Admin & Kasir) WAJIB Login
+/*
+|--------------------------------------------------------------------------
+| SETELAH LOGIN
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
-    
-    // Halaman Transaksi (Bisa diakses Kasir & Admin)
+
+    // 🔹 Transaksi (Kasir & Admin)
     Route::resource('transaksi', TransaksiController::class);
 
-    // 2. Halaman Khusus ADMIN (Tanpa Alias)
-    // Langsung panggil AdminMiddleware::class
+    // 🔹 Customer (biar bisa dipakai kasir juga)
+    Route::resource('customer', CustomerController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | KHUSUS ADMIN
+    |--------------------------------------------------------------------------
+    */
     Route::middleware([AdminMiddleware::class])->group(function () {
-       // Route::get('/dashboard', [DashboardController::class, 'index']);
+
         Route::resource('kategori', KategoriController::class);
         Route::resource('menu', MenuController::class);
         Route::resource('user', UserController::class);
         Route::resource('diskon', DiskonController::class);
+
     });
 
 });

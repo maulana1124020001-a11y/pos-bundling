@@ -17,7 +17,7 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        $transaksis = Transaksi::with('user')->latest()->get();
+        $transaksis = Transaksi::with('user', 'customer')->latest()->get();
         return view('transaksi.index', compact('transaksis'));
     }
 
@@ -40,6 +40,7 @@ class TransaksiController extends Controller
             'total_harga' => 'required|numeric',
             'uang_bayar'  => 'required|numeric|min:' . $request->total_harga,
             'items'       => 'required|array', // Array dari keranjang belanja
+            'customer_id' => 'nullable|exists:customers,id',
         ]);
 
         // Mulai Database Transaction
@@ -53,6 +54,7 @@ class TransaksiController extends Controller
                 'uang_bayar'        => $request->uang_bayar,
                 'kembalian'         => $request->uang_bayar - $request->total_harga,
                 'status'            => 'selesai',
+                'customer_id'       => $request->customer_id ?: null,
                 'metode_pembayaran' => $request->metode_pembayaran ?? 'cash',
                 'waktu'             => now(),
             ]);

@@ -9,6 +9,7 @@ class Transaksi extends Model
 {
     protected $fillable = [
         'user_id',
+        'customer_id',
         'total_harga',
         'uang_bayar',
         'kembalian',
@@ -28,9 +29,8 @@ class Transaksi extends Model
     {
         return $this->hasMany(TransaksiDetail::class, 'transaksi_id');
     }
-
     public function customer()
     {
-        return $this->hasOne(Customer::class);
+        return $this->belongsto(Customer::class);
     }
 }

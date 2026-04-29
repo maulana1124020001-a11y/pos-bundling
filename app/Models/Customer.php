@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     protected $fillable = [
-        'transaksi_id',
         'nama',
         'no_hp'
     ];
 
-    public function transaksi()
+    public function transaksis()
     {
-        return $this->belongsTo(Transaksi::class);
+        return $this->hasMany(Transaksi::class);
     }
 }
