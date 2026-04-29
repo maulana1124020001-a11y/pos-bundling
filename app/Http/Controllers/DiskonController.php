@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Diskon;
@@ -13,6 +14,7 @@ class DiskonController extends Controller
     public function index()
     {
         $diskons = Diskon::with('menu')->latest()->get();
+
         return view('diskon.index', compact('diskons'));
     }
 
@@ -22,26 +24,35 @@ class DiskonController extends Controller
     public function create()
     {
         $menus = Menu::all();
+
         return view('diskon.create', compact('menus'));
     }
 
-    /**
-     * Menyimpan data diskon baru.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'menu_id'       => 'required|exists:menus,id',
-            'tipe_diskon'   => 'required|in:Persen,Nominal',
-            'mulai_diskon'  => 'required|date',
-            'akhir_diskon'  => 'required|date|after:mulai_diskon',
+            'menu_id' => 'required|exists:menus,id',
+            'tipe_diskon' => 'required|in:Persen,Nominal',
+            'mulai_diskon' => 'required|date',
+            'akhir_diskon' => 'required|date|after:mulai_diskon',
             'diskon_persen' => 'required_if:tipe_diskon,Persen|nullable|numeric|max:100',
-            'diskon_nominal'=> 'required_if:tipe_diskon,Nominal|nullable|numeric',
+            'diskon_nominal' => 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
+
+        // 🔥 Ambil harga menu
+        $menu = Menu::findOrFail($request->menu_id);
+
+        // 🔥 Validasi tambahan
+        if ($request->tipe_diskon == 'Nominal' && $request->diskon_nominal > $menu->harga) {
+            return back()
+                ->withErrors(['diskon_nominal' => 'Diskon nominal tidak boleh lebih besar dari harga menu'])
+                ->withInput();
+        }
 
         Diskon::create($request->all());
 
-        return redirect()->route('diskon.index')->with('success', 'Diskon berhasil dikonfigurasi.');
+        return redirect()->route('diskon.index')
+            ->with('success', 'Diskon berhasil dikonfigurasi.');
     }
 
     /**
@@ -50,6 +61,7 @@ class DiskonController extends Controller
     public function edit(Diskon $diskon)
     {
         $menus = Menu::all();
+
         return view('diskon.edit', compact('diskon', 'menus'));
     }
 
@@ -59,12 +71,12 @@ class DiskonController extends Controller
     public function update(Request $request, Diskon $diskon)
     {
         $request->validate([
-            'menu_id'       => 'required|exists:menus,id',
-            'tipe_diskon'   => 'required|in:Persen,Nominal',
-            'mulai_diskon'  => 'required|date',
-            'akhir_diskon'  => 'required|date|after:mulai_diskon',
+            'menu_id' => 'required|exists:menus,id',
+            'tipe_diskon' => 'required|in:Persen,Nominal',
+            'mulai_diskon' => 'required|date',
+            'akhir_diskon' => 'required|date|after:mulai_diskon',
             'diskon_persen' => 'required_if:tipe_diskon,Persen|nullable|numeric|max:100',
-            'diskon_nominal'=> 'required_if:tipe_diskon,Nominal|nullable|numeric',
+            'diskon_nominal' => 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
 
         $diskon->update($request->all());
@@ -78,6 +90,7 @@ class DiskonController extends Controller
     public function destroy(Diskon $diskon)
     {
         $diskon->delete();
+
         return redirect()->route('diskon.index')->with('success', 'Diskon berhasil dihapus.');
     }
 }
