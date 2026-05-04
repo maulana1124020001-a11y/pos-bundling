@@ -2,56 +2,153 @@
 
 @section('content')
 
-<div class="container-fluid">
+<style>
+    .struk {
+        width: 80mm; /* bisa ubah ke 58mm kalau printer kecil */
+        margin: auto;
+        font-size: 12px;
+        font-family: monospace;
+    }
 
-    <h1 class="h3 mb-3 text-gray-800">Detail Transaksi</h1>
+    .struk hr {
+        border: none;
+        border-top: 1px dashed #000;
+        margin: 5px 0;
+    }
 
-    <div class="card shadow">
-        <div class="card-body">
+    .text-right {
+        text-align: right;
+    }
 
-            <p><b>Kasir:</b> {{ $transaksi->user->nama ?? '-' }}</p>
-            <p><b>Waktu:</b> {{ $transaksi->waktu }}</p>
+    .text-center {
+        text-align: center;
+    }
 
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Menu</th>
-                        <th>Harga</th>
-                        <th>Jumlah</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
+    .line {
+        display: flex;
+        justify-content: space-between;
+    }
 
-                <tbody>
-                    @foreach($transaksi->detail as $d)
-                    <tr>
-                        <td>{{ $d->menu->nama }}</td>
-                        <td>Rp {{ number_format($d->harga) }}</td>
-                        <td>{{ $d->jumlah }}</td>
-                        <td>Rp {{ number_format($d->subtotal) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
 
-            <hr>
+        .struk, .struk * {
+            visibility: visible;
+        }
 
-            <h5>Total: Rp {{ number_format($transaksi->total_harga) }}</h5>
-            <h5>Bayar: Rp {{ number_format($transaksi->uang_bayar) }}</h5>
-            <h5>Kembalian: Rp {{ number_format($transaksi->kembalian) }}</h5>
+        .struk {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+</style>
 
-            <!-- Tombol -->
-            <div class="mt-3">
-                <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Kembali
-                </a>
+<div class="container mt-4">
+    <div class="struk card p-3 shadow-sm">
 
-                <button onclick="window.print()" class="btn btn-primary">
-                    <i class="fas fa-print"></i> Print
-                </button>
-            </div>
-
+        {{-- HEADER --}}
+        <div class="text-center mb-2">
+            <h5 class="mb-0">Titik Temu</h5>
+            <small>Jl. Contoh No.123</small><br>
+            <small>Telp: 08123456789</small>
         </div>
+
+        <hr>
+
+        {{-- INFO --}}
+        <table width="100%">
+            <tr>
+                <td>Kasir</td>
+                <td>: {{ $transaksi->user->nama ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td>Customer</td>
+                <td>: {{ $transaksi->customer->nama ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Waktu</td>
+                <td>: {{ $transaksi->waktu }}</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        {{-- DETAIL --}}
+        <table width="100%">
+            @foreach($transaksi->detail as $d)
+            @php
+                $diskon = $d->menu->diskon ?? null;
+                $harga = $d->harga;
+                $diskonText = '-';
+
+                if($diskon){
+                    if($diskon->tipe_diskon == 'Persen'){
+                        $diskonText = $diskon->diskon_persen . '%';
+                    } else {
+                        $diskonText = 'Rp ' . number_format($diskon->diskon_nominal);
+                    }
+                }
+            @endphp
+
+            <tr>
+                <td colspan="2">{{ $d->menu->nama }}</td>
+            </tr>
+            <tr>
+                <td>
+                    {{ $d->jumlah }} x Rp {{ number_format($harga) }}
+                    <br><small>Diskon: {{ $diskonText }}</small>
+                </td>
+                <td class="text-right">
+                    Rp {{ number_format($d->subtotal) }}
+                </td>
+            </tr>
+            @endforeach
+        </table>
+
+        <hr>
+
+        {{-- TOTAL --}}
+        <table width="100%">
+            <tr>
+                <td>Total</td>
+                <td class="text-right">Rp {{ number_format($transaksi->total_harga) }}</td>
+            </tr>
+            <tr>
+                <td>Bayar</td>
+                <td class="text-right">Rp {{ number_format($transaksi->uang_bayar) }}</td>
+            </tr>
+            <tr>
+                <td>Kembalian</td>
+                <td class="text-right">Rp {{ number_format($transaksi->kembalian) }}</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        {{-- FOOTER --}}
+        <div class="text-center mt-2">
+            <small>Terima Kasih 🙏</small><br>
+            <small>Selamat Menikmati</small>
+        </div>
+
+    </div>
+
+    {{-- BUTTON --}}
+    <div class="text-center mt-3">
+        <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">
+            Kembali
+        </a>
+        
+        <button onclick="window.print()" class="btn btn-primary">
+            Print
+        </button>
+
+        <a href="{{ route('transaksi.create') }}" class="btn btn-secondary">
+            Tambah Transaksi baru
+        </a>
     </div>
 
 </div>

@@ -13,6 +13,7 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::latest()->get();
+
         return view('customer.index', compact('customers'));
     }
 
@@ -27,17 +28,14 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function storeAjax(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
-            'no_hp' => 'required'
+        $customer = Customer::create([
+            'nama' => $request->nama,
+            'no_hp' => $request->no_hp,
         ]);
 
-        Customer::create($request->all());
-
-        return redirect()->route('customer.index')
-            ->with('success', 'Customer berhasil ditambahkan');
+        return response()->json($customer);
     }
 
     /**
@@ -63,7 +61,7 @@ class CustomerController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'no_hp' => 'required'
+            'no_hp' => 'required',
         ]);
 
         $customer->update($request->all());

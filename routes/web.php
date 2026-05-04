@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     // 🔹 Customer (biar bisa dipakai kasir juga)
     Route::resource('customer', CustomerController::class);
+    Route::post('/customer/store-ajax', [CustomerController::class, 'storeAjax']);
 
     /*
     |--------------------------------------------------------------------------

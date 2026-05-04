@@ -6,28 +6,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    protected $fillable = ['kategori_id', 'nama', 'gambar', 'modal', 'harga', 'status'];
+    protected $fillable = [
+        'kategori_id',
+        'nama',
+        'gambar',
+        'modal',
+        'harga',
+        'status'
+    ];
 
-    // INI YANG HILANG: Definisi relasi ke tabel diskons
-    public function diskons()
-    {
-        return $this->hasMany(Diskon::class);
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
 
-    // Relasi ke kategori (tambahan agar aman)
+    // Relasi ke kategori
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
     }
 
-    // Logika harga diskon yang tadi kita buat
+    // Semua diskon (history)
+    public function diskons()
+    {
+        return $this->hasMany(Diskon::class, 'menu_id');
+    }
+
+    // Ambil 1 diskon yang sedang aktif
+    public function diskon()
+    {
+        return $this->hasOne(Diskon::class, 'menu_id')
+            ->where('mulai_diskon', '<=', now())
+            ->where('akhir_diskon', '>=', now());
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR (LOGIKA HARGA)
+    |--------------------------------------------------------------------------
+    */
+
+    // Harga setelah diskon
     public function getHargaDiskonAttribute()
     {
-        // Sekarang $this->diskons() sudah bisa dipanggil karena sudah ada di atas
-        $diskon = $this->diskons()
-            ->where('mulai_diskon', '<=', now())
-            ->where('akhir_diskon', '>=', now())
-            ->first();
+        $diskon = $this->diskon;
 
         if ($diskon) {
             if ($diskon->tipe_diskon === 'Persen') {
@@ -36,8 +59,29 @@ class Menu extends Model
                 return $this->harga - $diskon->diskon_nominal;
             }
         }
-        
+
         return $this->harga;
     }
-}
 
+    // Nominal diskon (biar gampang dipakai di struk)
+    public function getNominalDiskonAttribute()
+    {
+        $diskon = $this->diskon;
+
+        if ($diskon) {
+            if ($diskon->tipe_diskon === 'Persen') {
+                return ($this->harga * $diskon->diskon_persen) / 100;
+            } else {
+                return $diskon->diskon_nominal;
+            }
+        }
+
+        return 0;
+    }
+
+    // Cek apakah punya diskon
+    public function getAdaDiskonAttribute()
+    {
+        return $this->diskon ? true : false;
+    }
+}
