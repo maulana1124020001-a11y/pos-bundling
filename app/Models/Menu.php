@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Menu extends Model
 {
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'kategori_id',
         'nama',
@@ -40,6 +43,7 @@ class Menu extends Model
             ->where('mulai_diskon', '<=', now())
             ->where('akhir_diskon', '>=', now());
     }
+
 
     /*
     |--------------------------------------------------------------------------

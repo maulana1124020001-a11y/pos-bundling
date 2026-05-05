@@ -25,6 +25,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 | SETELAH LOGIN
 |--------------------------------------------------------------------------
 */
+Route::get('/', function () {
+    return view('auth.login');
+});
+
 Route::middleware(['auth'])->group(function () {
 
     // 🔹 Transaksi (Kasir & Admin)
