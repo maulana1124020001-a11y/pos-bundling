@@ -47,7 +47,7 @@
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
 
-                            <td>{{ $d->menu->nama }}</td>
+                            <td>{{ $d->menu?->nama }}</td>
 
                             <td>
                                 <span class="badge bg-info text-white">
