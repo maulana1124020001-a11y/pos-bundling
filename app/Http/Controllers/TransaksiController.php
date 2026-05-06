@@ -13,41 +13,58 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
+    // =========================
+    // HALAMAN LIST TRANSAKSI
+    // =========================
     public function index()
     {
+        // kalau bukan admin → hanya lihat transaksi sendiri
         if (auth()->user()->role_id != 1) {
             $transaksis = Transaksi::where('user_id', auth()->id())
                 ->with('user')
                 ->latest()
                 ->get();
         } else {
+            // admin → lihat semua
             $transaksis = Transaksi::with('user')->latest()->get();
         }
 
         return view('transaksi.index', compact('transaksis'));
     }
 
+    // =========================
+    // HALAMAN KASIR
+    // =========================
     public function create()
     {
+        // ambil menu yang tersedia
         $menus = Menu::where('status', 'tersedia')->get();
-        $customers = Customer::get();
-        $kategoris = Kategori::all(); // ✅ FIX
+
+        // ambil semua customer
+        $customers = Customer::all();
+
+        // ambil kategori untuk filter
+        $kategoris = Kategori::all();
 
         return view('transaksi.create', compact('menus', 'customers', 'kategoris'));
     }
 
+    // =========================
+    // SIMPAN TRANSAKSI (AJAX)
+    // =========================
     public function store(Request $request)
     {
+        // validasi data dari JS
         $request->validate([
             'total_harga' => 'required|numeric',
-            'uang_bayar' => 'required|numeric|min:'.$request->total_harga,
+            'uang_bayar' => 'required|numeric|min:' . $request->total_harga,
             'items' => 'required|array',
-            'customer_id' => 'nullable|exists:customers,id',
         ]);
 
         DB::beginTransaction();
 
         try {
+            // simpan transaksi utama
             $transaksi = Transaksi::create([
                 'user_id' => Auth::id(),
                 'total_harga' => $request->total_harga,
@@ -59,6 +76,7 @@ class TransaksiController extends Controller
                 'waktu' => now(),
             ]);
 
+            // simpan detail item
             foreach ($request->items as $item) {
                 TransaksiDetail::create([
                     'transaksi_id' => $transaksi->id,
@@ -71,16 +89,25 @@ class TransaksiController extends Controller
 
             DB::commit();
 
-            // ✅ langsung ke detail
-            return redirect()->route('transaksi.show', $transaksi);
+            // return JSON → diproses JS
+            return response()->json([
+                'success' => true,
+                'redirect' => route('transaksi.show', $transaksi)
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
 
-            return back()->with('error', $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
+    // =========================
+    // DETAIL TRANSAKSI
+    // =========================
     public function show(Transaksi $transaksi)
     {
         $transaksi->load('detail.menu', 'user', 'customer');
