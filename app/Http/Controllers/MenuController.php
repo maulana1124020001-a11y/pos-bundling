@@ -37,7 +37,7 @@ class MenuController extends Controller
             'nama' => 'required',
             'modal' => 'required|numeric',
             'harga' => 'required|numeric',
-            'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
+            'gambar' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $data = $request->all();

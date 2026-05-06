@@ -5,18 +5,19 @@
 <div class="container-fluid">
 
     <!-- Judul -->
-    <h1 class="h3 mb-3 text-gray-800">Data Customer</h1>
+      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-users text-primary"></i> Data Customer
+        </h1>
+    </div>
 
     <!-- Card -->
     <div class="card shadow mb-4">
 
         <!-- Header -->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel Customer</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Customer</h6>
 
-            <a href="{{ route('customer.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah
-            </a>
         </div>
 
         <!-- Body -->

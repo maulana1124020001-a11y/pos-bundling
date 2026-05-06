@@ -1,61 +1,122 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h4>Tambah Diskon Baru</h4>
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('diskon.store') }}" method="POST">
-                @csrf
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label>Pilih Menu</label>
-                        <select name="menu_id" class="form-control" required>
-                            @foreach($menus as $m)
-                                <option value="{{ $m->id }}">{{ $m->nama }} (Rp {{ number_format($m->harga) }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label>Tipe Diskon</label>
-                        <select name="tipe_diskon" id="tipe_diskon" class="form-control" required>
-                            <option value="Persen">Persen (%)</option>
-                            <option value="Nominal">Nominal (Rp)</option>
-                        </select>
-                    </div>
+
+<div class="container-fluid">
+
+    <!-- Judul -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-plus-circle text-primary"></i> Tambah Diskon
+        </h1>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Card -->
+            <div class="card shadow mb-4">
+
+                <!-- Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Form Tambah Diskon
+                    </h6>
                 </div>
 
-                <div class="row">
-                    <div id="input_persen" class="col-md-6 form-group">
-                        <label>Diskon Persen (%)</label>
-                        <input type="number" name="diskon_persen" class="form-control" min="1" max="100">
-                    </div>
-                    <div id="input_nominal" class="col-md-6 form-group" style="display:none;">
-                        <label>Diskon Nominal (Rp)</label>
-                        <input type="number" name="diskon_nominal" class="form-control">
-                    </div>
-                </div>
+                <!-- Body -->
+                <div class="card-body">
 
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label>Mulai Diskon</label>
-                        <input type="datetime-local" name="mulai_diskon" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label>Akhir Diskon</label>
-                        <input type="datetime-local" name="akhir_diskon" class="form-control" required>
-                    </div>
-                </div>
+                    <form action="{{ route('diskon.store') }}" method="POST">
+                        @csrf
 
-                <button type="submit" class="btn btn-success">Simpan Diskon</button>
-                <a href="{{ route('diskon.index') }}" class="btn btn-secondary">Batal</a>
-            </form>
+                        <div class="row">
+                            {{-- Pilih Menu --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Pilih Menu</label>
+                                    <select name="menu_id" class="form-control" required>
+                                        @foreach($menus as $m)
+                                            <option value="{{ $m->id }}">
+                                                {{ $m->nama }} (Rp {{ number_format($m->harga) }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Tipe Diskon --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Tipe Diskon</label>
+                                    <select name="tipe_diskon" id="tipe_diskon" class="form-control" required>
+                                        <option value="Persen">Persen (%)</option>
+                                        <option value="Nominal">Nominal (Rp)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Persen --}}
+                            <div id="input_persen" class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Diskon Persen (%)</label>
+                                    <input type="number" name="diskon_persen" class="form-control" min="1" max="100">
+                                </div>
+                            </div>
+
+                            {{-- Nominal --}}
+                            <div id="input_nominal" class="col-md-6" style="display:none;">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Diskon Nominal (Rp)</label>
+                                    <input type="number" name="diskon_nominal" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Mulai --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Mulai Diskon</label>
+                                    <input type="datetime-local" name="mulai_diskon" class="form-control" required>
+                                </div>
+                            </div>
+
+                            {{-- Akhir --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Akhir Diskon</label>
+                                    <input type="datetime-local" name="akhir_diskon" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Tombol -->
+                        <div class="text-right">
+                            <a href="{{ route('diskon.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Batal
+                            </a>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
         </div>
     </div>
+
 </div>
 
 <script>
-    // Script simpel untuk toggle input persen/nominal
     document.getElementById('tipe_diskon').addEventListener('change', function() {
         if (this.value === 'Persen') {
             document.getElementById('input_persen').style.display = 'block';
@@ -66,4 +127,5 @@
         }
     });
 </script>
+
 @endsection

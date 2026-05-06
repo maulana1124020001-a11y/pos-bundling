@@ -1,22 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
+<div class="container-fluid">
+
+    <!-- Judul -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-edit text-warning"></i> Edit Menu
+        </h1>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            
-            <div class="card shadow-sm border-0">
-                {{-- Card Header --}}
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 font-weight-bold text-warning">
-                        <i class="fas fa-edit me-1"></i> Edit Menu
-                    </h5>
+        <div class="col-lg-8">
+
+            <div class="card shadow mb-4 border-left-warning">
+
+                <!-- Header -->
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        Form Edit Menu
+                    </h6>
                 </div>
 
-                <div class="card-body p-4">
-                    {{-- Validasi Error --}}
+                <div class="card-body">
+
+                    {{-- Error --}}
                     @if ($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm">
+                        <div class="alert alert-danger">
                             <ul class="mb-0">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -29,83 +39,106 @@
                         @csrf
                         @method('PUT')
 
-                        {{-- Kategori --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Kategori</label>
-                            <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror form-control">
-                                @foreach($kategoris as $k)
-                                    <option value="{{ $k->id }}" {{ $menu->kategori_id == $k->id ? 'selected' : '' }}>
-                                        {{ $k->nama_kategori }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Nama Menu --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Menu</label>
-                            <input type="text" name="nama" value="{{ old('nama', $menu->nama) }}" 
-                                   class="form-control @error('nama') is-invalid @enderror"
-                                   placeholder="Masukkan nama menu">
-                        </div>
-
-                        {{-- Row untuk Modal & Harga --}}
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Modal</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="modal" value="{{ old('modal', $menu->modal) }}" 
-                                           class="form-control @error('modal') is-invalid @enderror">
+                            {{-- Kategori --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Kategori</label>
+                                    <select name="kategori_id" class="form-control">
+                                        @foreach($kategoris as $k)
+                                            <option value="{{ $k->id }}" {{ $menu->kategori_id == $k->id ? 'selected' : '' }}>
+                                                {{ $k->nama_kategori }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Harga</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="harga" value="{{ old('harga', $menu->harga) }}" 
-                                           class="form-control @error('harga') is-invalid @enderror">
+
+                            {{-- Nama --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Nama Menu</label>
+                                    <input type="text" name="nama" value="{{ old('nama', $menu->nama) }}" 
+                                           class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            {{-- Modal --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Harga Modal</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+                                        <input type="number" name="modal" value="{{ old('modal', $menu->modal) }}" 
+                                               class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Harga --}}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Harga Jual</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+                                        <input type="number" name="harga" value="{{ old('harga', $menu->harga) }}" 
+                                               class="form-control">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Status --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Status</label>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Status</label>
                             <select name="status" class="form-control">
                                 <option value="tersedia" {{ $menu->status == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
                                 <option value="tidak tersedia" {{ $menu->status == 'tidak tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
                             </select>
-                        </div
+                        </div>
 
-                        {{-- Gambar & Preview --}}
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Gambar</label>
+                        {{-- Gambar --}}
+                        <div class="form-group">
+                            <label class="font-weight-bold">Gambar</label>
+
                             @if($menu->gambar)
                                 <div class="mb-3">
                                     <img src="{{ asset('images/'.$menu->gambar) }}" 
-                                         class="rounded img-thumbnail shadow-sm" 
-                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                         class="img-thumbnail shadow"
+                                         style="width:120px;height:120px;object-fit:cover;">
                                 </div>
                             @endif
-                            <input type="file" name="gambar" class="form-control @error('gambar') is-invalid @enderror">
-                            <div class="form-text mt-2 text-muted small">
-                                * Kosongkan jika tidak ingin mengganti gambar.
-                            </div>
+
+                            <input type="file" name="gambar" class="form-control">
+                            <small class="text-muted">
+                                Kosongkan jika tidak ingin mengganti gambar
+                            </small>
                         </div>
 
-                        <hr class="text-muted mb-4">
+                        <hr>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('menu.index') }}" class="btn btn-light border px-4">Kembali</a>
-                            <button type="submit" class="btn btn-warning px-4">
-                                <i class="fas fa-save me-1"></i> Update Data
+                        <div class="text-right">
+                            <a href="{{ route('menu.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Batal
+                            </a>
+
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update
                             </button>
                         </div>
+
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>
 @endsection
