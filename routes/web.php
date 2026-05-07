@@ -7,6 +7,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminMiddleware;
 
@@ -37,6 +38,9 @@ Route::middleware(['auth'])->group(function () {
     // 🔹 Customer (biar bisa dipakai kasir juga)
     Route::resource('customer', CustomerController::class);
     Route::post('/customer/store-ajax', [CustomerController::class, 'storeAjax']);
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------

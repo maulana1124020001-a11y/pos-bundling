@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('menu_id')->constrained('menus');
             $table->foreignId('menu_non_bundling_id')->constrained('menus');
             $table->decimal('harga', 10, 2);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
