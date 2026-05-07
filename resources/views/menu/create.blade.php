@@ -2,116 +2,192 @@
 
 @section('content')
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <!-- Judul halaman -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-plus-circle text-primary"></i> Tambah Menu
-        </h1>
-    </div>
+        <!-- Judul halaman -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-plus-circle text-primary"></i> Tambah Menu
+            </h1>
+        </div>
 
-    <!-- Center layout -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <!-- Center Layout -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
 
-            <!-- Card -->
-            <div class="card shadow mb-4 border-left-primary">
+                <!-- Card -->
+                <div class="card shadow mb-4 border-left-primary">
 
-                <!-- Header -->
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        Form Tambah Menu
-                    </h6>
-                </div>
+                    <!-- Header -->
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            Form Tambah Menu
+                        </h6>
+                    </div>
 
-                <!-- Body -->
-                <div class="card-body">
+                    <!-- Body -->
+                    <div class="card-body">
 
-                    <form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                        <form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">
 
-                        <div class="row">
-                            {{-- Kategori --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Kategori</label>
-                                    <select name="kategori_id" class="form-control" required>
-                                        <option value="" selected disabled>Pilih Kategori...</option>
-                                        @foreach($kategoris as $k)
-                                            <option value="{{ $k->id }}">{{ $k->nama_kategori }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                            @csrf
 
-                            {{-- Nama Menu --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Nama Menu</label>
-                                    <input type="text" name="nama" class="form-control"
-                                           placeholder="Misal: Nasi Goreng, Matcha Latte dll" required>
-                                </div>
-                            </div>
-                        </div>
+                            <!-- Row 1 -->
+                            <div class="row">
 
-                        <div class="row">
-                            {{-- Modal --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Harga Modal</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Rp</span>
-                                        </div>
-                                        <input type="number" name="modal" class="form-control" required>
+                                {{-- Kategori --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">
+                                            Kategori
+                                        </label>
+
+                                        <select name="kategori_id" class="form-control" required>
+
+                                            <option value="" selected disabled>
+                                                Pilih Kategori...
+                                            </option>
+
+                                            @foreach($kategoris as $k)
+                                                <option value="{{ $k->id }}">
+                                                    {{ $k->nama_kategori }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
 
-                            {{-- Harga Jual --}}
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="font-weight-bold">Harga Jual</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Rp</span>
-                                        </div>
-                                        <input type="number" name="harga" class="form-control" required>
+                                {{-- Nama Menu --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">
+                                            Nama Menu
+                                        </label>
+
+                                        <input type="text" name="nama" class="form-control"
+                                            placeholder="Misal: Nasi Goreng, Matcha Latte dll" required>
                                     </div>
                                 </div>
+
                             </div>
-                        </div>
 
-                        {{-- Gambar --}}
-                        <div class="form-group">
-                            <label class="font-weight-bold">Gambar Menu</label>
-                            <input type="file" name="gambar" class="form-control" required>
-                            <small class="form-text text-muted">
-                                Format: JPG, PNG, WEBP. Maks 2MB.
-                            </small>
-                        </div>
+                            <!-- Row 2 -->
+                            <div class="row">
 
-                        <hr>
+                                {{-- Harga Modal --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
 
-                        <!-- Tombol -->
-                        <div class="text-right">
-                            <a href="{{ route('menu.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Batal
-                            </a>
+                                        <label class="font-weight-bold">
+                                            Harga Modal
+                                        </label>
 
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Simpan
-                            </button>
-                        </div>
+                                        <div class="input-group">
 
-                    </form>
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    Rp
+                                                </span>
+                                            </div>
+
+                                            <input type="text" name="modal" class="form-control"
+                                                placeholder="Masukkan harga modal"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                                                required>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Harga Jual --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label class="font-weight-bold">
+                                            Harga Jual
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    Rp
+                                                </span>
+                                            </div>
+
+                                            <input type="text" name="harga" class="form-control"
+                                                placeholder="Masukkan harga jual"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                                                required>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Row Gambar -->
+                            <div class="row">
+
+                                {{-- Input Gambar --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label class="font-weight-bold">
+                                            Gambar Menu
+                                        </label>
+
+                                        <input type="file" name="gambar" class="form-control" accept="image/*"
+                                            onchange="previewImage(event)" required>
+
+                                        <small class="form-text text-muted">
+                                            Format: JPG, PNG, WEBP. Maks 2MB.
+                                        </small>
+
+                                    </div>
+                                </div>
+
+                                {{-- Preview Gambar --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <img id="preview" src="https://placehold.co/300x200?text=Preview+Gambar"
+                                            class="img-fluid rounded" style="max-height: 130px; object-fit: cover;">
+
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- Tombol -->
+                            <div class="text-right">
+
+                                <a href="{{ route('menu.index') }}" class="btn btn-secondary">
+
+                                    <i class="fas fa-arrow-left"></i>
+                                    Batal
+                                </a>
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="fas fa-save"></i>
+                                    Simpan
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
                 </div>
 
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 
 @endsection

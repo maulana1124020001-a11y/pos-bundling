@@ -27,7 +27,7 @@ class Menu extends Model
     // Relasi ke kategori
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class);
+        return $this->belongsTo(Kategori::class)->withTrashed();
     }
 
     // Semua diskon (history)

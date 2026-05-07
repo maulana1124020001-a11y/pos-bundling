@@ -15,13 +15,31 @@
     <div class="card shadow mb-4">
 
         <!-- Header -->
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Daftar Menu</h6>
 
-            <a href="{{ route('menu.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah Menu
-            </a>
-        </div>
+        
+       <div class="card-header py-3 d-flex justify-content-between align-items-center">
+
+    <h6 class="m-0 font-weight-bold text-primary">
+        Daftar Menu
+    </h6>
+
+    <div>
+
+        <a href="{{ route('menu.trash') }}" 
+           class="btn btn-danger btn-sm">
+
+            <i class="fas fa-trash"></i> Sampah
+        </a>
+
+        <a href="{{ route('menu.create') }}" 
+           class="btn btn-primary btn-sm">
+
+            <i class="fas fa-plus"></i> Tambah Menu
+        </a>
+
+    </div>
+
+</div>
 
         <!-- Body -->
         <div class="card-body">
@@ -47,7 +65,7 @@
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $m->nama }}</td>
-                            <td>{{ $m->kategori->nama_kategori }}</td>
+                            <td>{{ $m?->kategori->nama_kategori ?? '-' }}</td>
                             
                             <td>Rp {{ number_format($m->harga) }}</td>
 

@@ -127,4 +127,19 @@ class MenuController extends Controller
 
         return redirect()->route('menu.index')->with('success', 'Menu dan gambar terhapus');
     }
+
+    public function trash()
+{
+    $menus = Menu::onlyTrashed()->get();
+
+    return view('menu.trash', compact('menus'));
+}
+
+    public function restore($id)
+    {
+        $menu = Menu::onlyTrashed()->findOrFail($id);
+        $menu->restore();
+
+        return redirect()->route('menu.trash')->with('success', 'Menu berhasil direstore');
+    }
 }

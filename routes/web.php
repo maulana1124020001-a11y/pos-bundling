@@ -51,6 +51,12 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('kategori', KategoriController::class);
         Route::resource('menu', MenuController::class);
+
+        Route::get('/menu-trash', [MenuController::class, 'trash'])
+            ->name('menu.trash');
+        Route::get('/menu-restore/{id}', [MenuController::class, 'restore'])
+            ->name('menu.restore');
+            
         Route::resource('user', UserController::class);
         Route::resource('diskon', DiskonController::class);
 
