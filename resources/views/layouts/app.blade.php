@@ -18,12 +18,13 @@
     <style>
         /* Custom style untuk alert agar tidak menutupi konten */
         .alert-fixed {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-        }
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 300px;
+}
     </style>
 </head>
 
@@ -147,11 +148,11 @@
                     </ul>
 
                 </nav>
-                <div class="container-fluid">
+                <div class="container-fluid" >
 
                     @if (session('success'))
                         <div id="alert-msg" class="alert alert-success alert-dismissible fade show alert-fixed">
-                            <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
+                            <i class="fas fa-check-circle mr-2 "></i> {{ session('success') }}
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     @endif

@@ -24,116 +24,146 @@
                     <div class="card-body" style="height:400px; overflow-y:auto;">
 
                         {{-- form ini akan di-submit via AJAX oleh transaksi.js --}}
-                        <form id="form-transaksi">
+                       {{-- form transaksi --}}
+<form action="{{ route('transaksi.store') }}"
+      method="POST"
+      id="form-transaksi">
 
-                            <table class="table table-sm table-bordered">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>Menu</th>
-                                        <th width="100">Qty</th>
-                                        <th>Subtotal</th>
-                                        <th width="50">Aksi</th>
-                                    </tr>
-                                </thead>
+    @csrf
 
-                                <tbody id="cart-table">
-                                    {{-- isi otomatis via javascript --}}
-                                </tbody>
-                            </table>
+    {{-- cart json --}}
+    <input type="hidden" name="items" id="items">
 
-                    </div>
+    <table class="table table-sm table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Menu</th>
+                <th width="100">Qty</th>
+                <th>Subtotal</th>
+                <th width="50">Aksi</th>
+            </tr>
+        </thead>
 
-                    <div class="card-footer">
+        <tbody id="cart-table">
+            {{-- isi otomatis via javascript --}}
+        </tbody>
+    </table>
 
-                        {{-- TOTAL --}}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">
-                                Total Harga
-                            </label>
+</div>
 
-                            <div class="col-sm-8">
-                                <input type="number" id="total_harga" class="form-control font-weight-bold" value="0"
-                                    readonly>
-                            </div>
-                        </div>
+<div class="card-footer">
 
-                        {{-- BAYAR --}}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">
-                                Bayar
-                            </label>
+    {{-- TOTAL --}}
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">
+            Total Harga
+        </label>
 
-                            <div class="col-sm-8">
-                                <input type="number" id="uang_bayar" class="form-control" placeholder="Masukkan uang bayar"
-                                    required>
-                            </div>
-                        </div>
+        <div class="col-sm-8">
+            <input type="number"
+                   name="total_harga"
+                   id="total_harga"
+                   class="form-control font-weight-bold"
+                   value="0"
+                   readonly>
+        </div>
+    </div>
 
-                        {{-- KEMBALIAN --}}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">
-                                Kembalian
-                            </label>
+    {{-- BAYAR --}}
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">
+            Bayar
+        </label>
 
-                            <div class="col-sm-8">
-                                <input type="number" id="kembalian" class="form-control" value="0" readonly>
-                            </div>
-                        </div>
+        <div class="col-sm-8">
+            <input type="number"
+                   name="uang_bayar"
+                   id="uang_bayar"
+                   class="form-control"
+                   placeholder="Masukkan uang bayar"
+                   required>
+        </div>
+    </div>
 
-                        {{-- METODE PEMBAYARAN --}}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">
-                                Metode
-                            </label>
+    {{-- KEMBALIAN --}}
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">
+            Kembalian
+        </label>
 
-                            <div class="col-sm-8">
-                                <select name="metode_pembayaran" class="form-control">
+        <div class="col-sm-8">
+            <input type="number"
+                   id="kembalian"
+                   class="form-control"
+                   value="0"
+                   readonly>
+        </div>
+    </div>
 
-                                    <option value="cash">Cash</option>
-                                    <option value="qris">QRIS</option>
-                                    <option value="transfer">Transfer</option>
+    {{-- METODE PEMBAYARAN --}}
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">
+            Metode
+        </label>
 
-                                </select>
-                            </div>
-                        </div>
+        <div class="col-sm-8">
+            <select name="metode_pembayaran"
+                    class="form-control">
 
-                        {{-- CUSTOMER --}}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">
-                                Customer
-                            </label>
+                <option value="cash">Cash</option>
+                <option value="qris">QRIS</option>
+                <option value="transfer">Transfer</option>
 
-                            <div class="col-sm-6">
-                                <select id="customer_id" class="form-control">
+            </select>
+        </div>
+    </div>
 
-                                    <option value="">-- pilih customer --</option>
+    {{-- CUSTOMER --}}
+    <div class="form-group row">
+        <label class="col-sm-4 col-form-label">
+            Customer
+        </label>
 
-                                    @foreach ($customers as $customer)
-                                        <option value="{{ $customer->id }}">
-                                            {{ $customer->nama }}
-                                        </option>
-                                    @endforeach
+        <div class="col-sm-6">
 
-                                </select>
-                            </div>
+            <select name="customer_id"
+                    id="customer_id"
+                    class="form-control">
 
-                            <div class="col-sm-2">
-                                <button type="button" class="btn btn-primary btn-block" data-toggle="modal"
-                                    data-target="#modalCustomer">
-                                    +
-                                </button>
-                            </div>
-                        </div>
+                <option value="">
+                    -- pilih customer --
+                </option>
 
-                        {{-- SUBMIT --}}
-                        <button type="submit" class="btn btn-success btn-block btn-lg">
+                @foreach ($customers as $customer)
+                    <option value="{{ $customer->id }}">
+                        {{ $customer->nama }}
+                    </option>
+                @endforeach
 
-                            <i class="fa fa-check-circle"></i>
-                            PROSES TRANSAKSI
+            </select>
 
-                        </button>
+        </div>
 
-                        </form>
+        <div class="col-sm-2">
+            <button type="button"
+                    class="btn btn-primary btn-block"
+                    data-toggle="modal"
+                    data-target="#modalCustomer">
+                +
+            </button>
+        </div>
+    </div>
+
+    {{-- SUBMIT --}}
+    <button type="submit"
+            class="btn btn-success btn-block btn-lg">
+
+        <i class="fa fa-check-circle"></i>
+        PROSES TRANSAKSI
+
+    </button>
+
+</form>
                     </div>
                 </div>
 

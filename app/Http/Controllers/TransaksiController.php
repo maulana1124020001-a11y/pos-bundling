@@ -14,103 +14,208 @@ use Illuminate\Support\Facades\DB;
 class TransaksiController extends Controller
 {
     // =========================
-    // HALAMAN LIST TRANSAKSI
+    // LIST TRANSAKSI
     // =========================
     public function index()
     {
-        // kalau bukan admin → hanya lihat transaksi sendiri
-        if (auth()->user()->role_id != 1) {
-            $transaksis = Transaksi::where('user_id', auth()->id())
-                ->with('user')
+        // admin lihat semua
+        if (auth()->user()->role_id == 1) {
+
+            $transaksis = Transaksi::with('user', 'customer')
                 ->latest()
                 ->get();
+
         } else {
-            // admin → lihat semua
-            $transaksis = Transaksi::with('user')->latest()->get();
+
+            // kasir hanya lihat miliknya
+            $transaksis = Transaksi::where('user_id', auth()->id())
+                ->with('user', 'customer')
+                ->latest()
+                ->get();
+
         }
 
         return view('transaksi.index', compact('transaksis'));
     }
 
+
     // =========================
-    // HALAMAN KASIR
+    // HALAMAN TRANSAKSI / KASIR
     // =========================
     public function create()
     {
-        // ambil menu yang tersedia
-        $menus = Menu::where('status', 'tersedia')->get();
+        // menu tersedia
+        $menus = Menu::where('status', 'tersedia')
+            ->latest()
+            ->get();
 
-        // ambil semua customer
-        $customers = Customer::all();
+        // customer
+        $customers = Customer::latest()->get();
 
-        // ambil kategori untuk filter
-        $kategoris = Kategori::all();
+        // kategori
+        $kategoris = Kategori::latest()->get();
 
-        return view('transaksi.create', compact('menus', 'customers', 'kategoris'));
+        return view(
+            'transaksi.create',
+            compact('menus', 'customers', 'kategoris')
+        );
     }
 
+
     // =========================
-    // SIMPAN TRANSAKSI (AJAX)
+    // SIMPAN TRANSAKSI
     // =========================
     public function store(Request $request)
     {
-        // validasi data dari JS
+        // ubah json cart menjadi array
+        $items = json_decode($request->items, true);
+
+        // validasi
         $request->validate([
+
             'total_harga' => 'required|numeric',
-            'uang_bayar' => 'required|numeric|min:' . $request->total_harga,
-            'items' => 'required|array',
+
+            'uang_bayar' =>
+                'required|numeric|min:' . $request->total_harga,
+
+            'metode_pembayaran' =>
+                'required',
+
+            'items' => 'required',
+
         ]);
+
+        // validasi cart kosong
+        if (!$items || count($items) == 0) {
+
+            return redirect()
+                ->back()
+                ->with('error', 'Keranjang kosong');
+
+        }
 
         DB::beginTransaction();
 
         try {
-            // simpan transaksi utama
+
+            // simpan transaksi
             $transaksi = Transaksi::create([
+
                 'user_id' => Auth::id(),
-                'total_harga' => $request->total_harga,
-                'uang_bayar' => $request->uang_bayar,
-                'kembalian' => $request->uang_bayar - $request->total_harga,
+
+                'customer_id' =>
+                    $request->customer_id ?: null,
+
+                'total_harga' =>
+                    $request->total_harga,
+
+                'uang_bayar' =>
+                    $request->uang_bayar,
+
+                'kembalian' =>
+                    $request->uang_bayar -
+                    $request->total_harga,
+
+                'metode_pembayaran' =>
+                    $request->metode_pembayaran,
+
                 'status' => 'selesai',
-                'customer_id' => $request->customer_id ?: null,
-                'metode_pembayaran' => $request->metode_pembayaran ?? 'cash',
+
                 'waktu' => now(),
+
             ]);
 
-            // simpan detail item
-            foreach ($request->items as $item) {
+
+            // simpan detail transaksi
+            foreach ($items as $item) {
+
                 TransaksiDetail::create([
-                    'transaksi_id' => $transaksi->id,
-                    'menu_id' => $item['menu_id'],
-                    'jumlah' => $item['jumlah'],
-                    'harga' => $item['harga'],
-                    'subtotal' => $item['jumlah'] * $item['harga'],
+
+                    'transaksi_id' =>
+                        $transaksi->id,
+
+                    'menu_id' =>
+                        $item['menu_id'],
+
+                    'jumlah' =>
+                        $item['jumlah'],
+
+                    'harga' =>
+                        $item['harga'],
+
+                    'subtotal' =>
+                        $item['jumlah'] *
+                        $item['harga'],
+
                 ]);
+
             }
 
             DB::commit();
 
-            // return JSON → diproses JS
-            return response()->json([
-                'success' => true,
-                'redirect' => route('transaksi.show', $transaksi)
-            ]);
+            return redirect()
+                ->route('transaksi.show', $transaksi->id)
+                ->with('success', 'Transaksi berhasil');
 
         } catch (\Exception $e) {
+
             DB::rollback();
 
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+
         }
     }
+
 
     // =========================
     // DETAIL TRANSAKSI
     // =========================
     public function show(Transaksi $transaksi)
     {
-        $transaksi->load('detail.menu', 'user', 'customer');
-        return view('transaksi.show', compact('transaksi'));
+        $transaksi->load(
+            'detail.menu',
+            'user',
+            'customer'
+        );
+
+        return view(
+            'transaksi.show',
+            compact('transaksi')
+        );
+    }
+
+
+    // =========================
+    // HAPUS TRANSAKSI
+    // =========================
+    public function destroy(Transaksi $transaksi)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            // hapus detail transaksi dulu
+            $transaksi->detail()->delete();
+
+            // hapus transaksi
+            $transaksi->delete();
+
+            DB::commit();
+
+            return redirect()
+                ->route('transaksi.index')
+                ->with('success', 'Transaksi berhasil dihapus');
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+
+        }
     }
 }
