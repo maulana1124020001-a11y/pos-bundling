@@ -16,8 +16,8 @@ return new class extends Migration
            
             $table->foreignId('kategori_id')->constrained('kategoris');
             $table->string('nama');
-            $table->decimal('modal', 10, 2);
-            $table->decimal('harga', 10, 2);
+            $table->decimal('modal', 10, 0);
+            $table->decimal('harga', 10, 0);
             $table->enum('status', ['tersedia', 'tidak tersedia'])->default('tersedia');
             $table->string('gambar');
             $table->softDeletes();

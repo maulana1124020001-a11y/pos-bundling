@@ -84,19 +84,16 @@
                                         </label>
 
                                         <div class="input-group">
-
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    Rp
-                                                </span>
+                                                <span class="input-group-text">Rp</span>
                                             </div>
 
-                                            <input type="text" name="modal" class="form-control"
-                                                placeholder="Masukkan harga modal"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
-                                                required>
-
+                                            <!-- Input ini HANYA untuk tampilan (User Interface) -->
+                                            <input type="text" class="form-control" placeholder="0"
+                                                oninput="formatRupiah(this, 'modal_asli')" required>
+                                            <input type="hidden" name="modal" id="modal_asli">
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -109,19 +106,16 @@
                                         </label>
 
                                         <div class="input-group">
-
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    Rp
-                                                </span>
+                                                <span class="input-group-text">Rp</span>
                                             </div>
 
-                                            <input type="text" name="harga" class="form-control"
-                                                placeholder="Masukkan harga jual"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
-                                                required>
-
+                                            <!-- Input ini HANYA untuk tampilan (User Interface) -->
+                                            <input type="text" class="form-control" placeholder="0"
+                                                oninput="formatRupiah(this, 'harga_asli')" required>
+                                            <input type="hidden" name="harga" id="harga_asli">
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -129,22 +123,17 @@
 
                             <!-- Row Gambar -->
                             <div class="row">
-
                                 {{-- Input Gambar --}}
                                 <div class="col-md-6">
                                     <div class="form-group">
-
                                         <label class="font-weight-bold">
                                             Gambar Menu
                                         </label>
-
-                                        <input type="file" name="gambar" class="form-control" accept="image/*"
-                                            onchange="previewImage(event)" required>
-
+                                        <input type="file" name="gambar" class="form-control" onchange="previewImage(event)"
+                                            required>
                                         <small class="form-text text-muted">
                                             Format: JPG, PNG, WEBP. Maks 2MB.
                                         </small>
-
                                     </div>
                                 </div>
 
@@ -153,15 +142,11 @@
                                     <div class="form-group">
                                         <img id="preview" src="https://placehold.co/300x200?text=Preview+Gambar"
                                             class="img-fluid rounded" style="max-height: 130px; object-fit: cover;">
-
-
-
                                     </div>
                                 </div>
-
                             </div>
 
-                            <hr>
+                         
 
                             <!-- Tombol -->
                             <div class="text-right">
@@ -191,3 +176,5 @@
     </div>
 
 @endsection
+
+<script src="{{ asset('js/format-harga.js') }}"></script>
