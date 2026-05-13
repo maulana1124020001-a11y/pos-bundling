@@ -84,8 +84,8 @@
                             </td>
 
                             <td class="text-center">
-                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-info"></i>
+                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
                                 </a>
 
                                 <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">

@@ -1,19 +1,14 @@
 @extends('layouts.app')
-
 @section('content')
-
-   
-
 
     <div class="container-fluid">
         <div class="row">
 
-            {{-- ===================================================== --}}
-            {{-- KIRI = KERANJANG --}}
-            {{-- ===================================================== --}}
+            <!-- KIRI KRANJANG -->
             <div class="col-md-5">
 
                 <div class="card shadow">
+
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">
                             <i class="fa fa-shopping-cart"></i>
@@ -22,16 +17,9 @@
                     </div>
 
                     <div class="card-body" style="height:250px; overflow-y:auto;">
-
-                        {{-- form ini akan di-submit via AJAX oleh transaksi.js --}}
-                        {{-- form transaksi --}}
                         <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
-
                             @csrf
-
-                            {{-- cart json --}}
                             <input type="hidden" name="items" id="items">
-
                             <table class="table table-sm table-bordered mb-1">
                                 <thead class="thead-light mb-1">
                                     <tr>
@@ -41,22 +29,19 @@
                                         <th width="50">Hapus</th>
                                     </tr>
                                 </thead>
-
                                 <tbody id="cart-table">
-                                    {{-- isi otomatis via javascript --}}
+                                  
                                 </tbody>
                             </table>
-
                     </div>
 
                     <div class="card-footer">
 
-                        {{-- TOTAL --}}
+                        <!-- TOTAL  -->
                         <div class="form-group mb-1 row">
                             <label class="col-sm-4 col-form-label">
                                 Total Harga
                             </label>
-
                             <div class="col-sm-8">
                                 <input type="number" name="total_harga" id="total_harga"
                                     class="form-control font-weight-bold" value="0" readonly>
@@ -149,7 +134,6 @@
 
             </div>
 
-
             {{-- KANAN = MENU --}}
 
             <div class="col-md-7">
@@ -188,7 +172,7 @@
                     </div>
 
                     {{-- LIST MENU --}}
-                    <div class="card-body" style="max: height 600px;px; overflow-y:auto; overflow-x:hidden;">
+                    <div class="card-body" style="max-height:600px; overflow-y:auto; overflow-x:hidden;">
 
                         <div class="row" id="menu-list">
 
@@ -271,15 +255,9 @@
 
                 <!-- Form tambah customer  -->
                 <div class="modal-body">
-                    <input  type="text" 
-                            id="cust_nama" 
-                            class="form-control mb-3" 
-                            placeholder="Nama customer">
+                    <input type="text" id="cust_nama" class="form-control mb-3" placeholder="Nama customer">
 
-                    <input type="text" 
-                    id="cust_no_hp" 
-                    class="form-control" 
-                    placeholder="Nomor HP">
+                    <input type="text" id="cust_no_hp" class="form-control" placeholder="Nomor HP">
                 </div>
 
                 <!-- Tombol simpan + batal  -->
