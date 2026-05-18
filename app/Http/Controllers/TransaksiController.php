@@ -72,15 +72,9 @@ class TransaksiController extends Controller
 
         // validasi
         $request->validate([
-
             'total_harga' => 'required|numeric',
-
-            'uang_bayar' =>
-                'required|numeric|min:' . $request->total_harga,
-
-            'metode_pembayaran' =>
-                'required',
-
+            'uang_bayar' =>'required|numeric|min:' . $request->total_harga,
+            'metode_pembayaran' =>'required',
             'items' => 'required',
 
         ]);

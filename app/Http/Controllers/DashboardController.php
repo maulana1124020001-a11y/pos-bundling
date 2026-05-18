@@ -15,6 +15,7 @@ class DashboardController extends Controller
         // =========================
 
         $totalTransaksi = Transaksi::count();
+        //ambil tgl skrg
 
         $totalPendapatan = Transaksi::sum('total_harga');
 

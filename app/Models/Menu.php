@@ -52,8 +52,11 @@ class Menu extends Model
     */
 
     // Harga setelah diskon
+    // di blade tinggal panggil $menu->harga_diskon karena ini accessor 
+    
     public function getHargaDiskonAttribute()
     {
+        
         $diskon = $this->diskon;
 
         if ($diskon) {
@@ -63,6 +66,7 @@ class Menu extends Model
                 return $this->harga - $diskon->diskon_nominal;
             }
         }
+    
 
         return $this->harga;
     }
@@ -74,8 +78,10 @@ class Menu extends Model
 
         if ($diskon) {
             if ($diskon->tipe_diskon === 'Persen') {
+                //
                 return ($this->harga * $diskon->diskon_persen) / 100;
             } else {
+                // 
                 return $diskon->diskon_nominal;
             }
         }
