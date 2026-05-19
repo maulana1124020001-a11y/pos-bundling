@@ -13,8 +13,10 @@ class KategoriController extends Controller
         return view('kategori.index', compact('kategoris'));
     }
 
+    
     public function create()
     {
+        // seperti ini: user klik tombol "Tambah Kategori" di halaman index, lalu diarahkan ke halaman create yang
         return view('kategori.create');
     }
 

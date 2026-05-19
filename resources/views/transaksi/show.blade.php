@@ -213,22 +213,23 @@
                 {{-- DETAIL --}}
                 <tr>
 
-                    <td class="small">
+                   <td class="small">
 
-                        {{ $d->jumlah }}
-                        x
-                        Rp {{ number_format($harga) }}
+    Harga:
+    Rp {{ number_format($d->menu->harga) }}
 
-                        <br>
+    <br>
 
-                        Diskon:
-                        {{ $diskonText }}
+    Diskon:
+    {{ $diskonText }}
 
-                    </td>
+    <br>
 
-                    <td class="text-right">
-                        Rp {{ number_format($d->subtotal) }}
-                    </td>
+    {{ $d->jumlah }}
+    x
+    Rp {{ number_format($d->harga) }}
+
+</td>
 
                 </tr>
 

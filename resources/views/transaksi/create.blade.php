@@ -1,277 +1,215 @@
 @extends('layouts.app')
+
 @section('content')
 
-    <div class="container-fluid">
-        <div class="row">
+<div class="container-fluid">
 
-            <!-- KIRI KRANJANG -->
-            <div class="col-md-5">
+    <div class="row">
 
-                <div class="card shadow">
+        {{-- KIRI = KERANJANG --}}
+        <div class="col-md-5">
 
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
-                            <i class="fa fa-shopping-cart"></i>
-                            Keranjang Belanja
-                        </h5>
-                    </div>
+            <div class="card shadow">
 
-                    <div class="card-body" style="height:250px; overflow-y:auto;">
-                        <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
-                            @csrf
-                            <input type="hidden" name="items" id="items">
-                            <table class="table table-sm table-bordered mb-1">
-                                <thead class="thead-light mb-1">
-                                    <tr>
-                                        <th>Menu</th>
-                                        <th width="100">Qty</th>
-                                        <th>Subtotal</th>
-                                        <th width="50">Hapus</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cart-table">
+                <div class="card-header bg-primary text-white">
 
-                                </tbody>
-                            </table>
-                          </div>
-
-                            <div class="card-footer">
-
-                            <!-- TOTAL  -->
-                            <div class="form-group mb-1 row">
-                                <label class="col-sm-4 col-form-label">
-                                    Total Harga
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="number" name="total_harga" id="total_harga"
-                                        class="form-control font-weight-bold" value="0" readonly>
-                                </div>
-                            </div>
-
-                            {{-- BAYAR --}}
-                            <div class="form-group mb-1 row">
-                                <label class="col-sm-4 col-form-label">
-                                    Bayar
-                                </label>
-
-                                <div class="col-sm-8">
-                                    <input type="number" name="uang_bayar" id="uang_bayar" class="form-control"
-                                        placeholder="Masukkan uang bayar" required>
-                                </div>
-                            </div>
-
-                            {{-- KEMBALIAN --}}
-                            <div class="form-group mb-1 row">
-                                <label class="col-sm-4 col-form-label">
-                                    Kembalian
-                                </label>
-
-                                <div class="col-sm-8">
-                                    <input type="number" id="kembalian" class="form-control" value="0" readonly>
-                                </div>
-                            </div>
-
-                            {{-- METODE PEMBAYARAN --}}
-                            <div class="form-group mb-1 row">
-                                <label class="col-sm-4 col-form-label">
-                                    Metode
-                                </label>
-
-                                <div class="col-sm-8">
-                                    <select name="metode_pembayaran" class="form-control">
-
-                                        <option value="cash">Cash</option>
-                                        <option value="qris">QRIS</option>
-                                        <option value="transfer">Transfer</option>
-
-                                    </select>
-                                </div>
-                            </div>
-
-                            {{-- CUSTOMER --}}
-                            <div class="form-group mb-1 row">
-                                <label class="col-sm-4 col-form-label">
-                                    Customer
-                                </label>
-
-                                <div class="col-sm-6">
-
-                                    <select name="customer_id" id="customer_id" class="form-control">
-
-                                        <option value="">
-                                            -- pilih customer --
-                                        </option>
-
-                                        @foreach ($customers as $customer)
-                                            <option value="{{ $customer->id }}">
-                                                {{ $customer->nama }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-
-                                </div>
-                                // penjelasannya
-                                <div class="col-sm-2">
-                                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal"
-                                        data-target="#modalCustomer">
-                                        +
-                                    </button>
-                                </div>
-                            </div>
-
-                            {{-- SUBMIT --}}
-                            <button type="submit" class="btn btn-success btn-block btn-lg">
-
-                                <i class="fa fa-check-circle"></i>
-                                PROSES TRANSAKSI
-
-                            </button>
-
-                        </form>
-                        </div>
-                    </div>
+                    <h5 class="mb-0">
+                        Keranjang
+                    </h5>
 
                 </div>
 
-                {{-- KANAN = MENU --}}
+                {{-- FORM TRANSAKSI --}}
+                <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
 
-                <div class="col-md-7">
+                    @csrf
 
-                    <div class="card shadow">
+                    {{-- TEMPAT JSON CART --}}
+                    <input type="hidden" name="menu" id="menu">
 
-                        {{-- SEARCH + FILTER --}}
-                        <div class="card-header bg-light">
-                            <div class="row">
+                    <div class="card-body">
 
-                                {{-- search --}}
-                                <div class="col-md-6 mb-2">
-                                    <input type="text" id="search-menu" class="form-control" placeholder="Cari menu...">
-                                </div>
+                        <table class="table table-bordered">
 
-                                {{-- kategori --}}
-                                <div class="col-md-6">
-                                    <select id="filter-kategori" class="form-control">
-                                        <option value="">
-                                            Semua Kategori
-                                        </option>
+                            <thead>
 
-                                        @foreach ($kategoris as $kategori)
-                                            <option value="{{ $kategori->id }}">{{ $kategori->nama_kategori }}
-                                            </option>
-                                        @endforeach
+                                <tr>
 
-                                    </select>
-                                </div>
+                                    <th>Menu</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                    <th>Hapus</th>
 
-                            </div>
+                                </tr>
 
-                        </div>
+                            </thead>
 
-                        {{-- LIST MENU --}}
-                        <div class="card-body" style="max-height:600px; overflow-y:auto; overflow-x:hidden;">
+                            <tbody id="cart-table">
 
-                            <div class="row" id="menu-list">
+                            </tbody>
 
-                                @foreach ($menus as $menu)
-
-                                    @php
-                                        $hargaAkhir = $menu->harga_diskon;
-                                        $punyaDiskon = $hargaAkhir < $menu->harga;
-                                    @endphp
-
-                                    <div class="col-md-4 mb-3 menu-item" data-nama="{{ strtolower($menu->nama) }}"
-                                        data-kategori="{{ $menu->kategori_id }}">
-
-                                        <div class="card h-100 shadow-sm btn-add-to-cart" style="cursor:pointer"
-                                            data-id="{{ $menu->id }}" data-nama="{{ $menu->nama }}" data-harga="{{ $hargaAkhir }}">
-
-                                            {{-- gambar --}}
-                                            <img src="{{ asset('images/' . $menu->gambar) }}" class="card-img-top"
-                                                style="height:120px; object-fit:cover;">
-
-                                            {{-- body --}}
-                                            <div class="card-body text-center p-2">
-
-                                                <h6 class="mb-2">
-                                                    {{ $menu->nama }}
-                                                </h6>
-
-                                                @if ($punyaDiskon)
-
-                                                    <small class="text-danger d-block">
-                                                        <strike>
-                                                            Rp {{ number_format($menu->harga) }}
-                                                        </strike>
-                                                    </small>
-
-                                                    <span class="badge badge-danger">
-                                                        Rp {{ number_format($hargaAkhir) }}
-                                                    </span>
-
-                                                @else
-
-                                                    <span class="badge badge-success">
-                                                        Rp {{ number_format($menu->harga) }}
-                                                    </span>
-
-                                                @endif
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                @endforeach
-
-                            </div>
-
-                        </div>
+                        </table>
 
                     </div>
 
-                </div>
+                    <div class="card-footer">
+
+                        {{-- TOTAL --}}
+                        <div class="form-group">
+
+                            <label>Total Harga</label>
+
+                            <input type="number" name="total_harga" id="total_harga" class="form-control" value="0"
+                                readonly>
+
+                        </div>
+
+
+                        {{-- BAYAR --}}
+                        <div class="form-group">
+
+                            <label>Uang Bayar</label>
+
+                            <input type="number" name="uang_bayar" id="uang_bayar" class="form-control" required>
+
+                        </div>
+
+
+                        {{-- KEMBALIAN --}}
+                        <div class="form-group">
+
+                            <label>Kembalian</label>
+
+                            <input type="number" id="kembalian" class="form-control" value="0" readonly>
+
+                        </div>
+
+
+                        {{-- METODE PEMBAYARAN --}}
+                        <div class="form-group">
+
+                            <label>Metode Pembayaran</label>
+
+                            <select name="metode_pembayaran" class="form-control">
+
+                                <option value="cash">
+                                    Cash
+                                </option>
+
+                                <option value="qris">
+                                    QRIS
+                                </option>
+
+                                <option value="transfer">
+                                    Transfer
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button type="submit" class="btn btn-success btn-block">
+
+                            PROSES TRANSAKSI
+
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
+
         </div>
 
 
-        {{-- TAMBAH CUSTOMER --}}
+        {{-- KANAN = MENU --}}
+        <div class="col-md-7">
 
-        <div class="modal fade" id="modalCustomer">
-            <div class="modal-dialog">
-                <div class="modal-content">
+            <div class="row">
 
-                    <!-- Tombol tambah customer -->
-                    <div class="modal-header">
-                        <h5 class="mb-0">Tambah Customer</h5>
-                        <button class="close" data-dismiss="modal">
-                            &times;
-                        </button>
-                    </div>
+                @foreach($menus as $menu)
 
-                    <!-- Form tambah customer  -->
-                    <div class="modal-body">
-                        <input type="text" id="cust_nama" class="form-control mb-3" placeholder="Nama customer">
+                <div class="col-md-4 mb-3">
 
-                        <input type="text" id="cust_no_hp" class="form-control" placeholder="Nomor HP">
-                    </div>
+                    <div class="card shadow btn-add h-100" style="cursor:pointer" data-id="{{ $menu->id }}"
+                        data-nama="{{ $menu->nama }}" data-harga="{{ $menu->harga_diskon }}">
 
-                    <!-- Tombol simpan + batal  -->
-                    <div class="modal-footer">
-                        <button type="button" id="btn-simpan-customer" class="btn btn-success">
-                            Simpan
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            Batal
-                        </button>
+                        {{-- GAMBAR --}}
+                        <img src="{{ asset('images/' . $menu->gambar) }}" class="card-img-top"
+                            style="height:150px; object-fit:cover;">
+
+                        {{-- BODY --}}
+                        <div class="card-body text-center" style="min-height:100px;">
+
+                            <h6>
+                                {{ $menu->nama }}
+                            </h6>
+
+
+                            {{-- HARGA --}}
+                            @if($menu->ada_diskon)
+
+                            <small class="badge badge-success">
+
+                                <del>
+                                    Rp {{ number_format($menu->harga) }}
+                                </del>
+
+                            </small>
+
+                            <br>
+
+                            <small class="text-danger">
+
+                                Diskon
+                                @if($menu->diskon->tipe_diskon == 'Persen')
+
+                                {{ $menu->diskon->diskon_persen }}%
+
+                                @else
+
+                                Rp {{ number_format($menu->diskon->diskon_nominal) }}
+
+                                @endif
+
+                            </small>
+
+                            <br>
+
+                            <span class="badge badge-danger">
+
+                                Rp {{ number_format($menu->harga_diskon) }}
+
+                            </span>
+
+                            @else
+
+                            <span class="badge badge-success">
+
+                                Rp {{ number_format($menu->harga) }}
+
+                            </span>
+
+                            @endif
+
+                        </div>
+
                     </div>
 
                 </div>
+
+                @endforeach
+
             </div>
+
         </div>
 
-    @endsection
+    </div>
 
-    {{-- load javascript transaksi --}}
-    <script src="{{ asset('js/transaksi.js') }}"></script>
+</div>
+
+@endsection
+
+<script src="{{ asset('js/transaksi.js') }}"></script>
