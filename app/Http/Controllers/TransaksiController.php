@@ -7,6 +7,8 @@ use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
 
 class TransaksiController extends Controller
 {
@@ -15,8 +17,6 @@ class TransaksiController extends Controller
     {
         //ambil data transaksi dari model transaksi dengan relasi user, urutkan dari yang terbaru
         $transaksis = Transaksi::with('user')->latest();
-
-        
 
         if (auth()->user()->role_id == 1) {
             // jika yang login adalah user dengan ID=1 atau admin, maka ambil semua data transaksi 
@@ -37,16 +37,17 @@ class TransaksiController extends Controller
        $menus = Menu::with('diskon')->where('status', 'tersedia')
     ->latest()
     ->get();
+    $customers = Customer:: latest()->get();
 
         // tampilkan ke view dengan membawa data menu
-        return view('transaksi.create',compact('menus')
+        return view('transaksi.create',compact('menus', 'customers')
         );
     }
     public function store(Request $request)
     {
         // validasi
         $request->validate([
-
+            'customer_id' => 'nullable|exists:customers,id',
             'total_harga' => 'required|numeric',
             'uang_bayar' =>'required|numeric|min:' .$request->total_harga,
             'metode_pembayaran' => 'required',
@@ -59,8 +60,8 @@ class TransaksiController extends Controller
 
         // simpan transaksi
         $transaksi = Transaksi::create([
-
             'user_id' => Auth::id(),
+            'customer_id' => $request->customer_id,
             'total_harga' => $request->total_harga,
             'uang_bayar' => $request->uang_bayar,
             'kembalian' => $request->uang_bayar - $request->total_harga,
