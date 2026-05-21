@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
+use App\Models\Kategori;
 
 class TransaksiController extends Controller
 {
@@ -34,14 +35,12 @@ class TransaksiController extends Controller
     public function create()
     {
         // ambil data menu beserta diskonnya yang statusnya tersedia dan urutkan dari yang terbaru
-       $menus = Menu::with('diskon')->where('status', 'tersedia')
-    ->latest()
-    ->get();
+    $menus = Menu::with('diskon', 'kategori')->where('status', 'tersedia')->latest()->get();
     $customers = Customer:: latest()->get();
+    $kategoris = Kategori::get();
 
         // tampilkan ke view dengan membawa data menu
-        return view('transaksi.create',compact('menus', 'customers')
-        );
+        return view('transaksi.create',compact('menus', 'customers', 'kategoris'));
     }
     public function store(Request $request)
     {
