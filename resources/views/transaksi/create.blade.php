@@ -1,270 +1,532 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container-fluid px-2 px-md-4">
+
     <div class="row">
-        
-        <!-- ================================================================== -->
-        <!-- KIRI: ETALASE MENU (Menampilkan 4 Kolom Menu di Layar Komputer Lebar)-->
-        <!-- ================================================================== -->
+
+        <!-- ====================================================== -->
+        <!-- KIRI : MENU -->
+        <!-- ====================================================== -->
         <div class="col-12 col-lg-7 mb-4">
-            
-            <!-- FORM PENCARIAN & FILTER KATEGORI -->
+
+            <!-- SEARCH + FILTER -->
             <div class="row row-cols-1 row-cols-sm-2 g-2 mb-3">
-                <div class="col mb-2 mb-sm-0">
-                    <input type="text" id="search" class="form-control" placeholder="Cari menu...">
-                </div>
+
+                <!-- SEARCH -->
                 <div class="col">
-                    <select id="filter-kategori" class="form-control">
-                        <option value="">Semua Kategori</option>
-                        @foreach($kategoris as $k)
-                            <option value="{{ strtolower($k->nama_kategori) }}">{{ $k->nama_kategori }}</option>
-                        @endforeach
-                    </select>
+
+                    <input
+                        type="text"
+                        id="search"
+                        class="form-control"
+                        placeholder="Cari menu...">
+
                 </div>
+
+
+                <!-- FILTER -->
+                <div class="col">
+
+                    <select
+                        id="filter-kategori"
+                        class="form-control">
+
+                        <option value="">
+                            Semua Kategori
+                        </option>
+
+                        @foreach($kategoris as $k)
+
+                        <option
+                            value="{{ strtolower($k->nama_kategori) }}">
+
+                            {{ $k->nama_kategori }}
+
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
             </div>
 
-            <!-- GRID DAFTAR MENU -->
-            <!-- row-cols-xl-4 memastikan menu terbagi rapi menjadi 4 kolom di resolusi pc/komputer besar -->
-            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-xl-4 g-2" id="menu-wrapper">
+
+
+            <!-- GRID MENU -->
+            <div
+                class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-xl-4 g-2">
+
                 @foreach($menus as $menu)
+
                 <div class="col mb-3 menu-item-target">
-                    
-                    <!-- Class 'btn-add' disematkan di sini agar bisa ditangkap oleh click event di transaksi.js -->
-                    <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative" style="cursor:pointer"
-                        data-id="{{ $menu->id }}" 
-                        data-nama="{{ $menu->nama }}"
-                        data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}" 
+
+                    <!-- CARD MENU -->
+                    <div
+                        class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
+                        style="cursor:pointer"
+
+                        data-id="{{ $menu->id }}"
+                        data-nama="{{ strtolower($menu->nama) }}"
+                        data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}"
                         data-harga="{{ $menu->harga_diskon }}">
 
-                        <!-- LABEL PANDUAN DISKON -->
+                        <!-- BADGE DISKON -->
                         @if($menu->ada_diskon)
-                        <span class="badge badge-danger position-absolute" style="top:8px; left:8px; z-index:5; font-size: 75%;">
-                            Diskon {{ $menu->diskon->tipe_diskon == 'Persen' ? $menu->diskon->diskon_persen . '%' : 'Rp ' . number_format($menu->diskon->diskon_nominal) }}
+
+                        <span
+                            class="badge badge-danger position-absolute"
+                            style="top:8px; left:8px; z-index:10;">
+
+                            Diskon
+
                         </span>
+
                         @endif
 
-                        <!-- GAMBAR PRODUK -->
-                        <img src="{{ asset('images/' . $menu->gambar) }}" class="card-img-top" style="height:110px; object-fit:cover;">
 
-                        <!-- DETAIL TEKS MENU -->
-                        <div class="card-body p-2 text-center d-flex flex-column justify-content-between" style="min-height: 90px;">
-                            <span class="font-weight-bold d-block text-truncate small mb-1" title="{{ $menu->nama }}">{{ $menu->nama }}</span>
-                            <div>
-                                @if($menu->ada_diskon)
-                                    <div class="text-muted" style="font-size: 75%;"><del>Rp {{ number_format($menu->harga) }}</del></div>
-                                    <span class="text-danger font-weight-bold small">Rp {{ number_format($menu->harga_diskon) }}</span>
-                                @else
-                                    <span class="text-success font-weight-bold small">Rp {{ number_format($menu->harga) }}</span>
-                                @endif
+
+                        <!-- GAMBAR -->
+                        <img
+                            src="{{ asset('images/' . $menu->gambar) }}"
+                            class="card-img-top"
+                            style="height:110px; object-fit:cover;">
+
+
+
+                        <!-- BODY -->
+                        <div
+                            class="card-body p-2 text-center">
+
+                            <!-- NAMA -->
+                            <div
+                                class="font-weight-bold small text-truncate mb-1">
+
+                                {{ $menu->nama }}
+
                             </div>
+
+
+                            <!-- HARGA -->
+                            @if($menu->ada_diskon)
+
+                            <div
+                                class="text-muted"
+                                style="font-size:12px;">
+
+                                <del>
+                                    Rp {{ number_format($menu->harga) }}
+                                </del>
+
+                            </div>
+
+                            <div
+                                class="text-danger font-weight-bold small">
+
+                                Rp {{ number_format($menu->harga_diskon) }}
+
+                            </div>
+
+                            @else
+
+                            <div
+                                class="text-success font-weight-bold small">
+
+                                Rp {{ number_format($menu->harga) }}
+
+                            </div>
+
+                            @endif
+
                         </div>
 
                     </div>
+
                 </div>
+
                 @endforeach
+
             </div>
+
         </div>
 
-        <!-- ================================================================== -->
-        <!-- KANAN: PANEL KERANJANG BELANJA & FORM PEMBAYARAN                  -->
-        <!-- ================================================================== -->
+
+
+        <!-- ====================================================== -->
+        <!-- KANAN : TRANSAKSI -->
+        <!-- ====================================================== -->
         <div class="col-12 col-lg-5 mb-4">
+
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white p-3">
-                    <h5 class="mb-0 font-weight-bold">Keranjang</h5>
+
+                <!-- HEADER -->
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+                        Keranjang
+                    </h5>
+
                 </div>
 
-                <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
+
+
+                <!-- FORM -->
+                <form
+                    action="{{ route('transaksi.store') }}"
+                    method="POST"
+                    id="form-transaksi">
+
                     @csrf
-                    <!-- Data JSON belanjaan dari array cart akan disimpan ke input hidden ini saat submit -->
-                    <input type="hidden" name="menu" id="menu">
 
+                    <!-- CART JSON -->
+                    <input
+                        type="hidden"
+                        name="menu"
+                        id="menu">
+
+
+
+                    <!-- BODY -->
                     <div class="card-body p-2 p-md-3">
-                        <!-- TABEL DAFTAR BELANJA -->
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-sm mb-0 text-center">
-                                <thead class="bg-light">
+
+                        <!-- TABEL CART -->
+                        <div
+                            class="table-responsive"
+                            style="max-height:250px; overflow-y:auto;">
+
+                            <table
+                                class="table table-bordered table-sm text-center mb-0">
+
+                                <thead
+                                    class="bg-light"
+                                    style="position:sticky; top:0; z-index:1;">
+
                                     <tr>
-                                        <th class="text-left">Menu</th>
-                                        <th style="width: 25%">Qty</th>
-                                        <th>Subtotal</th>
-                                        <th>Aksi</th>
+
+                                        <th class="text-left">
+                                            Menu
+                                        </th>
+
+                                        <th width="25%">
+                                            Qty
+                                        </th>
+
+                                        <th>
+                                            Subtotal
+                                        </th>
+
+                                        <th>
+                                            Aksi
+                                        </th>
+
                                     </tr>
+
                                 </thead>
-                                <!-- Elemen tbody ini akan diisi baris belanjaan secara dinamis oleh renderCart() -->
-                                <tbody id="cart-table"></tbody>
+
+                                <!-- DIISI JS -->
+                                <tbody id="cart-table">
+
+                                </tbody>
+
                             </table>
+
                         </div>
+
                     </div>
 
-                    <!-- FORM RINCIAN PEMBAYARAN -->
-                    <div class="card-footer bg-white p-3 border-top-0">
+
+
+                    <!-- FOOTER -->
+                    <div class="card-footer bg-white">
+
+                        <!-- TOTAL -->
                         <div class="form-group mb-2">
-                            <label class="small font-weight-bold mb-1">Total Harga</label>
-                            <input type="number" name="total_harga" id="total_harga" class="form-control form-control-lg font-weight-bold text-danger" value="0" readonly>
+
+                            <label>Total Harga</label>
+
+                            <input
+                                type="number"
+                                name="total_harga"
+                                id="total_harga"
+                                class="form-control"
+                                value="0"
+                                readonly>
+
                         </div>
 
-                        <div class="row row-cols-2 g-2">
-                            <div class="col form-group mb-2">
-                                <label class="small font-weight-bold mb-1">Uang Bayar</label>
-                                <input type="number" name="uang_bayar" id="uang_bayar" class="form-control" required>
+
+
+                        <!-- BAYAR + KEMBALIAN -->
+                        <div class="row">
+
+                            <!-- BAYAR -->
+                            <div class="col-md-6 form-group">
+
+                                <label>Uang Bayar</label>
+
+                                <input
+                                    type="number"
+                                    name="uang_bayar"
+                                    id="uang_bayar"
+                                    class="form-control"
+                                    required>
+
                             </div>
-                            <div class="col form-group mb-2">
-                                <label class="small font-weight-bold mb-1">Kembalian</label>
-                                <input type="number" id="kembalian" class="form-control" value="0" readonly>
+
+
+
+                            <!-- KEMBALIAN -->
+                            <div class="col-md-6 form-group">
+
+                                <label>Kembalian</label>
+
+                                <input
+                                    type="number"
+                                    id="kembalian"
+                                    class="form-control"
+                                    value="0"
+                                    readonly>
+
                             </div>
+
                         </div>
 
-                        <div class="row row-cols-2 g-2 mb-3">
-                            <div class="col form-group mb-0">
-                                <label class="small font-weight-bold mb-1">Metode</label>
-                                <select name="metode_pembayaran" class="form-control">
-                                    <option value="cash">Cash</option>
-                                    <option value="qris">QRIS</option>
-                                    <option value="transfer">Transfer</option>
+
+
+                        <!-- METODE + CUSTOMER -->
+                        <div class="row">
+
+                            <!-- METODE -->
+                            <div class="col-md-6 form-group">
+
+                                <label>Metode</label>
+
+                                <select
+                                    name="metode_pembayaran"
+                                    class="form-control">
+
+                                    <option value="cash">
+                                        Cash
+                                    </option>
+
+                                    <option value="qris">
+                                        QRIS
+                                    </option>
+
+                                    <option value="transfer">
+                                        Transfer
+                                    </option>
+
                                 </select>
+
                             </div>
-                            <div class="col form-group mb-0">
-                                <label class="small font-weight-bold mb-1">Customer</label>
-                                <div class="input-group">
-                                    <select name="customer_id" id="customer_id" class="form-control">
-                                        <option value="">-- Umum --</option>
-                                        @foreach ($customers as $customer)
-                                            <option value="{{ $customer->id }}">{{ $customer->nama }} ({{ $customer->no_hp }})</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-primary" id="btnTambahCustomer">+</button>
+
+
+
+                            <!-- CUSTOMER -->
+                            <div class="col-md-6 form-group">
+
+                                <label>Customer</label>
+
+
+
+                                <!-- SELECT CUSTOMER -->
+                                <div id="selectCustomerWrapper">
+
+                                    <div class="d-flex">
+
+                                        <!-- SELECT -->
+                                        <select
+                                            name="customer_id"
+                                            id="customer_id"
+                                            class="form-control">
+
+                                            <option value="">
+                                                -- Umum --
+                                            </option>
+
+                                            @foreach($customers as $customer)
+
+                                            <option
+                                                value="{{ $customer->id }}">
+
+                                                {{ $customer->nama }}
+
+                                            </option>
+
+                                            @endforeach
+
+                                        </select>
+
+
+
+                                        <!-- BUTTON PLUS -->
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary ml-2"
+                                            id="btnTambahCustomer">
+
+                                            +
+
+                                        </button>
+
                                     </div>
+
                                 </div>
+
+
+
+                                <!-- FORM CUSTOMER BARU -->
+                                <div
+                                    id="formCustomerBaru"
+                                    style="display:none;">
+
+                                    <!-- NAMA -->
+                                    <div class="form-group mt-2">
+
+                                        <label>Nama Customer</label>
+
+                                        <input
+                                            type="text"
+                                            name="nama_customer"
+                                            class="form-control">
+
+                                    </div>
+
+
+
+                                    <!-- NO HP -->
+                                    <div class="form-group">
+
+                                        <label>No HP</label>
+
+                                        <input
+                                            type="text"
+                                            name="no_hp"
+                                            class="form-control">
+
+                                    </div>
+
+
+
+                                    <!-- BATAL -->
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary btn-sm"
+                                        id="btnBatalCustomer">
+
+                                        Batal
+
+                                    </button>
+
+                                </div>
+
                             </div>
+
                         </div>
 
-                        <button type="submit" class="btn btn-success btn-block btn-lg font-weight-bold shadow-sm">
+
+
+                        <!-- BUTTON -->
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-block mt-3">
+
                             PROSES TRANSAKSI
+
                         </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </div>
 
     </div>
+
 </div>
 
-<!-- ================================================================== -->
-<!-- MODAL POPUP: TAMBAH CUSTOMER BARU (AJAX)                          -->
-<!-- ================================================================== -->
-<div class="modal fade" id="modalCustomer" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title font-weight-bold">Tambah Customer</h5>
-            </div>
-            <div class="modal-body">
-                <div class="form-group mb-2">
-                    <label class="small font-weight-bold mb-1">Nama Customer</label>
-                    <input type="text" id="inputNamaCustomer" class="form-control" placeholder="Nama">
-                    <small class="text-danger d-block mt-1" id="textErrorCustomer"></small>
-                </div>
-                <div class="form-group mb-0">
-                    <label class="small font-weight-bold mb-1">No HP</label>
-                    <input type="text" id="inputNoHpCustomer" class="form-control" placeholder="No HP">
-                </div>
-            </div>
-            <div class="modal-footer bg-light p-2">
-                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-sm btn-success" id="btnSimpanCustomer">Simpan</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- ================================================================== -->
-<!-- SCRIPT 1: LOGIKA LIVE PENCARIAN & FILTER KATEGORI                 -->
-<!-- ================================================================== -->
+
+<!-- ====================================================== -->
+<!-- JS CUSTOMER -->
+<!-- ====================================================== -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search');
-    const kategoriSelect = document.getElementById('filter-kategori');
 
-    function filterMenu() {
-        let keyword = searchInput.value.toLowerCase().trim();
-        let kategoriValue = kategoriSelect.value.toLowerCase().trim();
-        const items = document.querySelectorAll('.menu-item-target');
+document.addEventListener('DOMContentLoaded', function () {
 
-        items.forEach(item => {
-            const card = item.querySelector('.menu-card');
-            if (!card) return;
+    // tombol +
+    const tombolTambah =
+        document.getElementById('btnTambahCustomer');
 
-            // Mengambil nilai data langsung dari attribute DOM elemen card menu
-            let namaMenu = card.getAttribute('data-nama') ? card.getAttribute('data-nama').toLowerCase() : '';
-            let kategoriMenu = card.getAttribute('data-kategori') ? card.getAttribute('data-kategori').toLowerCase() : '';
+    // tombol batal
+    const tombolBatal =
+        document.getElementById('btnBatalCustomer');
 
-            let cocokSearch = namaMenu.includes(keyword);
-            let cocokKategori = kategoriValue === '' || kategoriMenu === kategoriValue;
+    // wrapper select
+    const selectWrapper =
+        document.getElementById('selectCustomerWrapper');
 
-            // Atur tampilan card menu berdasarkan hasil filter pencarian
-            if (cocokSearch && cocokKategori) {
-                item.style.setProperty('display', 'block', 'important');
-            } else {
-                item.style.setProperty('display', 'none', 'important');
-            }
-        });
-    }
+    // form customer baru
+    const formCustomer =
+        document.getElementById('formCustomerBaru');
 
-    if (searchInput) { searchInput.addEventListener('keyup', filterMenu); }
-    if (kategoriSelect) { kategoriSelect.addEventListener('change', filterMenu); }
-});
-</script>
 
-<!-- ================================================================== -->
-<!-- SCRIPT 2: LOGIKA ASYNC LIVE ASYNC POPUP SIMPAN CUSTOMER            -->
-<!-- ================================================================== -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let tombolTambah = document.getElementById('btnTambahCustomer');
-    let tombolSimpan = document.getElementById('btnSimpanCustomer');
-    let inputNama = document.getElementById('inputNamaCustomer');
-    let inputNohp = document.getElementById('inputNoHpCustomer');
-    let textError = document.getElementById('textErrorCustomer');
-    let selectCustomer = document.getElementById('customer_id');
 
-    tombolTambah.addEventListener('click', function() {
-        inputNama.value = ''; inputNohp.value = ''; textError.innerText = '';
-        $('#modalCustomer').modal('show');
+    // =========================
+    // SAAT TOMBOL + DIKLIK
+    // =========================
+
+    tombolTambah.addEventListener('click', function () {
+
+        // sembunyikan select
+        selectWrapper.style.display = 'none';
+
+        // tampilkan form customer
+        formCustomer.style.display = 'block';
+
     });
 
-    tombolSimpan.addEventListener('click', function() {
-        let namaCustomer = inputNama.value.trim();
-        let noHpCustomer = inputNohp.value.trim();
 
-        if (namaCustomer == '') {
-            textError.innerText = 'Nama customer wajib diisi';
-            return;
-        }
 
-        fetch('/customer/store-ajax', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ nama: namaCustomer, no_hp: noHpCustomer })
-        })
-        .then(response => response.json())
-        .then(data => {
-            let optionBaru = new Option(data.nama, data.id);
-            selectCustomer.add(optionBaru);
-            selectCustomer.value = data.id;
-            tombolSimpan.blur();
-            $('#modalCustomer').modal('hide');
-        })
-        .catch(error => console.log(error));
+    // =========================
+    // SAAT BATAL DIKLIK
+    // =========================
+
+    tombolBatal.addEventListener('click', function () {
+
+        // tampilkan select lagi
+        selectWrapper.style.display = 'block';
+
+        // sembunyikan form
+        formCustomer.style.display = 'none';
+
+
+
+        // kosongkan input customer baru
+        document.querySelector(
+            'input[name="nama_customer"]'
+        ).value = '';
+
+        document.querySelector(
+            'input[name="no_hp"]'
+        ).value = '';
+
     });
+
 });
+
 </script>
 
-<!-- Memuat aset script transaksi utama setelah seluruh kerangka HTML siap -->
+
+
+<!-- JS -->
 <script src="{{ asset('js/transaksi.js') }}"></script>
+<script src="{{ asset('js/filter.js') }}"></script>
+
 @endsection

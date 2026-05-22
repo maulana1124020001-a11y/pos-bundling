@@ -62,7 +62,7 @@
                                    value="{{ old('nama_kategori') }}"
                                    class="form-control @error('nama_kategori') is-invalid @enderror"
                                    placeholder="Contoh: Makanan, Minuman"
-                                   required>
+                                   2>
 
                             <!-- tampilkan error spesifik field -->
                             @error('nama_kategori')

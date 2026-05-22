@@ -17,7 +17,7 @@ class TransaksiController extends Controller
     public function index()
     {
         //ambil data transaksi dari model transaksi dengan relasi user, urutkan dari yang terbaru
-        $transaksis = Transaksi::with('user')->latest();
+        $transaksis = Transaksi::with('user','customer')->latest();
 
         if (auth()->user()->role_id == 1) {
             // jika yang login adalah user dengan ID=1 atau admin, maka ambil semua data transaksi 
@@ -42,50 +42,135 @@ class TransaksiController extends Controller
         // tampilkan ke view dengan membawa data menu
         return view('transaksi.create',compact('menus', 'customers', 'kategoris'));
     }
-    public function store(Request $request)
-    {
-        // validasi
-        $request->validate([
-            'customer_id' => 'nullable|exists:customers,id',
-            'total_harga' => 'required|numeric',
-            'uang_bayar' =>'required|numeric|min:' .$request->total_harga,
-            'metode_pembayaran' => 'required',
-            'menu' => 'required'
+   public function store(Request $request)
+  
+{
+   
+    // VALIDASI
+    $request->validate([
+
+        'nama_customer' => 'nullable|string|max:255',
+
+        'total_harga' => 'required|numeric',
+
+        'uang_bayar' =>
+            'required|numeric|min:' . $request->total_harga,
+
+        'metode_pembayaran' => 'required',
+
+        'menu' => 'required'
+
+    ]);
+
+
+    // DECODE JSON MENU
+    $menu = json_decode($request->menu, true);
+
+
+
+    // =========================
+    // CUSTOMER
+    // =========================
+
+   
+
+    // jika nama customer diisi
+    $customerId = null;
+
+
+
+// =========================
+// JIKA PILIH CUSTOMER LAMA
+// =========================
+
+if ($request->customer_id) {
+
+    $customerId = $request->customer_id;
+
+}
+
+
+
+// =========================
+// JIKA TAMBAH CUSTOMER BARU
+// =========================
+
+elseif ($request->nama_customer) {
+
+    $customer = Customer::firstOrCreate(
+
+        [
+            'nama' => $request->nama_customer
+        ],
+
+        [
+            'no_hp' => $request->no_hp
+        ]
+
+    );
+
+    $customerId = $customer->id;
+
+}
+
+
+    // =========================
+    // SIMPAN TRANSAKSI
+    // =========================
+
+    $transaksi = Transaksi::create([
+
+        'user_id' => Auth::id(),
+
+        'customer_id' => $customerId,
+
+        'total_harga' => $request->total_harga,
+
+        'uang_bayar' => $request->uang_bayar,
+
+        'kembalian' =>
+            $request->uang_bayar -
+            $request->total_harga,
+
+        'metode_pembayaran' =>
+            $request->metode_pembayaran,
+
+        'status' => 'selesai',
+
+        'waktu' => now()
+
+    ]);
+
+
+
+    // =========================
+    // SIMPAN DETAIL
+    // =========================
+
+    foreach ($menu as $m) {
+
+        TransaksiDetail::create([
+
+            'transaksi_id' => $transaksi->id,
+
+            'menu_id' => $m['id'],
+
+            'jumlah' => $m['jumlah'],
+
+            'harga' => $m['harga'],
+
+            'subtotal' =>
+                $m['jumlah'] * $m['harga']
+
         ]);
-        // menu yang dikirim dari form berupa string JSON maka harus di decode terlebih dahulu menjadi array
-        $menu = json_decode($request->menu,true
-        );
 
-
-        // simpan transaksi
-        $transaksi = Transaksi::create([
-            'user_id' => Auth::id(),
-            'customer_id' => $request->customer_id,
-            'total_harga' => $request->total_harga,
-            'uang_bayar' => $request->uang_bayar,
-            'kembalian' => $request->uang_bayar - $request->total_harga,
-            'metode_pembayaran' =>$request->metode_pembayaran,
-            'status' => 'selesai',
-            'waktu' => now()
-
-        ]);     
-        // simpan detail   
-        foreach ($menu as $m) {
-
-            TransaksiDetail::create([
-
-                'transaksi_id' =>$transaksi->id,
-                'menu_id' => $m ['id'],
-                'jumlah' => $m ['jumlah'],
-                'harga' => $m ['harga'],
-                'subtotal' => $m ['jumlah'] * $m ['harga']
-
-            ]);
-
-        }
-
-        return redirect()->route('transaksi.index')->with('success','Transaksi berhasil');
     }
+
+
+    return redirect()
+        ->route('transaksi.index')
+        ->with('success', 'Transaksi berhasil');
+}
 
     public function show(Transaksi $transaksi)
     {

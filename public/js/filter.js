@@ -1,51 +1,45 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // input search
-    const search = document.getElementById('search');
+// 1. Menunggu seluruh struktur HTML selesai dimuat oleh browser sebelum menjalankan script
+document.addEventListener('DOMContentLoaded', () => {
 
-    // select kategori
+    // 2. Mengambil elemen input pencarian dan dropdown kategori berdasarkan ID masing-masing
+    const search = document.getElementById('search');
     const kategori = document.getElementById('filter-kategori');
 
-    // semua card
-    const cards = document.querySelectorAll('.menu-card');
-
-    // function filter
+    // 3. Membuat fungsi utama untuk menyaring (filter) menu kuliner
     function filterMenu() {
-        // ambil search
-        let keyword = search.value.toLowerCase();
 
-        // ambil kategori
-        let kategoriValue = kategori.value.toLowerCase();
+        // a. Mengambil text yang diketik user & pilihan kategori, lalu disamakan menjadi huruf kecil (lowercase)
+        const keyword = search.value.toLowerCase();
+        const filter = kategori.value.toLowerCase();
 
-        // looping card
-        cards.forEach(card => {
-            // nama menu
-            let nama = card.dataset.nama;
+        // b. Menyeleksi semua elemen pembungkus menu yang ada di halaman web
+        const items = document.querySelectorAll('.menu-item-target');
 
-            // kategori menu
-            let kategoriMenu = card.dataset.kategori;
+        // c. Melakukan perulangan (looping) untuk memeriksa satu per satu item menu
+        items.forEach(item => {
 
-            // cek search
-            let cocokSearch = nama.includes(keyword);
+            // Ambil card di dalam item untuk membaca data spesifik menu tersebut
+            const card = item.querySelector('.menu-card');
 
-            // cek kategori
-            let cocokKategori = kategoriValue == '' || kategoriMenu == kategoriValue;
+            // Ambil nilai dari atribut data-nama dan data-kategori pada HTML, ubah ke huruf kecil
+            const nama = card.dataset.nama.toLowerCase();
+            const kategoriMenu = card.dataset.kategori.toLowerCase();
 
-            // tampil / sembunyi
-            if (cocokSearch && cocokKategori) {
-                card.parentElement.style.display = ''; // Menggunakan kosong agar grid Bootstrap tetap aman
-            } else {
-                card.parentElement.style.display = 'none';
-            }
+            // d. KONDISI 1: Cek apakah nama menu mengandung kata kunci yang diketik user
+            const cocokSearch = nama.includes(keyword);
+
+            // e. KONDISI 2: Cek kesesuaian kategori. 
+            // Jika dropdown kosong (pilih "Semua"), maka dianggap cocok. Jika dipilih spesifik, nilainya harus sama persis.
+            const cocokKategori = filter === '' || kategoriMenu === filter;
+
+            // f. EKSEKUSI: Jika KONDISI 1 dan KONDISI 2 keduanya bernilai BENAR (true),
+            // tampilkan menu tersebut. Jika salah satu saja salah, sembunyikan menunya.
+            item.style.display = cocokSearch && cocokKategori ? 'block' : 'none';
+
         });
     }
 
-    // saat mengetik
-    if (search) {
-        search.addEventListener('keyup', filterMenu);
-    }
+    search.addEventListener('keyup', filterMenu); 
+    kategori.addEventListener('change', filterMenu);
 
-    // saat pilih kategori
-    if (kategori) {
-        kategori.addEventListener('change', filterMenu);
-    }
 });

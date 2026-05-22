@@ -4,46 +4,51 @@
 
 <div class="container-fluid">
 
-    {{-- JUDUL --}}
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-            <h1 class="h3 mb-0 text-gray-800">
+            <h3 class="font-weight-bold text-gray-800 mb-1">
                 Dashboard
-            </h1>
+            </h3>
 
-           <small class="text-muted">
-
-    {{ \Carbon\Carbon::parse('2026-06-01')->locale('id')->translatedFormat('l, d F Y') }}
-
-</small>
+            <small class="text-muted">
+                {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+            </small>
         </div>
 
     </div>
 
-    <!-- CARD -->
+
+    {{-- CARD STATISTIK --}}
     <div class="row">
 
-        <!-- JUMLAH MENU -->
-        <div class="col-md-4 mb-4">
+        {{-- JUMLAH MENU --}}
+        <div class="col-xl col-md-6 mb-4">
 
-            <div class="card border-left-info shadow h-100 py-3">
+            <div class="card shadow border-0 h-100">
 
-                <div class="card-body d-flex justify-content-between align-items-center">
+                <div class="card-body">
 
-                    <div>
+                    <div class="d-flex justify-content-between">
 
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Jumlah Menu
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Jumlah Menu
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                {{ $jumlahMenu }}
+                            </div>
+
                         </div>
 
-                        <div class="h4 font-weight-bold text-gray-800">
-                            {{ $jumlahMenu }}
+                        <div>
+                            <i class="fas fa-utensils fa-2x text-info"></i>
                         </div>
 
                     </div>
-
-                    <i class="fas fa-utensils fa-2x text-gray-300"></i>
 
                 </div>
 
@@ -51,26 +56,33 @@
 
         </div>
 
-        <!-- JUMLAH TRANSAKSI -->
-        <div class="col-md-4 mb-4">
 
-            <div class="card border-left-primary shadow h-100 py-3">
+        {{-- MODAL --}}
+        <div class="col-xl col-md-6 mb-4">
 
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card shadow border-0 h-100">
 
-                    <div>
+                <div class="card-body">
 
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Transaksi Bulan Ini
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Modal
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                Rp {{ number_format($totalModal,0,',','.') }}
+                            </div>
+
                         </div>
 
-                        <div class="h4 font-weight-bold text-gray-800">
-                            {{ $jumlahTransaksi }}
+                        <div>
+                            <i class="fas fa-wallet fa-2x text-primary"></i>
                         </div>
 
                     </div>
-
-                    <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
 
                 </div>
 
@@ -78,26 +90,33 @@
 
         </div>
 
-        <!-- PENDAPATAN -->
-        <div class="col-md-4 mb-4">
 
-            <div class="card border-left-success shadow h-100 py-3">
+        {{-- KEUNTUNGAN --}}
+        <div class="col-xl col-md-6 mb-4">
 
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card shadow border-0 h-100">
 
-                    <div>
+                <div class="card-body">
 
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Pendapatan Keseluruhan
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Keuntungan
+                            </div>
+
+                            <div class="h4 font-weight-bold text-success">
+                                Rp {{ number_format($keuntunganBersih,0,',','.') }}
+                            </div>
+
                         </div>
 
-                        <div class="h4 font-weight-bold text-gray-800">
-                            Rp {{ number_format($totalPendapatan,0,',','.') }}
+                        <div>
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
                         </div>
 
                     </div>
-
-                    <i class="fas fa-wallet fa-2x text-gray-300"></i>
 
                 </div>
 
@@ -105,26 +124,33 @@
 
         </div>
 
-        <!-- MODAL -->
-        <div class="col-md-6 mb-4">
 
-            <div class="card border-left-danger shadow h-100 py-3">
+        {{-- PENJUALAN --}}
+        <div class="col-xl col-md-6 mb-4">
 
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card shadow border-0 h-100">
 
-                    <div>
+                <div class="card-body">
 
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                            Modal Bulan Ini
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Total Penjualan
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                Rp {{ number_format($totalPendapatan,0,',','.') }}
+                            </div>
+
                         </div>
 
-                        <div class="h4 font-weight-bold text-gray-800">
-                            Rp {{ number_format($totalModal,0,',','.') }}
+                        <div>
+                            <i class="fas fa-dollar-sign fa-2x text-primary"></i>
                         </div>
 
                     </div>
-
-                    <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
 
                 </div>
 
@@ -132,26 +158,140 @@
 
         </div>
 
-        <!-- KEUNTUNGAN -->
-        <div class="col-md-6 mb-4">
 
-            <div class="card border-left-warning shadow h-100 py-3">
+        {{-- TRANSAKSI --}}
+        <div class="col-xl col-md-6 mb-4">
 
-                <div class="card-body d-flex justify-content-between align-items-center">
+            <div class="card shadow border-0 h-100">
 
-                    <div>
+                <div class="card-body">
 
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Keuntungan Bersih Bulan Ini
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Jumlah Transaksi
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                {{ $jumlahTransaksi }}
+                            </div>
+
                         </div>
 
-                        <div class="h4 font-weight-bold text-gray-800">
-                            Rp {{ number_format($keuntunganBersih,0,',','.') }}
+                        <div>
+                            <i class="fas fa-shopping-cart fa-2x text-secondary"></i>
                         </div>
 
                     </div>
 
-                    <i class="fas fa-coins fa-2x text-gray-300"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    {{-- ROW BAWAH --}}
+    <div class="row">
+
+        {{-- TABEL MENU --}}
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-white">
+
+                    <h6 class="font-weight-bold mb-0">
+                        Tabel Menu Terlaris
+                    </h6>
+
+                </div>
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover mb-0">
+
+                            <thead class="bg-light">
+
+                                <tr>
+
+                                    <th>No</th>
+                                    <th>Menu</th>
+                                    <th>Terjual</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach($menuTerlaris as $index => $item)
+
+                                <tr>
+
+                                    <td>
+                                        {{ $index + 1 }}
+                                    </td>
+
+                                    <td>
+
+                                        <div class="font-weight-bold">
+                                            {{ $item->menu->nama ?? '-' }}
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="badge badge-success px-3 py-2">
+
+                                            {{ $item->total_terjual }}
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- GRAFIK --}}
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-white">
+
+                    <h6 class="font-weight-bold mb-0">
+                        Grafik Penjualan
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <canvas id="chartPenjualan" height="120"></canvas>
 
                 </div>
 
@@ -162,5 +302,40 @@
     </div>
 
 </div>
+
+
+
+{{-- CHART JS --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById('chartPenjualan');
+
+new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+
+        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+
+        datasets: [{
+
+            label: 'Penjualan',
+
+            data: [12, 19, 8, 15, 20, 30, 25],
+
+            borderWidth: 2,
+
+            fill: true
+
+        }]
+
+    }
+
+});
+
+</script>
 
 @endsection

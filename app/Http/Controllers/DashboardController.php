@@ -6,65 +6,50 @@ use App\Models\Menu;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // =========================
-        // WAKTU BULAN INI
-        // =========================
+        // 1. Filter Waktu (Bulan Ini)
+        $awalBulan = Carbon::now()->startOfMonth();
+        $akhirBulan = Carbon::now()->endOfMonth();
 
-        $awalBulan = Carbon::parse('2026-06-01')->startOfMonth();
-$akhirBulan = Carbon::parse('2026-06-01')->endOfMonth();
-
-        // =========================
-        // CARD
-        // =========================
-
-        // jumlah menu
+        // 2. Data Statistik Utama (Card)
         $jumlahMenu = Menu::count();
+        
+        $jumlahTransaksi = Transaksi::whereBetween('waktu', [$awalBulan, $akhirBulan])->count();
+        
+        $totalPendapatan = Transaksi::whereBetween('waktu', [$awalBulan, $akhirBulan])->sum('total_harga');
 
-        // jumlah transaksi bulan ini
-        $jumlahTransaksi = Transaksi::whereBetween('waktu', [
-            $awalBulan,
-            $akhirBulan
-        ])->count();
+        // Hitung total modal langsung via relasi TransaksiDetail ke Menu
+       // Hitung total modal langsung via relasi TransaksiDetail ke Menu
+$totalModal = TransaksiDetail::whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
+        $query->whereBetween('waktu', [$awalBulan, $akhirBulan]);
+    })
+    ->join('menus', 'transaksi_details.menu_id', '=', 'menus.id') // Perbaikan nama tabel di sini
+    ->sum(DB::raw('menus.modal * transaksi_details.jumlah'));
+            
 
-        // pendapatan keseluruhan
-     $totalPendapatan = Transaksi::whereBetween('waktu', [
-    $awalBulan,
-    $akhirBulan
-])->sum('total_harga');
+        $keuntunganBersih = $totalPendapatan - $totalModal;
 
-        // modal bulan ini
-        $totalModal = TransaksiDetail::with('menu')
+        // 3. Data Menu Terlaris & Kurang Laris
+        $baseQuery = TransaksiDetail::with('menu')
+            ->select('menu_id', DB::raw('SUM(jumlah) as total_terjual'))
             ->whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
-                $query->whereBetween('waktu', [
-                    $awalBulan,
-                    $akhirBulan
-                ]);
+                $query->whereBetween('waktu', [$awalBulan, $akhirBulan]);
             })
-            ->get()
-            ->sum(function ($detail) {
-                return $detail->menu->modal * $detail->jumlah;
-            });
+            ->groupBy('menu_id');
 
-        // pendapatan bulan ini
-        $pendapatanBulanIni = Transaksi::whereBetween('waktu', [
-            $awalBulan,
-            $akhirBulan
-        ])->sum('total_harga');
+        // Batasi hasil pencarian maksimal 5 data (sesuai komentar Anda sebelumnya)
+        $menuTerlaris = (clone $baseQuery)->orderBy('total_terjual', 'desc')->take(5)->get();
+        $menuKurangLaris = (clone $baseQuery)->orderBy('total_terjual', 'asc')->take(5)->get();
 
-        // keuntungan bersih bulan ini
-        $keuntunganBersih = $pendapatanBulanIni - $totalModal;
-
+        // 4. Kirim Data ke View
         return view('dashboard.index', compact(
-            'jumlahMenu',
-            'jumlahTransaksi',
-            'totalPendapatan',
-            'totalModal',
-            'keuntunganBersih'
+            'jumlahMenu', 'jumlahTransaksi', 'totalPendapatan', 
+            'totalModal', 'keuntunganBersih', 'menuTerlaris', 'menuKurangLaris'
         ));
     }
 }
