@@ -118,9 +118,7 @@ class MenuController extends Controller
     public function destroy(Menu $menu)
     {
         // 1. Hapus file fisik di public/images
-        if ($menu->gambar) {
-            File::delete(public_path('images/' . $menu->gambar));
-        }
+      
 
         // 2. Hapus data di database
         $menu->delete();
@@ -142,4 +140,20 @@ class MenuController extends Controller
 
         return redirect()->route('menu.trash')->with('success', 'Menu berhasil direstore');
     }
+
+    public function forceDelete($id)
+{
+
+
+    // Cari data termasuk yang sudah di-soft delete
+    $menu = Menu::withTrashed()->findOrFail($id);
+      if ($menu->gambar) {
+            File::delete(public_path('images/' . $menu->gambar));
+        }
+    // Hapus permanen dari database
+    $menu->forceDelete();
+
+    return redirect()->back()->with('success', 'Data berhasil dimusnahkan!');
+}
+
 }

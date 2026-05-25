@@ -1,344 +1,142 @@
-// =====================================
-// GLOBAL
-// =====================================
+// Array global untuk menampung item di keranjang belanja
 let cart = [];
-let csrfToken = '';
 
+document.addEventListener('DOMContentLoaded', () => {
 
-// =====================================
-// DOM READY
-// =====================================
-document.addEventListener('DOMContentLoaded', function () {
+    // ==========================================
+    // 1. FITUR: TAMBAH MENU KE KERANJANG
+    // ==========================================
+    document.querySelectorAll('.btn-add').forEach(button => {
+        button.addEventListener('click', function () {
+            // Mengambil data produk langsung dari atribut data HTML tombol
+            const id = this.dataset.id;
+            const nama = this.dataset.nama;
+            const harga = parseInt(this.dataset.harga) || 0;
 
-    // ambil csrf token
-    csrfToken =
-        document.querySelector('meta[name="csrf-token"]')
-            ?.getAttribute('content') || '';
+            // Cek apakah item tersebut sudah pernah dimasukkan ke keranjang
+            const existingMenu = cart.find(item => item.id == id);
 
-    console.log('csrf = ', csrfToken);
-
-
-    // =================================
-    // KLIK MENU -> MASUK KERANJANG
-    // =================================
-    document.querySelectorAll('.btn-add-to-cart').forEach(card => {
-
-        card.addEventListener('click', function () {
-
-            let id = this.dataset.id;
-            let nama = this.dataset.nama;
-            let harga = parseInt(this.dataset.harga);
-
-            let item = cart.find(x => x.menu_id == id);
-
-            if (item) {
-
-                item.jumlah++;
-
+            if (existingMenu) {
+                existingMenu.jumlah++; // Jika sudah ada, cukup naikkan jumlahnya
             } else {
-
-                cart.push({
-                    menu_id: id,
-                    nama: nama,
-                    harga: harga,
-                    jumlah: 1
-                });
-
+                cart.push({ id, nama, harga, jumlah: 1 }); // Jika belum ada, buat objek baru
             }
 
             renderCart();
-
         });
-
     });
 
+    // ==========================================
+    // 2. FITUR: INPUT & FORMATTING UANG BAYAR
+    // ==========================================
+    const inputBayar = document.getElementById('uang_bayar');
 
-    // =================================
-    // INPUT BAYAR
-    // =================================
-    const uangBayar = document.getElementById('uang_bayar');
+    inputBayar.addEventListener('input', function () {
+        // Hapus semua karakter non-angka saat user mengetik
+        const angkaMurni = this.value.replace(/\D/g, '');
+        // Format ulang angkanya menjadi format Rupiah yang rapi
+        this.value = formatRupiah(angkaMurni);
+        hitungKembalian();
+    });
 
-    if (uangBayar) {
-        uangBayar.addEventListener('input', hitungKembalian);
-    }
+    // ==========================================
+    // 3. FITUR: VALIDASI & SUBMIT TRANSAKSI
+    // ==========================================
+    document.getElementById('form-transaksi').addEventListener('submit', function (e) {
+        if (cart.length === 0) {
+            e.preventDefault();
+            return alert('Keranjang masih kosong!');
+        }
 
+        const total = getAngkaMurni('total_harga');
+        const bayar = getAngkaMurni('uang_bayar');
 
-    // =================================
-    // SEARCH MENU
-    // =================================
-    const searchMenu = document.getElementById('search-menu');
+        if (bayar < total) {
+            e.preventDefault();
+            return alert('Uang bayar masih kurang!');
+        }
 
-    if (searchMenu) {
-        searchMenu.addEventListener('keyup', filterMenu);
-    }
+        // Konversi array keranjang belanja menjadi JSON String untuk dikirim ke backend
+        document.getElementById('menu').value = JSON.stringify(cart);
 
-
-    // =================================
-    // FILTER KATEGORI
-    // =================================
-    const filterKategori =
-        document.getElementById('filter-kategori');
-
-    if (filterKategori) {
-        filterKategori.addEventListener('change', filterMenu);
-    }
-
-
-    // =================================
-    // BUTTON SIMPAN CUSTOMER
-    // =================================
-    const btnCustomer =
-        document.getElementById('btn-simpan-customer');
-
-    if (btnCustomer) {
-        btnCustomer.addEventListener('click', simpanCustomer);
-    }
-
-
-    // =================================
-    // SUBMIT FORM TRANSAKSI
-    // TANPA AJAX
-    // =================================
-    const formTransaksi =
-        document.getElementById('form-transaksi');
-
-    if (formTransaksi) {
-
-        formTransaksi.addEventListener('submit', function (e) {
-
-            // validasi cart kosong
-            if (cart.length === 0) {
-
-                e.preventDefault();
-
-                alert('Keranjang kosong');
-
-                return;
-            }
-
-            // kirim cart ke hidden input
-            document.getElementById('items').value =
-                JSON.stringify(cart);
-
-        });
-
-    }
-
+        // Kembalikan nilai input menjadi angka murni sebelum dikirim ke server/database
+        document.getElementById('total_harga').value = total;
+        document.getElementById('uang_bayar').value = bayar;
+    });
 });
 
+// ==========================================
+// FUNGSI-FUNGSI UTALITAS (HELPER FUNCTIONS)
+// ==========================================
 
-// =====================================
-// SIMPAN CUSTOMER (AJAX)
-// =====================================
-function simpanCustomer() {
+// Fungsi mengubah angka mentah menjadi format Rupiah ber-titik
+function formatRupiah(angka) {
+    if (!angka) return '0';
+    return new Intl.NumberFormat('id-ID').format(angka);
+}
 
-    let nama =
-        document.getElementById('cust_nama').value;
+// Fungsi mengambil nilai dari input HTML dan membersihkan titiknya menjadi angka murni
+function getAngkaMurni(idElemen) {
+    const nilaiInput = document.getElementById(idElemen).value;
+    return parseInt(nilaiInput.replace(/\./g, '')) || 0;
+}
 
-    let no_hp =
-        document.getElementById('cust_no_hp').value;
+// Fungsi menghitung selisih uang kembalian secara real-time
+function hitungKembalian() {
+    const total = getAngkaMurni('total_harga');
+    const bayar = getAngkaMurni('uang_bayar');
 
-    if (!nama) {
+    document.getElementById('kembalian').value = formatRupiah(bayar - total);
+}
 
-        alert('Nama wajib diisi');
+// Fungsi memperbarui jumlah pesanan langsung dari input angka di tabel
+function updatejumlah(index, jumlah) {
+    let jumlahBaru = parseInt(jumlah);
 
-        return;
+    // Proteksi: Jika diinput minus, kosong, atau bukan angka, paksa kembali ke angka 1
+    if (jumlahBaru < 1 || isNaN(jumlahBaru)) {
+        jumlahBaru = 1;
     }
 
-    let formData = new FormData();
-
-    formData.append('nama', nama);
-    formData.append('no_hp', no_hp);
-    formData.append('_token', csrfToken);
-
-
-    fetch('/customer/store-ajax', {
-
-        method: 'POST',
-        credentials: 'same-origin',
-        body: formData
-
-    })
-
-        .then(res => res.json())
-
-        .then(data => {
-
-            let select =
-                document.getElementById('customer_id');
-
-            let option = new Option(
-
-                data.nama +
-                (data.no_hp ? ' (' + data.no_hp + ')' : ''),
-
-                data.id,
-                true,
-                true
-            );
-
-            select.append(option);
-
-            // reset input
-            document.getElementById('cust_nama').value = '';
-            document.getElementById('cust_no_hp').value = '';
-
-            // tutup modal
-            $('#modalCustomer').modal('hide');
-
-            alert('Customer berhasil ditambah');
-
-        })
-
-        .catch(err => {
-
-            console.log(err);
-
-            alert('Gagal simpan customer');
-
-        });
-
+    cart[index].jumlah = jumlahBaru;
+    renderCart();
 }
 
+// Fungsi menghapus satu baris menu berdasarkan posisinya di array
+function removemenu(index) {
+    cart.splice(index, 1);
+    renderCart();
+}
 
-// =====================================
-// RENDER CART
-// =====================================
+// Fungsi merender ulang seluruh isi tabel keranjang belanja
 function renderCart() {
+    const tbody = document.getElementById('cart-table');
+    let htmlContent = '';
+    let totalHarga = 0;
 
-    let tbody =
-        document.getElementById('cart-table');
+    cart.forEach((menu, index) => {
+        const subtotal = menu.jumlah * menu.harga;
+        totalHarga += subtotal;
 
-    let total = 0;
-
-    tbody.innerHTML = '';
-
-    cart.forEach((item, index) => {
-
-        let subtotal = item.harga * item.jumlah;
-
-        total += subtotal;
-
-        tbody.innerHTML += `
+        // Menyusun baris tabel menggunakan Template Literals (``)
+        htmlContent += `
             <tr>
-
-                <td>${item.nama}</td>
-
+                <td>${menu.nama}</td>
                 <td>
-                    <input
-                        type="number"
-                        min="1"
-                        value="${item.jumlah}"
-                        class="form-control form-control-sm"
-                        onchange="updateQty(${index}, this.value)">
+                    <input type="number" min="1" value="${menu.jumlah}" 
+                           onchange="updatejumlah(${index}, this.value)" class="form-control">
                 </td>
-
+                <td>${formatRupiah(subtotal)}</td>
                 <td>
-                    Rp ${subtotal.toLocaleString()}
+                    <button type="button" onclick="removemenu(${index})" class="btn btn-danger btn-sm">X</button>
                 </td>
-
-                <td>
-                    <button
-                        type="button"
-                        class="btn btn-danger btn-sm"
-                        onclick="removeItem(${index})">
-
-                        x
-
-                    </button>
-                </td>
-
             </tr>
         `;
-
     });
 
-    // update total
-    document.getElementById('total_harga').value = total;
+    tbody.innerHTML = htmlContent;
+    document.getElementById('total_harga').value = formatRupiah(totalHarga);
 
-    // hitung kembalian
+    // Setiap kali isi keranjang berubah, hitung ulang kembaliannya
     hitungKembalian();
-
-}
-
-
-// =====================================
-// UPDATE QTY
-// =====================================
-function updateQty(index, qty) {
-
-    cart[index].jumlah = parseInt(qty);
-
-    renderCart();
-
-}
-
-
-// =====================================
-// REMOVE ITEM
-// =====================================
-function removeItem(index) {
-
-    cart.splice(index, 1);
-
-    renderCart();
-
-}
-
-
-// =====================================
-// HITUNG KEMBALIAN
-// =====================================
-function hitungKembalian() {
-
-    let total =
-        parseInt(
-            document.getElementById('total_harga').value
-        ) || 0;
-
-    let bayar =
-        parseInt(
-            document.getElementById('uang_bayar').value
-        ) || 0;
-
-    document.getElementById('kembalian').value =
-        bayar - total;
-
-}
-
-
-// =====================================
-// FILTER MENU
-// =====================================
-function filterMenu() {
-
-    let keyword =
-        document.getElementById('search-menu')
-            .value
-            .toLowerCase();
-
-    let kategori =
-        document.getElementById('filter-kategori')
-            .value;
-
-    document.querySelectorAll('.menu-item')
-        .forEach(item => {
-
-            let nama = item.dataset.nama;
-
-            let kat = item.dataset.kategori;
-
-            let cocokNama =
-                nama.includes(keyword);
-
-            let cocokKategori =
-                kategori === '' || kategori === kat;
-
-            item.style.display =
-                (cocokNama && cocokKategori)
-                    ? 'block'
-                    : 'none';
-
-        });
-
 }

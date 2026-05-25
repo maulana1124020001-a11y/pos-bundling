@@ -56,7 +56,9 @@ Route::middleware(['auth'])->group(function () {
             ->name('menu.trash');
         Route::get('/menu-restore/{id}', [MenuController::class, 'restore'])
             ->name('menu.restore');
-            
+        Route::delete('/menu/{id}/force', [MenuController::class, 'forceDelete'])->name('menu.forceDelete');
+
+
         Route::resource('user', UserController::class);
         Route::resource('diskon', DiskonController::class);
 

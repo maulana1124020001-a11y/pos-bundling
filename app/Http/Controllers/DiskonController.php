@@ -39,7 +39,7 @@ class DiskonController extends Controller
             'diskon_nominal' => 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
 
-        // 🔥 Ambil harga menu
+        
         $menu = Menu::findOrFail($request->menu_id);
 
         // 🔥 Validasi tambahan

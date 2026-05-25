@@ -31,6 +31,6 @@ class Transaksi extends Model
     }
     public function customer()
     {
-        return $this->belongsto(Customer::class);
+        return $this->belongsto(Customer::class)->withTrashed();
     }
 }

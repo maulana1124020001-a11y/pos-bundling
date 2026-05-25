@@ -28,7 +28,7 @@
         <a href="{{ route('menu.trash') }}" 
            class="btn btn-danger btn-sm">
 
-            <i class="fas fa-trash"></i> Sampah
+            <i class="fas fa-trash-restore"></i> Sampah
         </a>
 
         <a href="{{ route('menu.create') }}" 
@@ -66,9 +66,7 @@
                             <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $m->nama }}</td>
                             <td>{{ $m?->kategori->nama_kategori ?? '-' }}</td>
-                            
                             <td>Rp {{ number_format($m->harga) }}</td>
-
                             <td>
                                 @if($m->gambar)
                                     <img src="{{ asset('images/'.$m->gambar) }}" width="70">
@@ -86,8 +84,8 @@
                             </td>
 
                             <td class="text-center">
-                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-info"></i>
+                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
                                 </a>
 
                                 <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">

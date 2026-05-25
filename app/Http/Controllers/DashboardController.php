@@ -2,81 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // =========================
-        // CARD
-        // =========================
+        // 1. Filter Waktu (Bulan Ini)
+        $awalBulan = Carbon::now()->startOfMonth();
+        $akhirBulan = Carbon::now()->endOfMonth();
 
-        $totalTransaksi = Transaksi::count();
+        // 2. Data Statistik Utama (Card)
+        $jumlahMenu = Menu::count();
+        
+        $jumlahTransaksi = Transaksi::whereBetween('waktu', [$awalBulan, $akhirBulan])->count();
+        
+        $totalPendapatan = Transaksi::whereBetween('waktu', [$awalBulan, $akhirBulan])->sum('total_harga');
 
-        $totalPendapatan = Transaksi::sum('total_harga');
+        // Hitung total modal langsung via relasi TransaksiDetail ke Menu
+       // Hitung total modal langsung via relasi TransaksiDetail ke Menu
+$totalModal = TransaksiDetail::whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
+        $query->whereBetween('waktu', [$awalBulan, $akhirBulan]);
+    })
+    ->join('menus', 'transaksi_details.menu_id', '=', 'menus.id') // Perbaikan nama tabel di sini
+    ->sum(DB::raw('menus.modal * transaksi_details.jumlah'));
+            
 
-        $totalModal = TransaksiDetail::with('menu')->get()->sum(function ($detail) {
-            return $detail->menu->modal * $detail->jumlah;
-        });
+        $keuntunganBersih = $totalPendapatan - $totalModal;
 
-        $keuntungan = $totalPendapatan - $totalModal;
+        // 3. Data Menu Terlaris & Kurang Laris
+        $baseQuery = TransaksiDetail::with('menu')
+            ->select('menu_id', DB::raw('SUM(jumlah) as total_terjual'))
+            ->whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
+                $query->whereBetween('waktu', [$awalBulan, $akhirBulan]);
+            })
+            ->groupBy('menu_id');
 
-        // =========================
-        // TRANSAKSI TERBARU
-        // =========================
+        // Batasi hasil pencarian maksimal 5 data (sesuai komentar Anda sebelumnya)
+        $menuTerlaris = (clone $baseQuery)->orderBy('total_terjual', 'desc')->get();
+        $menuKurangLaris = (clone $baseQuery)->orderBy('total_terjual', 'asc')->take(5)->get();
 
-        $transaksiTerbaru = Transaksi::with('user', 'customer')
-            ->latest()
-            ->take(10)
-            ->get();
-
-        // =========================
-        // TRANSAKSI PER BULAN
-        // =========================
-
-        $transaksiBulanan = Transaksi::select(
-                DB::raw('MONTH(waktu) as bulan'),
-                DB::raw('SUM(total_harga) as total')
-            )
-            ->groupBy(DB::raw('MONTH(waktu)'))
-            ->orderBy(DB::raw('MONTH(waktu)'))
-            ->get();
-
-        // Label bulan
-        $bulan = [
-            1 => 'Jan',
-            2 => 'Feb',
-            3 => 'Mar',
-            4 => 'Apr',
-            5 => 'Mei',
-            6 => 'Jun',
-            7 => 'Jul',
-            8 => 'Agu',
-            9 => 'Sep',
-            10 => 'Okt',
-            11 => 'Nov',
-            12 => 'Des'
-        ];
-
-        $labels = [];
-        $data = [];
-
-        foreach ($transaksiBulanan as $item) {
-            $labels[] = $bulan[$item->bulan];
-            $data[] = $item->total;
-        }
-
+        // 4. Kirim Data ke View
         return view('dashboard.index', compact(
-            'totalTransaksi',
-            'totalPendapatan',
-            'totalModal',
-            'keuntungan',
-            'transaksiTerbaru',
-            'labels',
-            'data'
+            'jumlahMenu', 'jumlahTransaksi', 'totalPendapatan', 
+            'totalModal', 'keuntunganBersih', 'menuTerlaris', 'menuKurangLaris'
         ));
     }
 }

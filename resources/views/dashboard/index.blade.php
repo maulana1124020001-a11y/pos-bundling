@@ -4,215 +4,285 @@
 
 <div class="container-fluid">
 
-    <!-- TITLE -->
-    <h1 class="h3 mb-4 text-gray-800">
-        Dashboard
-    </h1>
+    {{-- HEADER --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <!-- CARD -->
+        <div>
+            <h3 class="font-weight-bold text-gray-800 mb-1">
+                Dashboard
+            </h3>
+
+            <small class="text-muted">
+                {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+            </small>
+        </div>
+
+    </div>
+
+
+    {{-- CARD STATISTIK --}}
     <div class="row">
 
-        <!-- TOTAL TRANSAKSI -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+        {{-- JUMLAH MENU --}}
+        <div class="col-xl col-md-6 mb-4">
+
+            <div class="card shadow border-0 h-100">
 
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
 
-                        <div class="col mr-2">
+                    <div class="d-flex justify-content-between">
 
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Transaksi
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Jumlah Menu
                             </div>
 
-                            <div class="h4 mb-0 font-weight-bold text-gray-800">
-                                {{ $totalTransaksi }}
+                            <div class="h4 font-weight-bold">
+                                {{ $jumlahMenu }}
                             </div>
 
                         </div>
 
-                        <div class="col-auto">
-                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                        <div>
+                            <i class="fas fa-utensils fa-2x text-info"></i>
                         </div>
 
                     </div>
+
                 </div>
 
             </div>
+
         </div>
 
-        <!-- KEUNTUNGAN -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+
+        {{-- MODAL --}}
+        <div class="col-xl col-md-6 mb-4">
+
+            <div class="card shadow border-0 h-100">
 
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
 
-                        <div class="col mr-2">
+                    <div class="d-flex justify-content-between">
 
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Keuntungan
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Modal
                             </div>
 
-                            <div class="h4 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($keuntungan,0,',','.') }}
-                            </div>
-
-                        </div>
-
-                        <div class="col-auto">
-                            <i class="fas fa-coins fa-2x text-gray-300"></i>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- MODAL -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-
-                        <div class="col mr-2">
-
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                Modal / Kerugian
-                            </div>
-
-                            <div class="h4 mb-0 font-weight-bold text-gray-800">
+                            <div class="h4 font-weight-bold">
                                 Rp {{ number_format($totalModal,0,',','.') }}
                             </div>
 
                         </div>
 
-                        <div class="col-auto">
-                            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                        <div>
+                            <i class="fas fa-wallet fa-2x text-primary"></i>
                         </div>
 
                     </div>
+
                 </div>
 
             </div>
+
         </div>
 
-    </div>
 
-    <!-- GRAFIK -->
-    <div class="card shadow mb-4">
+        {{-- KEUNTUNGAN --}}
+        <div class="col-xl col-md-6 mb-4">
 
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                Grafik Transaksi Perbulan
-            </h6>
-        </div>
+            <div class="card shadow border-0 h-100">
 
-        <div class="card-body">
-            <canvas id="chartBulanan"></canvas>
-        </div>
+                <div class="card-body">
 
-    </div>
+                    <div class="d-flex justify-content-between">
 
-    <!-- TRANSAKSI TERBARU -->
-    <div class="card shadow">
+                        <div>
 
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                Transaksi Terbaru
-            </h6>
-        </div>
+                            <div class="text-xs text-muted mb-2">
+                                Keuntungan
+                            </div>
 
-        <div class="card-body">
+                            <div class="h4 font-weight-bold text-success">
+                                Rp {{ number_format($keuntunganBersih,0,',','.') }}
+                            </div>
 
-            <div class="table-responsive">
+                        </div>
 
-                <table class="table table-bordered">
+                        <div>
+                            <i class="fas fa-chart-line fa-2x text-success"></i>
+                        </div>
 
-                    <thead class="thead-light">
-                        <tr>
-                            <th>No</th>
-                            <th>Kasir</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Pembayaran</th>
-                            <th>Waktu</th>
-                        </tr>
-                    </thead>
+                    </div>
 
-                    <tbody>
-
-                        @forelse($transaksiTerbaru as $t)
-                        <tr>
-
-                            <td>{{ $loop->iteration }}</td>
-
-                            <td>{{ $t->user->nama ?? '-' }}</td>
-
-                            <td>{{ $t->customer->nama ?? 'Umum' }}</td>
-
-                            <td>
-                                Rp {{ number_format($t->total_harga,0,',','.') }}
-                            </td>
-
-                            <td>
-                                {{ ucfirst($t->metode_pembayaran) }}
-                            </td>
-
-                            <td>
-                                {{ $t->waktu }}
-                            </td>
-
-                        </tr>
-                        @empty
-
-                        <tr>
-                            <td colspan="6" class="text-center">
-                                Belum ada transaksi
-                            </td>
-                        </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </div>
 
+
+        {{-- PENJUALAN --}}
+        <div class="col-xl col-md-6 mb-4">
+
+            <div class="card shadow border-0 h-100 ">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Total Penjualan
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                Rp {{ number_format($totalPendapatan,0,',','.') }}
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <i class="fas fa-dollar-sign fa-2x text-primary"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- TRANSAKSI --}}
+        <div class="col-xl col-md-6 mb-4">
+
+            <div class="card shadow border-0 h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <div class="text-xs text-muted mb-2">
+                                Jumlah Transaksi
+                            </div>
+
+                            <div class="h4 font-weight-bold">
+                                {{ $jumlahTransaksi }}
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <i class="fas fa-shopping-cart fa-2x text-secondary"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    {{-- ROW BAWAH --}}
+    <div class="row">
+
+        {{-- TABEL MENU --}}
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-white">
+
+                    <h6 class="font-weight-bold mb-0">
+                        Tabel Menu Terlaris
+                    </h6>
+
+                </div>
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover mb-0">
+
+                            <thead class="bg-light">
+
+                                <tr>
+
+                                    <th>No</th>
+                                    <th>Menu</th>
+                                    <th>Terjual</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach($menuTerlaris as $index => $item)
+
+                                <tr>
+
+                                    <td>
+                                        {{ $index + 1 }}
+                                    </td>
+
+                                    <td>
+
+                                        <div class="font-weight-bold">
+                                            {{ $item->menu->nama ?? '-' }}
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="badge badge-success px-3 py-2">
+
+                                            {{ $item->total_terjual }}
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+       
     </div>
 
 </div>
 
-<!-- CHART JS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    const ctx = document.getElementById('chartBulanan');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: @json($labels),
-            datasets: [{
-                label: 'Pendapatan',
-                data: @json($data),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
+
 
 @endsection

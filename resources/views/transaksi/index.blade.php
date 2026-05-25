@@ -48,19 +48,19 @@
                             <td>Rp {{ number_format($t->uang_bayar,0,',','.') }}</td>
                             <td>Rp {{ number_format($t->kembalian,0,',','.') }}</td>
                             <td>{{ $t->metode_pembayaran }}</td>
-                            <td>{{ $t->customer->nama ?? '-' }}</td>
+                            <td>{{ $t?->customer->nama ?? '-' }}</td>
                             <td>{{ $t->waktu }}</td>
                             <td>
                                 <a href="{{ route('transaksi.show', $t->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-info"></i>
+                                    <i class="fas fa-receipt"></i>
                                 </a>
-                                <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
+                                <!-- <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </form>
+                                </form> -->
                             </td>
                         </tr>
                         @empty
