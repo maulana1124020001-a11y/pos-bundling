@@ -128,7 +128,7 @@
         {{-- PENJUALAN --}}
         <div class="col-xl col-md-6 mb-4">
 
-            <div class="card shadow border-0 h-100">
+            <div class="card shadow border-0 h-100 ">
 
                 <div class="card-body">
 
@@ -276,66 +276,13 @@
 
 
 
-        {{-- GRAFIK --}}
-        <div class="col-lg-6 mb-4">
-
-            <div class="card shadow border-0">
-
-                <div class="card-header bg-white">
-
-                    <h6 class="font-weight-bold mb-0">
-                        Grafik Penjualan
-                    </h6>
-
-                </div>
-
-                <div class="card-body">
-
-                    <canvas id="chartPenjualan" height="120"></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
+       
     </div>
 
 </div>
 
 
 
-{{-- CHART JS --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-
-const ctx = document.getElementById('chartPenjualan');
-
-new Chart(ctx, {
-
-    type: 'line',
-
-    data: {
-
-        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-
-        datasets: [{
-
-            label: 'Penjualan',
-
-            data: [12, 19, 8, 15, 20, 30, 25],
-
-            borderWidth: 2,
-
-            fill: true
-
-        }]
-
-    }
-
-});
-
-</script>
 
 @endsection

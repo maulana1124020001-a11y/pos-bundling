@@ -43,7 +43,7 @@ $totalModal = TransaksiDetail::whereHas('transaksi', function ($query) use ($awa
             ->groupBy('menu_id');
 
         // Batasi hasil pencarian maksimal 5 data (sesuai komentar Anda sebelumnya)
-        $menuTerlaris = (clone $baseQuery)->orderBy('total_terjual', 'desc')->take(5)->get();
+        $menuTerlaris = (clone $baseQuery)->orderBy('total_terjual', 'desc')->get();
         $menuKurangLaris = (clone $baseQuery)->orderBy('total_terjual', 'asc')->take(5)->get();
 
         // 4. Kirim Data ke View

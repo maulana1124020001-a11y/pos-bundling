@@ -35,9 +35,14 @@ class TransaksiController extends Controller
     public function create()
     {
         // ambil data menu beserta diskonnya yang statusnya tersedia dan urutkan dari yang terbaru
-    $menus = Menu::with('diskon', 'kategori')->where('status', 'tersedia')->latest()->get();
+    $menus = Menu::with('diskon', 'kategori')
+    ->where('status', 'tersedia')
+    ->latest()
+    ->get();
+
     $customers = Customer:: latest()->get();
-    $kategoris = Kategori::get();
+
+    $kategoris = Kategori::all();
 
         // tampilkan ke view dengan membawa data menu
         return view('transaksi.create',compact('menus', 'customers', 'kategoris'));
@@ -53,8 +58,7 @@ class TransaksiController extends Controller
 
         'total_harga' => 'required|numeric',
 
-        'uang_bayar' =>
-            'required|numeric|min:' . $request->total_harga,
+        'uang_bayar' =>'required|numeric|min:' . $request->total_harga,
 
         'metode_pembayaran' => 'required',
 
@@ -69,52 +73,6 @@ class TransaksiController extends Controller
 
 
     // =========================
-    // CUSTOMER
-    // =========================
-
-   
-
-    // jika nama customer diisi
-    $customerId = null;
-
-
-
-// =========================
-// JIKA PILIH CUSTOMER LAMA
-// =========================
-
-if ($request->customer_id) {
-
-    $customerId = $request->customer_id;
-
-}
-
-
-
-// =========================
-// JIKA TAMBAH CUSTOMER BARU
-// =========================
-
-elseif ($request->nama_customer) {
-
-    $customer = Customer::firstOrCreate(
-
-        [
-            'nama' => $request->nama_customer
-        ],
-
-        [
-            'no_hp' => $request->no_hp
-        ]
-
-    );
-
-    $customerId = $customer->id;
-
-}
-
-
-    // =========================
     // SIMPAN TRANSAKSI
     // =========================
 
@@ -122,7 +80,7 @@ elseif ($request->nama_customer) {
 
         'user_id' => Auth::id(),
 
-        'customer_id' => $customerId,
+        'customer_id' => $request->customer_id,
 
         'total_harga' => $request->total_harga,
 
@@ -168,7 +126,7 @@ elseif ($request->nama_customer) {
 
 
     return redirect()
-        ->route('transaksi.index')
+        ->route('transaksi.show', $transaksi->id)
         ->with('success', 'Transaksi berhasil');
 }
 
