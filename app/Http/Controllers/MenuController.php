@@ -118,7 +118,6 @@ class MenuController extends Controller
     public function destroy(Menu $menu)
     {
         // 1. Hapus file fisik di public/images
-      
 
         // 2. Hapus data di database
         $menu->delete();
@@ -126,34 +125,34 @@ class MenuController extends Controller
         return redirect()->route('menu.index')->with('success', 'Menu dan gambar terhapus');
     }
 
-    public function trash()
-{
-    $menus = Menu::onlyTrashed()->get();
+//     public function trash()
+// {
+//     $menus = Menu::onlyTrashed()->get();
 
-    return view('menu.trash', compact('menus'));
-}
+//     return view('menu.trash', compact('menus'));
+// }
 
-    public function restore($id)
-    {
-        $menu = Menu::onlyTrashed()->findOrFail($id);
-        $menu->restore();
+//     public function restore($id)
+//     {
+//         $menu = Menu::onlyTrashed()->findOrFail($id);
+//         $menu->restore();
 
-        return redirect()->route('menu.trash')->with('success', 'Menu berhasil direstore');
-    }
+//         return redirect()->route('menu.trash')->with('success', 'Menu berhasil direstore');
+//     }
 
-    public function forceDelete($id)
-{
+//     public function forceDelete($id)
+// {
 
 
-    // Cari data termasuk yang sudah di-soft delete
-    $menu = Menu::withTrashed()->findOrFail($id);
-      if ($menu->gambar) {
-            File::delete(public_path('images/' . $menu->gambar));
-        }
-    // Hapus permanen dari database
-    $menu->forceDelete();
+//     // Cari data termasuk yang sudah di-soft delete
+//     $menu = Menu::withTrashed()->findOrFail($id);
+//       if ($menu->gambar) {
+//             File::delete(public_path('images/' . $menu->gambar));
+//         }
+//     // Hapus permanen dari database
+//     $menu->forceDelete();
 
-    return redirect()->back()->with('success', 'Data berhasil dimusnahkan!');
-}
+//     return redirect()->back()->with('success', 'Data berhasil dimusnahkan!');
+// }
 
 }

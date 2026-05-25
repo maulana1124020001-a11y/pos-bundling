@@ -1,17 +1,19 @@
 @extends('layouts.app')
-
 @section('content')
+
 <div class="container-fluid px-2 px-md-3">
-    <!-- vh-100 memastikan area kasir mengunci tinggi layar PC agar bisa dual-scroll -->
+    
     <div class="row vh-100 overflow-hidden">
 
         <!-- KIRI: ETALASE MENU (Bisa di-scroll mandiri) -->
         <div class="col-12 col-lg-7 pb-5 h-100 overflow-auto">
-            <!-- Form Pencarian & Filter Kategori -->
+           
             <div class="row g-2 mb-3 sticky-top bg-white pt-2 pb-1" style="z-index: 10;">
+
                 <div class="col-12 col-sm-6">
                     <input type="text" id="search" class="form-control form-control-sm" placeholder="Cari menu...">
                 </div>
+
                 <div class="col-12 col-sm-6">
                     <select id="filter-kategori" class="form-control form-control-sm">
                         <option value="">Semua Kategori</option>
@@ -20,10 +22,12 @@
                         @endforeach
                     </select>
                 </div>
+
             </div>
 
-            <!-- Grid Daftar Menu -->
+            <!-- Daftar Menu -->
             <div class="row row-cols-2 row-cols-sm-3 row-cols-md-3 row-cols-xl-4 g-2" id="menu-wrapper">
+
                 @foreach($menus as $menu)
                 <div class="col mb-2 menu-item-target">
                     <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
@@ -63,7 +67,7 @@
             </div>
         </div>
 
-        <!-- KANAN: PANEL KERANJANG BELANJA -->
+        <!-- KERANJANG BELANJA -->
         <div class="col-12 col-lg-5 mb-4">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white p-2 p-md-3">
@@ -170,6 +174,7 @@
 
     </div>
 </div>
+
 
 <!-- MODAL POPUP: TAMBAH CUSTOMER BARU -->
 <div class="modal fade" id="modalCustomer" tabindex="-1">

@@ -61,7 +61,7 @@ class CustomerController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'no_hp' => 'numeric', 'nullable',
+            'no_hp' => 'nullable|numeric',
         ]);
 
         $customer->update($request->all());
