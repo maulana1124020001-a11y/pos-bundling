@@ -25,7 +25,7 @@
         }
 
         .bg-login-image {
-            background: url('{{ asset('img/2.png') }}');
+            background: url('{{ asset('img/4.jpg') }}');
             background-position: center;
             background-size: cover;
         }
