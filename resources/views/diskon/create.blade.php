@@ -27,6 +27,19 @@
                 <!-- Body -->
                 <div class="card-body">
 
+                    <!-- VALIDASI ERROR -->
+                    @if ($errors->any())
+                        <!-- alert bootstrap -->
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <!-- looping semua error -->
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form action="{{ route('diskon.store') }}" method="POST">
                         @csrf
 

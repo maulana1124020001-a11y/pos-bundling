@@ -33,7 +33,7 @@
                 <div class="card-body">
 
                     <!-- VALIDASI ERROR -->
-                    @if ($errors->any())
+                    {{-- @if ($errors->any())
                         <!-- alert bootstrap -->
                         <div class="alert alert-danger">
                             <ul class="mb-0">
@@ -43,7 +43,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <!-- FORM UPDATE -->
                     <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
