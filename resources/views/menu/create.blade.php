@@ -28,7 +28,7 @@
                     <!-- Body -->
                     <div class="card-body">
 
-                        <!-- VALIDASI ERROR -->
+                        <!-- VALIDASI ERROR berbentuk daftar -->
                         @if ($errors->any())
                             <!-- alert bootstrap -->
                             <div class="alert alert-danger">

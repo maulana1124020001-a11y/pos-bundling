@@ -27,7 +27,7 @@
                 <!-- Body -->
                 <div class="card-body">
 
-                    <!-- VALIDASI ERROR -->
+                    <!-- VALIDASI ERROR berbentuk harga -->
                     @if ($errors->any())
                         <!-- alert bootstrap -->
                         <div class="alert alert-danger">
@@ -186,11 +186,11 @@
                                     </div>
                                 </div>
                                
-                                @error('diskon_persen')
+                                {{-- @error('diskon_persen')
                                     <small class="text-danger">
                                         {{ $message }}
                                     </small>
-                                @enderror
+                                @enderror --}}
 
                                 {{-- Nominal --}}
                                 <div id="input_nominal" class="col-md-6" style="display:none;">
@@ -202,11 +202,11 @@
                             </div>
                            
 
-                            @error('diskon_nominal')
+                            {{-- @error('diskon_nominal')
                                 <small class="text-danger">
                                     {{ $message }}
                                 </small>
-                            @enderror
+                            @enderror --}}
 
 
                             <div class="row">
