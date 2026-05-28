@@ -25,11 +25,11 @@
 
     <div>
 
-        {{-- <a href="{{ route('menu.trash') }}" 
+        {{-- {{-- <a href="{{ route('menu.trash') }}" 
            class="btn btn-danger btn-sm">
 
             <i class="fas fa-trash-restore"></i> Sampah
-        </a>
+        </a> --}}
 
         <a href="{{ route('menu.create') }}" 
            class="btn btn-primary btn-sm">
