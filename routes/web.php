@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('user', UserController::class);
         Route::resource('diskon', DiskonController::class);
+        
+
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
     });
 

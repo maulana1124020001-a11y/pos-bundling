@@ -2,126 +2,86 @@
 
 namespace App\Http\Controllers;
 
-// Import model yang akan dipakai
 use App\Models\Menu;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
-
-// Import Carbon untuk mengatur tanggal
 use Carbon\Carbon;
-
-// Import DB untuk query perhitungan SQL
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-
-
+        // Ambil tanggal awal dan akhir bulan sekarang
         $awalBulan = Carbon::now()->startOfMonth();
         $akhirBulan = Carbon::now()->endOfMonth();
 
-
+        // Hitung jumlah seluruh menu
         $jumlahMenu = Menu::count();
 
-        $jumlahTransaksi = Transaksi::whereBetween(
-            'waktu',
-            [$awalBulan, $akhirBulan]
-        )->count();
+        // Ambil transaksi bulan ini
+        $transaksiBulanIni = Transaksi::whereBetween('waktu', [ $awalBulan, $akhirBulan]);
 
-        $totalPendapatan = Transaksi::whereBetween(
-            'waktu',
-            [$awalBulan, $akhirBulan]
-        )->sum('total_harga');
+        // Hitung jumlah transaksi
+        $jumlahTransaksi = $transaksiBulanIni->count();
 
+        // Hitung total pendapatan
+        $totalPendapatan = $transaksiBulanIni->sum('total_harga');
 
+        // Hitung total modal bulan ini dengan join ke tabel menu untuk mendapatkan harga modal per menu dan kalikan dengan jumlah yang terjual fungsi dari = 
+        $totalModal = TransaksiDetail::join('menus','transaksi_details.menu_id','=','menus.id')
+            ->whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {$query->whereBetween('waktu', [$awalBulan,$akhirBulan]); })
+            ->sum(DB::raw('menus.modal * transaksi_details.jumlah'));
 
-       
-
-        $totalModal = TransaksiDetail::whereHas(
-            'transaksi',
-            function ($query) use ($awalBulan, $akhirBulan) {
-
-                // hanya mengambil transaksi bulan ini
-                $query->whereBetween(
-                    'waktu',
-                    [$awalBulan, $akhirBulan]
-                );
-            }
-        )
-
-        // menghubungkan tabel transaksi_details dengan menus
-        ->join(
-            'menus',
-            'transaksi_details.menu_id',
-            '=',
-            'menus.id'
-        )
-
-        // menghitung:
-        // modal menu x jumlah terjual
-        ->sum(
-            DB::raw('menus.modal * transaksi_details.jumlah')
-        );
-
+        // Keuntungan bersih
         $keuntunganBersih = $totalPendapatan - $totalModal;
 
-      /*
-|--------------------------------------------------------------------------
-| FILTER URUTAN MENU
-|--------------------------------------------------------------------------
-|
-| desc = paling laris
-| asc  = paling tidak laris
-|
-| default:
-| desc
-|
-|--------------------------------------------------------------------------
-*/
+       
+        $filter = request('filter', 'desc');
 
-$filter = request('filter', 'desc');
+        $semuaMenu = TransaksiDetail::with('menu')
+            ->select('menu_id', DB::raw('SUM(jumlah) as total_terjual') )
+
+            // Filter transaksi bulan ini
+            ->whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
+                $query->whereBetween('waktu', [
+                    $awalBulan,
+                    $akhirBulan
+                ]);
+            })
+
+            // Kelompokkan berdasarkan menu
+            ->groupBy('menu_id')
+
+            // Urutkan berdasarkan total terjual
+            ->orderBy('total_terjual', $filter)
+
+            ->get();
 
 
-/*
-|--------------------------------------------------------------------------
-| SEMUA MENU + TOTAL TERJUAL
-|--------------------------------------------------------------------------
-*/
-
-$semuaMenu = TransaksiDetail::with('menu')
-
-    ->select(
-        'menu_id',
-        DB::raw('SUM(jumlah) as total_terjual')
+            $penjualanHarian = Transaksi::select(
+        DB::raw('DATE(waktu) as tanggal'),
+        DB::raw('SUM(total_harga) as total')
     )
 
-    ->whereHas('transaksi', function ($query) use ($awalBulan, $akhirBulan) {
+    ->whereBetween('waktu', [$awalBulan, $akhirBulan])
 
-        $query->whereBetween(
-            'waktu',
-            [$awalBulan, $akhirBulan]
-        );
+    ->groupBy('tanggal')
 
-    })
-
-    ->groupBy('menu_id')
-
-    // urutan dinamis
-    ->orderBy('total_terjual', $filter)
+    ->orderBy('tanggal', 'asc')
 
     ->get();
 
-
-       return view('dashboard.index', compact(
-    'jumlahMenu',
-    'jumlahTransaksi',
-    'totalPendapatan',
-    'totalModal',
-    'keuntunganBersih',
-    'semuaMenu',
-    'filter'
-));
+        // Kirim data ke view dashboard
+        return view('dashboard.index', compact(
+            'jumlahMenu',
+            'jumlahTransaksi',
+            'totalPendapatan',
+            'totalModal',
+            'keuntunganBersih',
+            'semuaMenu',
+            'filter',
+            'penjualanHarian',
+        ));
     }
 }
