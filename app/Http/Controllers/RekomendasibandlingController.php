@@ -112,13 +112,21 @@ class RekomendasibandlingController extends Controller
     }
 
     // 🌟 FUNGSI BARU DI BAWAH INI UNTUK MENYIMPAN DATA BUNDLING
-   public function simpanBundling(Request $request)
+  public function simpanBundling(Request $request)
 {
     $request->validate([
         'nama_bundling' => 'required|string|max:255',
         'menu_a_id' => 'required',
         'menu_b_id' => 'required',
     ]);
+
+    // Ambil data detail dari Menu A dan Menu B untuk kalkulasi harga
+    $menuA = Menu::find($request->menu_a_id);
+    $menuB = Menu::find($request->menu_b_id);
+
+    // Hitung akumulasi modal dan harga jual dari kedua menu
+    $totalModal = ($menuA ? $menuA->modal : 0) + ($menuB ? $menuB->modal : 0);
+    $totalHarga = ($menuA ? $menuA->harga : 0) + ($menuB ? $menuB->harga : 0);
 
     // 1. Simpan relasi ke tabel bundlings
     Bundling::create([
@@ -127,19 +135,17 @@ class RekomendasibandlingController extends Controller
         'menu_b_id' => $request->menu_b_id,
     ]);
 
-    // Ambil data Menu A untuk menyontek nilai kategori, gambar, modal, dan statusnya
-    $menuA = Menu::find($request->menu_a_id);
-
-    // 2. Simpan sebagai Menu baru ke tabel menus sesuai isi $fillable Anda
+    // 2. Simpan sebagai Menu baru ke tabel menus dengan penyesuaian request Anda
     Menu::create([
         'kategori_id' => $menuA ? $menuA->kategori_id : 1, // Ikut kategori Menu A
         'nama'        => $request->nama_bundling,          // Nama paket bundling
-        'gambar'      => $menuA ? $menuA->gambar : null,   // Ikut gambar Menu A (atau kosongi)
-        'modal'       => 0,                                // Nilai modal awal paket
-        'harga'       => 0,                                // Nilai jual awal paket
-        'status'      => $menuA ? $menuA->status : 'aktif',// Ikut status Menu A (misal: aktif/tersedia)
+        'gambar'      => '',                               // 🌟 Set gambar menjadi string kosong
+        'modal'       => $totalModal,                      // 🌟 Hasil tambah modal A + B
+        'harga'       => $totalHarga,                      // 🌟 Hasil tambah harga A + B
+        'status'      => 'tersedia',                       // 🌟 Set status menjadi 'tersedia'
     ]);
 
-    return redirect()->back()->with('success', 'Bundling berhasil disimpan dan didaftarkan ke Menu!');
+    return redirect()->back()->with('success', 'Bundling berhasil disimpan dengan kalkulasi harga gabungan!');
 }
+
 }
