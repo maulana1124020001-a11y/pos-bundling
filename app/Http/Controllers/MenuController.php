@@ -14,7 +14,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::with('kategori')->get();
+        $menus = Menu::with('kategori')->latest()->get();
         return view('menu.index', compact('menus'));
     }
 
