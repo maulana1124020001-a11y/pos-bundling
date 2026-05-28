@@ -11,6 +11,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RekomendasibandlingController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +68,13 @@ Route::middleware(['auth'])->group(function () {
         
 
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/rekomendasi', [RekomendasibandlingController::class, 'index'])->name('rekomendasi.index');
+
+        
+// Taruh baris ini di bawah route rekomendasi index Anda
+Route::post('/rekomendasi/simpan-bundling', [RekomendasibandlingController::class, 'simpanBundling'])
+     ->name('rekomendasi.simpan-bundling');
+
 
     });
 
