@@ -36,7 +36,7 @@ class AuthController extends Controller
 
             // redirect berdasarkan role
             if ($user->role_id == 1) {
-                return redirect()->intended(route('transaksi.index'));
+                return redirect()->intended(route('dashboard'));
             }
 
             return redirect()->intended('/transaksi/create');

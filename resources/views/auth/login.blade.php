@@ -25,7 +25,7 @@
         }
 
         .bg-login-image {
-            background: url('{{ asset('img/2.png') }}');
+            background: url('{{ asset('img/4.jpg') }}');
             background-position: center;
             background-size: cover;
         }
@@ -75,16 +75,6 @@
                                     <div class="form-group">
                                         <input type="password" name="password" class="form-control form-control-user"
                                             placeholder="Password" required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" name="remember" class="custom-control-input"
-                                                id="customCheck">
-                                            <label class="custom-control-label" for="customCheck">
-                                                Remember Me
-                                            </label>
-                                        </div>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary btn-user btn-block">

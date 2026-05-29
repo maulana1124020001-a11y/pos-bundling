@@ -32,7 +32,7 @@
                 <!-- Body Card -->
                 <div class="card-body">
 
-                    <!-- VALIDASI ERROR -->
+                    <!-- VALIDASI ERROR berbentuk daftar -->
                     @if ($errors->any())
                         <!-- alert bootstrap -->
                         <div class="alert alert-danger">
@@ -50,27 +50,23 @@
                         @csrf
                         @method('PUT') <!-- method PUT untuk update data -->
 
-                        <!-- INPUT NAMA -->
                         <div class="form-group">
                             <label class="font-weight-bold">Nama Kategori</label>
 
-                            <!-- 
-                                old() = agar value tidak hilang saat error
-                                $kategori->nama_kategori = isi default dari database
-                            -->
                             <input type="text"
                                    name="nama_kategori"
                                    value="{{ old('nama_kategori', $kategori->nama_kategori) }}"
                                    class="form-control @error('nama_kategori') is-invalid @enderror"
                                    placeholder="Masukkan nama kategori"
                                    required>
+                                   {{-- is-invalid = otomatis merah kalau error --}}
 
-                            <!-- error per field -->
-                            @error('nama_kategori')
+                            <!-- tampilkan error di bawah form -->
+                            {{-- @error('nama_kategori')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
-                            @enderror
+                            @enderror --}}
                         </div>
 
                         <!-- garis pembatas -->

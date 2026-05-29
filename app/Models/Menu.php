@@ -33,7 +33,7 @@ class Menu extends Model
     // Semua diskon (history)
     public function diskons()
     {
-        return $this->hasMany(Diskon::class, 'menu_id');
+        return $this->hasOne(Diskon::class, 'menu_id');
     }
 
     // Ambil 1 diskon yang sedang aktif

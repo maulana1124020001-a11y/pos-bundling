@@ -45,10 +45,12 @@
                             <td>{{ $k->nama_kategori }}</td>
                             <td class="text-center">
 
+                                {{-- button edit --}}
                                 <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
 
+                                {{-- button delete --}}
                                 <form action="{{ route('kategori.destroy', $k->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

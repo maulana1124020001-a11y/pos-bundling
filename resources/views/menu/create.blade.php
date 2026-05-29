@@ -28,6 +28,19 @@
                     <!-- Body -->
                     <div class="card-body">
 
+                        <!-- VALIDASI ERROR berbentuk daftar -->
+                        @if ($errors->any())
+                            <!-- alert bootstrap -->
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <!-- looping semua error -->
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">
 
                             @csrf
@@ -42,7 +55,7 @@
                                             Kategori
                                         </label>
 
-                                        <select name="kategori_id" class="form-control" required>
+                                        <select name="kategori_id" class="form-control"required>
 
                                             <option value="" selected disabled>
                                                 Pilih Kategori...
