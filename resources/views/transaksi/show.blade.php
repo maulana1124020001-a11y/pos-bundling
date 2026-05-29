@@ -3,135 +3,133 @@
 @section('content')
 
 <style>
-    body{
-        background:#eee;
-        font-family:monospace; /* Menggunakan font monospace agar jarak antar karakter konsisten seperti struk kasir asli */
+    body {
+        background: #eee;
+        font-family: 'Courier New', Courier, monospace; /* Memaksa font monospace standar printer */
     }
 
-    .struk{
-        width:58mm; /* Standar ukuran lebar kertas printer thermal mini */
-        margin:auto;
-        background:#fff;
-        padding:8px;
-        font-size:11px;
-        color:#000;
+    .struk {
+        width: 58mm;
+        margin: auto;
+        background: #fff;
+        padding: 5px; /* Mengurangi padding agar area cetak maksimal */
+        font-size: 12px; /* Ukuran ideal untuk printer thermal 58mm */
+        color: #000;
+        line-height: 1.2;
     }
 
-    .center{
-        text-align:center;
+    .center {
+        text-align: center;
     }
 
-    .right{
-        text-align:right;
+    .right {
+        text-align: right;
     }
 
-    .small{
-        font-size:10px;
+    .small {
+        font-size: 10px;
     }
 
-    .bold{
-        font-weight:bold;
+    .bold {
+        font-weight: bold;
     }
 
-    hr{
-        border:none;
-        border-top:1px dashed #000; /* Membuat garis putus-putus hitam pembatas struk */
-        margin:5px 0;
+    hr {
+        border: none;
+        border-top: 1px dashed #000;
+        margin: 6px 0;
     }
 
-    table{
-        width:100%;
-        border-collapse:collapse;
+    table {
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    td{
-        padding:1px 0;
-        vertical-align:top;
+    td {
+        padding: 2px 0;
+        vertical-align: top;
     }
 
-    .menu{
-        margin-top:4px;
-        font-weight:bold;
+    .menu {
+        margin-top: 6px;
+        font-weight: bold;
     }
 
-    .coret{
-        text-decoration:line-through; /* Memberikan efek garis coret untuk harga asli sebelum diskon */
-        font-size:10px;
+    .coret {
+        text-decoration: line-through;
+        font-size: 10px;
     }
 
-    .btn-area{
-        margin-top:20px;
-        text-align:center;
+    .btn-area {
+        margin-top: 20px;
+        text-align: center;
     }
 
-    /* PENGATURAN KETIKA STRUK DICETAK (PRINT PHYSICALLY) */
+    /* PENGATURAN CETAK KHUSUS PRINTER THERMAL AQUOS 58 */
     @media print {
-        @page{
-            size:58mm auto; /* Mengatur ukuran kertas cetak otomatis memanjang mengikuti jumlah item */
-            margin:0;
+        @page {
+            size: 58mm auto; /* Memaksa ukuran kertas thermal 58mm */
+            margin: 0; /* Menghilangkan margin bawaan driver printer/browser */
         }
 
-        html,
-        body{
-            width:58mm;
-            margin:0;
-            padding:0;
-            background:#fff;
+        html, body {
+            width: 58mm;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            -webkit-print-color-adjust: exact; /* Memastikan warna hitam pekat */
+            print-color-adjust: exact;
         }
 
-        /* Menyembunyikan seluruh elemen halaman web terlebih dahulu */
-        body *{
-            visibility:hidden;
+        /* Sembunyikan semua elemen layout Laravel/Bootstrap bawaan */
+        body * {
+            visibility: hidden;
         }
 
-        /* Hanya memunculkan elemen struk beserta isinya saat dicetak */
-        .struk,
-        .struk *{
-            visibility:visible;
+        /* Tampilkan hanya area struk */
+        .struk, .struk * {
+            visibility: visible;
         }
 
-        .struk{
-            position:absolute;
-            left:0;
-            top:0;
-            width:58mm;
-            margin:0;
-            box-shadow:none;
+        .struk {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 58mm;
+            padding: 0 2mm; /* Menghindari teks terpotong di pinggir kertas */
+            box-shadow: none;
         }
 
-        /* Menyembunyikan seluruh tombol aksi agar tidak ikut terpotret di kertas struk */
-        .btn-area{
-            display:none !important; /* Force sembunyikan dengan Bootstrap/CSS print */
+        /* Sembunyikan tombol navigasi saat cetak */
+        .btn-area {
+            display: none !important;
         }
     }
 </style>
 
 <div class="struk">
 
-    {{-- 1. BAGIAN HEADER STRUK (NAMA TOKO & ALAMAT) --}}
+    {{-- 1. HEADER TOKO --}}
     <div class="center">
-        <div class="bold">TITIK TEMU</div>
-        <div class="small">Jl. Contoh No.123</div>
-        <div class="small">Telp 08123456789</div>
+        <div class="bold" style="font-size: 14px;">TITIK TEMU</div>
+        <div class="small"></div>
+        <div class="small"></div>
     </div>
 
     <hr>
 
-    {{-- 2. BAGIAN METADATA TRANSAKSI (NOMOR, KASIR, CUSTOMER, WAKTU) --}}
+    {{-- 2. METADATA TRANSAKSI --}}
     <table>
         <tr>
             <td>No</td>
-            {{-- Mengambil kode transaksi, jika kosong/null akan otomatis memakai ID --}}
             <td class="right">{{ $transaksi->kode_transaksi ?? $transaksi->id }}</td>
         </tr>
         <tr>
             <td>Kasir</td>
-            {{-- Menampilkan nama kasir yang login, jika kosong diganti tanda minus --}}
             <td class="right">{{ $transaksi->user->nama ?? '-' }}</td>
         </tr>
         <tr>
-            <td>Customer</td>
-            {{-- Menampilkan nama pelanggan, jika kosong dianggap pembeli umum --}}
+            <td>Pelanggan</td>
             <td class="right">{{ $transaksi->customer->nama ?? 'Umum' }}</td>
         </tr>
         <tr>
@@ -142,46 +140,43 @@
 
     <hr>
 
-    {{-- 3. BAGIAN DAFTAR BELANJA (LOOPING PRODUK) --}}
+    {{-- 3. DAFTAR ITEM --}}
     @foreach($transaksi->detail as $d)
         @php
-            // Menyimpan variabel harga dan subtotal untuk memudahkan perhitungan teks
             $hargaAsli = $d->menu->harga;
             $harga     = $d->harga;
             $subtotal  = $harga * $d->jumlah;
-            $diskon    = $d->menu->diskon ?? null;
         @endphp
 
-        {{-- Menampilkan nama menu produk --}}
         <div class="menu">
             {{ $d->menu->nama }}
         </div>
 
-        {{-- VALIDASI DISKON: Jika harga beli berbeda dengan harga asli, tampilkan harga asli tercoret --}}
         @if($hargaAsli != $harga)
             <div class="coret">
                 Rp {{ number_format($hargaAsli) }}
             </div>
         @endif
 
-        {{-- Menampilkan rincian perkalian jumlah, harga satuan, dan total subtotal per item --}}
         <table>
             <tr>
-                <td width="20%">{{ $d->jumlah }} x</td>
-                <td class="right" width="30%">{{ number_format($harga) }}</td>
-                <td class="right" width="50%">{{ number_format($subtotal) }}</td>
+                <td width="25%">{{ $d->jumlah }} x</td>
+                <td class="right" width="35%">{{ number_format($harga) }}</td>
+                <td class="right" width="40%">{{ number_format($subtotal) }}</td>
             </tr>
         </table>
     @endforeach
 
     <hr>
 
-    {{-- 4. BAGIAN TOTAL AKHIR (RINGKASAN PEMBAYARAN) --}}
+    {{-- 4. TOTAL & PEMBAYARAN --}}
     <table>
+        @php
+            $totalKeseluruhan = $transaksi->detail->sum(function($t) { return $t->harga * $t->jumlah; });
+        @endphp
         <tr class="bold">
             <td>TOTAL</td>
-            {{-- Menghitung total keseluruhan dengan menjumlahkan seluruh subtotal di dalam detail transaksi --}}
-            <td class="right">Rp {{ number_format($transaksi->detail->sum(function($t) { return $t->harga * $t->jumlah; })) }}</td>
+            <td class="right">Rp {{ number_format($totalKeseluruhan) }}</td>
         </tr>
         <tr>
             <td>Bayar</td>
@@ -189,33 +184,28 @@
         </tr>
         <tr>
             <td>Kembali</td>
-            <td class="right">Rp {{ number_format(($transaksi->uang_bayar ?? 0) - $transaksi->detail->sum(function($t) { return $t->harga * $t->jumlah; })) }}</td>
+            <td class="right">Rp {{ number_format(($transaksi->uang_bayar ?? 0) - $totalKeseluruhan) }}</td>
         </tr>
     </table>
 
     <hr>
 
-    {{-- 5. BAGIAN FOOTER (TERIMA KASIH) --}}
-    <div class="center small" style="margin-top: 8px;">
+    {{-- 5. FOOTER --}}
+    <div class="center small" style="margin-top: 10px; padding-bottom: 15px;">
         Terima Kasih<br>
         Selamat Menikmati
     </div>
 
 </div>
 
-{{-- 6. AREA TOMBOL AKSI BOOTSTRAP 4 (HANYA MUNCUL DI LAYAR MONITOR) --}}
+{{-- 6. TOMBOL AKSI --}}
 <div class="btn-area container text-center my-4">
-    <!-- Tombol Cetak (Hijau Sukses Bootstrap 4) -->
     <button onclick="window.print()" class="btn btn-success m-1">
         Cetak Struk
     </button>
-
-    <!-- Tombol Kembali ke Index (Abu-abu Sekunder Bootstrap 4) -->
     <a href="{{ route('transaksi.index') }}" class="btn btn-secondary m-1">
         Kembali ke Index
     </a>
-
-    <!-- Tombol Transaksi Baru (Biru Primer Bootstrap 4) -->
     <a href="{{ route('transaksi.create') }}" class="btn btn-primary m-1">
         Transaksi Baru
     </a>
