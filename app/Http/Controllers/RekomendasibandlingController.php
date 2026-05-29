@@ -97,8 +97,8 @@ class RekomendasibandlingController extends Controller
 
                 $associationRules[] = [
                     'rule' => "$namaB -> $namaA",
-                    'item_a_id' => $itemB, // 🌟 DISIMPAN UNTUK BLADE
-                    'item_b_id' => $itemA, // 🌟 DISIMPAN UNTUK BLADE
+                    'item_a_id' => $itemB, 
+                    'item_b_id' => $itemA, 
                     'support' => $supportAB,
                     'confidence' => round($confidenceBtoA, 2),
                     'lift' => round($lift, 2)
@@ -128,22 +128,22 @@ class RekomendasibandlingController extends Controller
     $totalModal = ($menuA ? $menuA->modal : 0) + ($menuB ? $menuB->modal : 0);
     $totalHarga = ($menuA ? $menuA->harga : 0) + ($menuB ? $menuB->harga : 0);
 
-    // 1. Simpan relasi ke tabel bundlings
+    //  Simpan relasi ke tabel bundlings
     Bundling::create([
         'nama_bundling' => $request->nama_bundling,
         'menu_a_id' => $request->menu_a_id,
         'menu_b_id' => $request->menu_b_id,
     ]);
 
-    // 2. Simpan sebagai Menu baru ke tabel menus dengan penyesuaian request Anda
-    Menu::create([
-        'kategori_id' => $menuA ? $menuA->kategori_id : 1, // Ikut kategori Menu A
-        'nama'        => $request->nama_bundling,          // Nama paket bundling
-        'gambar'      => '',                               // 🌟 Set gambar menjadi string kosong
-        'modal'       => $totalModal,                      // 🌟 Hasil tambah modal A + B
-        'harga'       => $totalHarga,                      // 🌟 Hasil tambah harga A + B
-        'status'      => 'tersedia',                       // 🌟 Set status menjadi 'tersedia'
-    ]);
+    //  Simpan sebagai Menu baru ke tabel menus dengan penyesuaian request Anda
+   Menu::create([
+    'kategori_id' => 4, 
+    'nama'        => $request->nama_bundling,          
+    'gambar'      => '',                              
+    'modal'       => $totalModal,                      
+    'harga'       => $totalHarga,                     
+    'status'      => 'tersedia',                       
+]);
 
     return redirect()->back()->with('success', 'Bundling berhasil disimpan dengan kalkulasi harga gabungan!');
 }

@@ -204,42 +204,71 @@
 
 <!-- AJAX SIMPAN CUSTOMER -->
 <script>
+// Menunggu seluruh halaman HTML selesai dimuat sebelum menjalankan kode di dalamnya
 document.addEventListener('DOMContentLoaded', function() {
-    const el = (id) => document.getElementById(id);
+    
+    // Membuat fungsi pembantu untuk mempersingkat perintah pencarian elemen HTML berdasarkan ID
+    const ambilElemen = (id) => document.getElementById(id);
 
-    el('btnTambahCustomer').addEventListener('click', function() {
-        el('inputNamaCustomer').value = '';
-        el('inputNoHpCustomer').value = '';
-        el('textErrorCustomer').innerText = '';
+    // Menangani aksi ketika tombol 'Tambah Customer' diklik oleh pengguna
+    ambilElemen('btnTambahCustomer').addEventListener('click', function() {
+        // Membersihkan (mengosongkan) kotak input nama agar siap diisi data baru
+        ambilElemen('inputNamaCustomer').value = '';
+        // Membersihkan (mengosongkan) kotak input nomor HP
+        ambilElemen('inputNoHpCustomer').value = '';
+        // Menghapus pesan error yang mungkin tertinggal dari input sebelumnya
+        ambilElemen('textErrorCustomer').innerText = '';
+        // Menampilkan jendela pop-up (modal) input customer ke layar menggunakan bantuan jQuery
         $('#modalCustomer').modal('show');
     });
 
-    el('btnSimpanCustomer').addEventListener('click', function() {
-        let nama = el('inputNamaCustomer').value.trim();
-        let no_hp = el('inputNoHpCustomer').value.trim();
+    // Menangani aksi ketika tombol 'Simpan Customer' di dalam modal diklik
+    ambilElemen('btnSimpanCustomer').addEventListener('click', function() {
+        // Mengambil teks nama dan menghapus spasi kosong yang tidak sengaja terketik di awal/akhir teks
+        let namaCustomer = ambilElemen('inputNamaCustomer').value.trim();
+        // Mengambil teks nomor HP dan menghapus spasi kosong di awal/akhir teks
+        let nomorHpCustomer = ambilElemen('inputNoHpCustomer').value.trim();
 
-        if (!nama) return el('textErrorCustomer').innerText = 'Nama customer wajib diisi';
+        // VALIDASI: Jika kolom nama kosong, tampilkan pesan error dan batalkan proses simpan
+        if (!namaCustomer) {
+            return ambilElemen('textErrorCustomer').innerText = 'Nama customer wajib diisi';
+        }
 
+        // Mengirimkan data customer baru ke server backend tanpa perlu memuat ulang halaman (AJAX)
         fetch('/customer/store-ajax', {
-                method: 'POST',
+                method: 'POST', // Menggunakan metode POST untuk mengirim atau membuat data baru
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'Content-Type': 'application/json', // Memberitahu server bahwa data yang dikirim berbentuk JSON
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content // Token keamanan untuk mencegah serangan siber (CSRF)
                 },
+                // Mengubah objek data JavaScript menjadi string teks berformat JSON sebelum dikirim ke server
                 body: JSON.stringify({
-                    nama,
-                    no_hp
+                    nama: namaCustomer,
+                    no_hp: nomorHpCustomer
                 })
             })
-            .then(res => res.json())
-            .then(data => {
-                el('customer_id').add(new Option(data.nama, data.id));
-                el('customer_id').value = data.id;
+            // Menerima respon awal/mentah dari server setelah data terkirim
+            .then(responMentahFromServer => {
+                // Mengubah respon mentah tersebut menjadi objek data JSON utuh yang bisa dibaca JavaScript
+                return responMentahFromServer.json();
+            })
+            // Mengolah data customer yang telah sukses disimpan dan dikembalikan oleh server
+            .then(dataCustomerBaru => {
+                // Membuat opsi pilihan baru lalu memasukkannya ke dalam elemen dropdown (select) customer di halaman utama
+                ambilElemen('customer_id').add(new Option(dataCustomerBaru.nama, dataCustomerBaru.id));
+                // Otomatis mengubah nilai dropdown ke customer yang baru saja dibuat tersebut
+                ambilElemen('customer_id').value = dataCustomerBaru.id;
+                // Menutup kembali jendela pop-up (modal) karena data sudah berhasil disimpan
                 $('#modalCustomer').modal('hide');
-            }).catch(err => console.log(err));
+            })
+            // Mengantisipasi jika terjadi kegagalan sistem atau putus koneksi saat mengirim data
+            .catch(errorSistem => {
+                console.log("Terjadi kesalahan:", errorSistem);
+            });
     });
 });
 </script>
+
 
 <script src="{{ asset('js/transaksi.js') }}"></script>
 <script src="{{ asset('js/filter.js') }}"></script>
