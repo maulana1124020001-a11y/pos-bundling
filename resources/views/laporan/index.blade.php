@@ -25,9 +25,9 @@
                 @endforeach
             </select>
             
-            <button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="window.print()">
+            <!-- <button type="button" class="btn btn-sm btn-outline-secondary mb-2" onclick="window.print()">
                 <i class="fas fa-print"></i> Cetak
-            </button>
+            </button> -->
         </form>
     </div>
 

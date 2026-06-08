@@ -4,211 +4,333 @@
 
 <style>
     body {
-        background: #eee;
-        font-family: 'Courier New', Courier, monospace; /* Memaksa font monospace standar printer */
+        background-color: #f4f6f9;
+        font-family: 'Courier New', Courier, monospace;
     }
 
-    .struk {
+    .struk-container {
         width: 58mm;
-        margin: auto;
-        background: #fff;
-        padding: 5px; /* Mengurangi padding agar area cetak maksimal */
-        font-size: 12px; /* Ukuran ideal untuk printer thermal 58mm */
-        color: #000;
-        line-height: 1.2;
+        max-width: 58mm;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 12px 6px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-sizing: border-box;
+        color: #000000;
+        font-size: 11px;
+        line-height: 1.3;
     }
 
-    .center {
+    .text-center {
         text-align: center;
     }
 
-    .right {
+    .text-right {
         text-align: right;
     }
 
-    .small {
-        font-size: 10px;
-    }
-
-    .bold {
+    .text-bold {
         font-weight: bold;
     }
 
-    hr {
+    .text-small {
+        font-size: 9px;
+    }
+
+    .harga-coret {
+        text-decoration: line-through;
+        font-size: 9px;
+        color: #555;
+    }
+
+    .pembatas {
         border: none;
-        border-top: 1px dashed #000;
+        border-top: 1px dashed #000000;
         margin: 6px 0;
     }
 
-    table {
+    .tabel-struk {
         width: 100%;
         border-collapse: collapse;
     }
 
-    td {
+    .tabel-struk td {
         padding: 2px 0;
         vertical-align: top;
     }
 
-    .menu {
-        margin-top: 6px;
+    .nama-item {
         font-weight: bold;
+        margin-top: 4px;
+        word-break: break-all;
     }
 
-    .coret {
-        text-decoration: line-through;
-        font-size: 10px;
-    }
-
-    .btn-area {
-        margin-top: 20px;
+    .aksi-area {
+        margin-top: 25px;
         text-align: center;
     }
 
-    /* PENGATURAN CETAK KHUSUS PRINTER THERMAL AQUOS 58 */
     @media print {
+
         @page {
-            size: 58mm auto; /* Memaksa ukuran kertas thermal 58mm */
-            margin: 0; /* Menghilangkan margin bawaan driver printer/browser */
+            size: 58mm auto;
+            margin: 0mm;
         }
 
-        html, body {
-            width: 58mm;
-            margin: 0;
-            padding: 0;
-            background: #fff;
-            -webkit-print-color-adjust: exact; /* Memastikan warna hitam pekat */
-            print-color-adjust: exact;
+        html,
+        body,
+        .wrapper,
+        .main-panel,
+        nav,
+        footer,
+        .aksi-area {
+            visibility: hidden !important;
+            background: #ffffff !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
-        /* Sembunyikan semua elemen layout Laravel/Bootstrap bawaan */
-        body * {
-            visibility: hidden;
+        .struk-container,
+        .struk-container * {
+            visibility: visible !important;
         }
 
-        /* Tampilkan hanya area struk */
-        .struk, .struk * {
-            visibility: visible;
-        }
-
-        .struk {
+        .struk-container {
             position: absolute;
             left: 0;
             top: 0;
-            width: 58mm;
-            padding: 0 2mm; /* Menghindari teks terpotong di pinggir kertas */
-            box-shadow: none;
-        }
-
-        /* Sembunyikan tombol navigasi saat cetak */
-        .btn-area {
-            display: none !important;
+            width: 58mm !important;
+            margin: 0 !important;
+            padding: 0 2mm 5mm 2mm !important;
+            box-shadow: none !important;
+            float: left;
         }
     }
 </style>
 
-<div class="struk">
+<div class="struk-container">
 
-    {{-- 1. HEADER TOKO --}}
-    <div class="center">
-        <div class="bold" style="font-size: 14px;">TITIK TEMU</div>
-        <div class="small"></div>
-        <div class="small"></div>
+```
+{{-- HEADER TOKO --}}
+<div class="text-center">
+
+    <div class="text-bold" style="font-size: 14px;">
+        TITIK TEMU
     </div>
 
-    <hr>
-
-    {{-- 2. METADATA TRANSAKSI --}}
-    <table>
-        <tr>
-            <td>No</td>
-            <td class="right">{{ $transaksi->kode_transaksi ?? $transaksi->id }}</td>
-        </tr>
-        <tr>
-            <td>Kasir</td>
-            <td class="right">{{ $transaksi->user->nama ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td>Pelanggan</td>
-            <td class="right">{{ $transaksi->customer->nama ?? 'Umum' }}</td>
-        </tr>
-        <tr>
-            <td>Waktu</td>
-            <td class="right">{{ $transaksi->waktu }}</td>
-        </tr>
-    </table>
-
-    <hr>
-
-    {{-- 3. DAFTAR ITEM --}}
-    @foreach($transaksi->detail as $d)
-        @php
-            $hargaAsli = $d->menu->harga;
-            $harga     = $d->harga;
-            $subtotal  = $harga * $d->jumlah;
-        @endphp
-
-        <div class="menu">
-            {{ $d->menu->nama }}
-        </div>
-
-        @if($hargaAsli != $harga)
-            <div class="coret">
-                Rp {{ number_format($hargaAsli) }}
-            </div>
-        @endif
-
-        <table>
-            <tr>
-                <td width="25%">{{ $d->jumlah }} x</td>
-                <td class="right" width="35%">{{ number_format($harga) }}</td>
-                <td class="right" width="40%">{{ number_format($subtotal) }}</td>
-            </tr>
-        </table>
-    @endforeach
-
-    <hr>
-
-    {{-- 4. TOTAL & PEMBAYARAN --}}
-    <table>
-        @php
-            $totalKeseluruhan = $transaksi->detail->sum(function($t) { return $t->harga * $t->jumlah; });
-        @endphp
-        <tr class="bold">
-            <td>TOTAL</td>
-            <td class="right">Rp {{ number_format($totalKeseluruhan) }}</td>
-        </tr>
-        <tr>
-            <td>Bayar</td>
-            <td class="right">Rp {{ number_format($transaksi->uang_bayar ?? 0) }}</td>
-        </tr>
-        <tr>
-            <td>Kembali</td>
-            <td class="right">Rp {{ number_format(($transaksi->uang_bayar ?? 0) - $totalKeseluruhan) }}</td>
-        </tr>
-    </table>
-
-    <hr>
-
-    {{-- 5. FOOTER --}}
-    <div class="center small" style="margin-top: 10px; padding-bottom: 15px;">
-        Terima Kasih<br>
-        Selamat Menikmati
+    <div class="text-small">
+        Terima Kasih Atas Kunjungan Anda
     </div>
 
 </div>
 
-{{-- 6. TOMBOL AKSI --}}
-<div class="btn-area container text-center my-4">
-    <button onclick="window.print()" class="btn btn-success m-1">
-        Cetak Struk
-    </button>
-    <a href="{{ route('transaksi.index') }}" class="btn btn-secondary m-1">
-        Kembali ke Index
-    </a>
-    <a href="{{ route('transaksi.create') }}" class="btn btn-primary m-1">
-        Transaksi Baru
-    </a>
+<div class="pembatas"></div>
+
+{{-- DATA TRANSAKSI --}}
+<table class="tabel-struk">
+
+    <tr>
+        <td width="35%">No. Nota</td>
+
+        <td class="text-right" width="65%">
+            {{ $transaksi->kode_transaksi ?? $transaksi->id }}
+        </td>
+    </tr>
+
+    <tr>
+        <td>Kasir</td>
+
+        <td class="text-right">
+            {{ $transaksi->user->nama ?? '-' }}
+        </td>
+    </tr>
+
+    <tr>
+        <td>Pelanggan</td>
+
+        <td class="text-right">
+            {{ $transaksi->customer->nama ?? 'Umum' }}
+        </td>
+    </tr>
+
+    <tr>
+        <td>Waktu</td>
+
+        <td class="text-right">
+            {{ $transaksi->waktu }}
+        </td>
+    </tr>
+
+</table>
+
+<div class="pembatas"></div>
+
+{{-- DETAIL BELANJA --}}
+@foreach($transaksi->detail as $detail)
+
+    @php
+        $hargaAsli = $detail->menu->harga;
+        $hargaJual = $detail->harga;
+        $subtotal  = $hargaJual * $detail->jumlah;
+    @endphp
+
+    <div class="nama-item">
+
+        {{ $detail->menu->nama }}
+
+    </div>
+
+    @if($hargaAsli != $hargaJual)
+
+        <div class="harga-coret">
+
+            Normal :
+            Rp {{ number_format($hargaAsli) }}
+
+        </div>
+
+    @endif
+
+    <table class="tabel-struk">
+
+        <tr>
+
+            <td width="30%">
+
+                {{ $detail->jumlah }} x
+
+            </td>
+
+            <td class="text-right" width="30%">
+
+                {{ number_format($hargaJual) }}
+
+            </td>
+
+            <td class="text-right" width="40%">
+
+                {{ number_format($subtotal) }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+@endforeach
+
+<div class="pembatas"></div>
+
+{{-- TOTAL --}}
+@php
+
+    $totalBelanja = $transaksi->detail->sum(function($item) {
+
+        return $item->harga * $item->jumlah;
+
+    });
+
+    $uangBayar = $transaksi->uang_bayar ?? 0;
+
+    $kembalian = $uangBayar - $totalBelanja;
+
+@endphp
+
+<table class="tabel-struk">
+
+    <tr class="text-bold">
+
+        <td>TOTAL</td>
+
+        <td class="text-right">
+
+            Rp {{ number_format($totalBelanja) }}
+
+        </td>
+
+    </tr>
+
+    <tr>
+
+        <td>Bayar</td>
+
+        <td class="text-right">
+
+            Rp {{ number_format($uangBayar) }}
+
+        </td>
+
+    </tr>
+
+    <tr class="text-bold">
+
+        <td>Kembali</td>
+
+        <td class="text-right">
+
+            Rp {{ number_format($kembalian) }}
+
+        </td>
+
+    </tr>
+
+</table>
+
+<div class="pembatas"></div>
+
+{{-- FOOTER --}}
+<div class="text-center text-small" style="margin-top: 10px;">
+
+    * BARANG YANG SUDAH DIBELI * <br>
+
+    TIDAK DAPAT DITUKAR KEMBALI <br>
+
+    Selamat Menikmati!
+
+</div>
+```
+
+</div>
+
+{{-- TOMBOL --}}
+
+<div class="aksi-area container text-center my-4">
+
+```
+{{-- PRINT BROWSER --}}
+<button
+    onclick="window.print()"
+    class="btn btn-success mx-1">
+
+    Cetak Browser
+
+</button>
+
+{{-- PRINT THERMAL --}}
+<a href="{{ route('transaksi.thermal', $transaksi->id) }}"
+   class="btn btn-dark mx-1">
+
+    Print Thermal
+
+</a>
+
+{{-- KEMBALI --}}
+<a href="{{ route('transaksi.index') }}"
+   class="btn btn-secondary mx-1">
+
+    Kembali
+
+</a>
+
+{{-- TRANSAKSI BARU --}}
+<a href="{{ route('transaksi.create') }}"
+   class="btn btn-primary mx-1">
+
+    Transaksi Baru
+
+</a>
+```
+
 </div>
 
 @endsection

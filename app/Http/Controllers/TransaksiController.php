@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
 use App\Models\Kategori;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 class TransaksiController extends Controller
 {
@@ -139,4 +141,88 @@ class TransaksiController extends Controller
             compact('transaksi')
         );
     }
+
+    public function thermalPrint($id)
+{
+    $transaksi = Transaksi::with(
+        'detail.menu'
+    )->findOrFail($id);
+
+    try {
+
+        $connector =
+            new WindowsPrintConnector("POS58");
+
+        $printer = new Printer($connector);
+
+        // HEADER
+        $printer->text("TITIK TEMU\n");
+
+        $printer->text("----------------\n");
+
+        // DETAIL MENU
+        foreach ($transaksi->detail as $item) {
+
+            $printer->text(
+                $item->menu->nama . "\n"
+            );
+
+            $printer->text(
+                $item->jumlah .
+                " x " .
+                number_format($item->harga)
+            );
+
+            $printer->text(
+                " = " .
+                number_format($item->subtotal)
+            );
+
+            $printer->text("\n");
+        }
+
+        // TOTAL
+        $printer->text("----------------\n");
+
+        $printer->text(
+            "TOTAL : Rp " .
+            number_format(
+                $transaksi->total_harga
+            ) . "\n"
+        );
+
+        $printer->text(
+            "BAYAR : Rp " .
+            number_format(
+                $transaksi->uang_bayar
+            ) . "\n"
+        );
+
+        $printer->text(
+            "KEMBALI : Rp " .
+            number_format(
+                $transaksi->kembalian
+            ) . "\n"
+        );
+
+        // AKHIR STRUK
+        $printer->feed(3);
+
+        $printer->cut();
+
+        $printer->close();
+
+        return back()->with(
+            'success',
+            'Berhasil print thermal'
+        );
+
+    } catch (\Exception $e) {
+
+        return back()->with(
+            'error',
+            $e->getMessage()
+        );
+    }
+}
 }
