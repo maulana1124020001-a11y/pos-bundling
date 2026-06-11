@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
-            $table->decimal('total_harga', 10, 2);
-            $table->decimal('uang_bayar', 10, 2);
-            $table->decimal('kembalian', 10, 2);
+            $table->decimal('total_harga', 20, 0);
+            $table->decimal('uang_bayar', 20, 0);
+            $table->decimal('kembalian', 20, 0);
             $table->enum('status', ['proses', 'selesai'])->default('proses');
             $table->enum('metode_pembayaran', ['cash', 'qris', 'transfer'])->default('cash');
             $table->dateTime('waktu');

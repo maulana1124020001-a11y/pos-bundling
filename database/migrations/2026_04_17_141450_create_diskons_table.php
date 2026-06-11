@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('menu_id')->constrained('menus');
             $table->integer('diskon_persen')->nullable();
-            $table->decimal('diskon_nominal', 10, 2)->nullable();
+            $table->decimal('diskon_nominal', 10, 0)->nullable();
             $table->enum('tipe_diskon', ['Persen', 'Nominal']);
             $table->dateTime('mulai_diskon');
             $table->dateTime('akhir_diskon');
