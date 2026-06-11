@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
-<div class="container-fluid">
+<div class="container-fluid px-2 px-md-4">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
@@ -10,20 +9,25 @@
         </h1>
     </div>
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 w-100">
 
-        <div class="card-header py-3 d-flex justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel Transaksi</h6>
+        <div class="card-header py-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            
+            <h6 class="m-0 font-weight-bold text-primary mb-2 mb-md-0">
+                Tabel Transaksi
+            </h6>
 
             <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Transaksi Baru
             </a>
+
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-2 p-md-3">
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="dataTable">
+            <div class="table-responsive w-100">
+
+                <table class="table table-bordered table-hover mb-0" id="dataTable">
 
                     <thead class="thead-light">
                         <tr>
@@ -33,7 +37,7 @@
                             <th>Bayar</th>
                             <th>Kembalian</th>
                             <th>Metode</th>
-                            <th>customer</th>
+                            <th>Customer</th>
                             <th>Waktu</th>
                             <th>Aksi</th>
                         </tr>
@@ -50,32 +54,27 @@
                             <td>{{ $t->metode_pembayaran }}</td>
                             <td>{{ $t?->customer->nama ?? '-' }}</td>
                             <td>{{ $t->waktu }}</td>
-                            <td>
+                            <td class="text-center">
                                 <a href="{{ route('transaksi.show', $t->id) }}" class="btn btn-info btn-sm">
                                     <i class="fas fa-receipt"></i>
                                 </a>
-                                <!-- <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form> -->
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center">Belum ada transaksi</td>
+                            <td colspan="9" class="text-center">
+                                Belum ada transaksi
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
 
                 </table>
+
             </div>
 
         </div>
     </div>
 
 </div>
-
 @endsection

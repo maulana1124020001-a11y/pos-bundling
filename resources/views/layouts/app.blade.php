@@ -123,7 +123,7 @@
 
             <li class="nav-item {{ Request::is('laporan*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('laporan.index') }}">
-                    <i class="fas fa-fw fa-users"></i>
+                    <i class="fas fa-fw fa-clipboard-list"></i>
                     <span>Laporan</span>
                 </a>
             </li>
@@ -243,6 +243,20 @@
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
     <script src="js/demo/datatables-demo.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Memeriksa apakah ada elemen alert di halaman
+            if ($('#alert-msg').length > 0) {
+                // Sembunyikan otomatis setelah 4000ms (4 detik)
+                setTimeout(function() {
+                    $('#alert-msg').fadeOut('slow', function() {
+                        $(this).remove();
+                    });
+                }, 4000); 
+            }
+        });
+    </script>
 
     @stack('scripts')
 
