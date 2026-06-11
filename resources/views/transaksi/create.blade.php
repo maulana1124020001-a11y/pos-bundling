@@ -37,9 +37,8 @@
                 <div class="col mb-2 menu-item-target">
 
 
-                    <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative" style="cursor:pointer;" 
-                        data-id="{{ $menu->id }}" 
-                        data-nama="{{ $menu->nama }}"
+                    <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
+                        style="cursor:pointer;" data-id="{{ $menu->id }}" data-nama="{{ $menu->nama }}"
                         data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}"
                         data-harga="{{ $menu->harga_diskon }}">
 
@@ -182,30 +181,27 @@
                         <!-- BAYAR -->
                         <div class="row">
 
-                            <div class="col-12 col-md-6 mb-2">
+                         <div class="col-12 col-md-6 mb-2">
 
-                                <div class="form-group mb-0">
+    <div class="form-group mb-0">
 
-                                    <label class="small font-weight-bold mb-1">
-                                        Uang Bayar
-                                    </label>
+        <label class="small font-weight-bold mb-1">Uang Bayar</label>
 
-                                    <div class="input-group">
+        <div class="input-group mb-2">
+            <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
+            <input type="text" name="uang_bayar" id="uang_bayar" class="form-control" autocomplete="off" required>
+        </div>
 
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Rp</span>
-                                        </div>
+        <div class="d-flex flex-wrap">
+            <button type="button" class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1" onclick="document.getElementById('uang_bayar').value = 20000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">20k</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1" onclick="document.getElementById('uang_bayar').value = 50000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">50k</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1" onclick="document.getElementById('uang_bayar').value = 100000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">100k</button>
+            <button type="button" class="btn btn-sm btn-primary font-weight-bold mb-1" onclick="let total = document.getElementById('total_harga').value.replace(/[^0-9]/g, ''); if(total > 0) { document.getElementById('uang_bayar').value = total; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true })); }">Uang Pas</button>
+        </div>
 
+    </div>
 
-
-                                        <input type="text" name="uang_bayar" id="uang_bayar" class="form-control"
-                                            autocomplete="off" required>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
+</div>
 
                             <!-- KEMBALIAN -->
                             <div class="col-12 col-md-6">

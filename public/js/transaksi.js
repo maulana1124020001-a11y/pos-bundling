@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mendengarkan setiap ketikan user pada input uang bayar
     inputBayar.addEventListener('input', function () {
         // Hapus semua karakter non-angka (\D artinya selain digit) saat user mengetik
-        const angkaMurni = this.value.replace(/\D/g, '');
+        const angkaMurni = this.value.replace(/\D/g, '').slice(0, 16);
         
         // Format ulang angkanya menjadi format Rupiah yang rapi (e.g., 50.000)
         this.value = formatRupiah(angkaMurni);
