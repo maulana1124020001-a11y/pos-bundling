@@ -79,6 +79,12 @@ class DiskonController extends Controller
             'diskon_nominal' => 'required_if:tipe_diskon,Nominal|nullable|numeric',
         ]);
 
+        $menu = Menu::findOrFail($request->menu_id);
+         if ($request->tipe_diskon == 'Nominal' && $request->diskon_nominal > $menu->harga) {
+            return back()
+                ->withErrors(['diskon_nominal' => 'Diskon nominal tidak boleh lebih besar dari harga menu'])
+                ->withInput();
+        }
         $diskon->update($request->all());
 
         return redirect()->route('diskon.index')->with('success', 'Diskon berhasil diperbarui.');

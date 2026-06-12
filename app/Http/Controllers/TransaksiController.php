@@ -142,87 +142,49 @@ class TransaksiController extends Controller
         );
     }
 
-//     public function thermalPrint($id)
-// {
-//     $transaksi = Transaksi::with(
-//         'detail.menu'
-//     )->findOrFail($id);
+    private function generateRawBT($transaksi)
+{
+    $struk = "";
 
-//     try {
+    // HEADER TOKO
+    $struk .= "TOKO BUNDLING\n";
+    $struk .= "Jl. Ahmad Yani No.10\n";
+    $struk .= "08123456789\n";
+    $struk .= "==============================\n";
 
-//         $connector =
-//             new WindowsPrintConnector("POS58");
+    // INFO TRANSAKSI
+    $struk .= "INV : ".$transaksi->kode_transaksi."\n";
+    $struk .= "TGL : ".$transaksi->created_at->format('d/m/Y H:i')."\n";
+    $struk .= "Kasir : ".auth()->user()->name."\n";
+    $struk .= "==============================\n";
 
-//         $printer = new Printer($connector);
+    // DETAIL BARANG
+    foreach ($transaksi->detailTransaksi as $item) {
 
-//         // HEADER
-//         $printer->text("TITIK TEMU\n");
+        $struk .= $item->menu->nama_menu."\n";
 
-//         $printer->text("----------------\n");
+        $struk .= $item->jumlah
+                ." x "
+                .number_format($item->harga,0,',','.')
+                ." = "
+                .number_format($item->subtotal,0,',','.')
+                ."\n";
+    }
 
-//         // DETAIL MENU
-//         foreach ($transaksi->detail as $item) {
+    $struk .= "==============================\n";
 
-//             $printer->text(
-//                 $item->menu->nama . "\n"
-//             );
+    // PEMBAYARAN
+    $struk .= "Total    : Rp ".number_format($transaksi->total_harga,0,',','.')."\n";
+    $struk .= "Bayar    : Rp ".number_format($transaksi->uang_bayar,0,',','.')."\n";
+    $struk .= "Kembali  : Rp ".number_format($transaksi->kembalian,0,',','.')."\n";
 
-//             $printer->text(
-//                 $item->jumlah .
-//                 " x " .
-//                 number_format($item->harga)
-//             );
+    $struk .= "==============================\n";
 
-//             $printer->text(
-//                 " = " .
-//                 number_format($item->subtotal)
-//             );
+    // FOOTER
+    $struk .= "Terima Kasih\n";
+    $struk .= "Sudah Berbelanja\n";
 
-//             $printer->text("\n");
-//         }
+    return $struk;
+}
 
-//         // TOTAL
-//         $printer->text("----------------\n");
-
-//         $printer->text(
-//             "TOTAL : Rp " .
-//             number_format(
-//                 $transaksi->total_harga
-//             ) . "\n"
-//         );
-
-//         $printer->text(
-//             "BAYAR : Rp " .
-//             number_format(
-//                 $transaksi->uang_bayar
-//             ) . "\n"
-//         );
-
-//         $printer->text(
-//             "KEMBALI : Rp " .
-//             number_format(
-//                 $transaksi->kembalian
-//             ) . "\n"
-//         );
-
-//         // AKHIR STRUK
-//         $printer->feed(3);
-
-//         $printer->cut();
-
-//         $printer->close();
-
-//         return back()->with(
-//             'success',
-//             'Berhasil print thermal'
-//         );
-
-//     } catch (\Exception $e) {
-
-//         return back()->with(
-//             'error',
-//             $e->getMessage()
-//         );
-//     }
-// }
- }
+}

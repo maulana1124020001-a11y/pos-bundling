@@ -30,84 +30,52 @@
             </div>
 
             <!-- LIST MENU -->
-            <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-2" id="menu-wrapper">
+         <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-2" id="menu-wrapper">
+    @foreach($menus as $menu)
+    <div class="col mb-2 menu-item-target">
+        <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
+            style="cursor:pointer;" 
+            data-id="{{ $menu->id }}" 
+            data-nama="{{ $menu->nama }}"
+            data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}"
+            data-harga="{{ $menu->harga_diskon }}">
 
-                @foreach($menus as $menu)
+            {{-- 1. Badge Diskon --}}
+            @if($menu->ada_diskon)
+            <span class="badge badge-danger position-absolute" style="top:6px; left:6px; z-index:5; font-size:70%;">
+                {{ $menu->diskon->tipe_diskon == 'Persen' ? $menu->diskon->diskon_persen . '%' : 'Rp ' . number_format($menu->diskon->diskon_nominal) }}
+            </span>
+            @endif
 
-                <div class="col mb-2 menu-item-target">
-
-
-                    <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
-                        style="cursor:pointer;" data-id="{{ $menu->id }}" data-nama="{{ $menu->nama }}"
-                        data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}"
-                        data-harga="{{ $menu->harga_diskon }}">
-
-                        @if($menu->ada_diskon)
-
-                        <span class="badge badge-danger position-absolute"
-                            style="top:6px; left:6px; z-index:5; font-size:70%;">
-
-                            {{ $menu->diskon->tipe_diskon == 'Persen'
-                    ? $menu->diskon->diskon_persen . '%'
-                    : 'Rp ' . number_format($menu->diskon->diskon_nominal) }}
-
-                        </span>
-
-                        @endif
-
-                        <img src="{{ $menu->gambar 
+            {{-- 2. Gambar Menu --}}
+            @php
+                $gambarMenu = $menu->gambar && file_exists(public_path('images/' . $menu->gambar)) 
                     ? asset('images/' . $menu->gambar) 
-                    : 'https://logodix.com/logo/1993885.png' }}" class="card-img-top"
-                            style="height:140px; object-fit:cover;"
-                            onerror="this.onerror=null;this.src='https://logodix.com/logo/1993885.png';">
+                    : 'https://logodix.com/logo/1993885.png';
+            @endphp
+            <img src="{{ $gambarMenu }}" class="card-img-top" style="height:140px; object-fit:cover;" onerror="this.onerror=null;this.src='https://logodix.com/logo/1993885.png';">
 
-                        <div class="card-body p-2 text-center" style="line-height:1.2;">
+            {{-- 3. Konten Card --}}
+            <div class="card-body p-2 text-center" style="line-height:1.2;">
+                <span class="font-weight-bold d-block text-truncate small mb-1" title="{{ $menu->nama }}">
+                    {{ $menu->nama }}
+                </span>
 
-                            <span class="font-weight-bold d-block text-truncate small mb-1" title="{{ $menu->nama }}">
-
-                                {{ $menu->nama }}
-
-                            </span>
-
-                            <div>
-
-                                @if($menu->ada_diskon)
-
-                                <div class="text-muted" style="font-size:70%;">
-
-                                    <del>
-                                        Rp {{ number_format($menu->harga) }}
-                                    </del>
-
-                                </div>
-
-                                <span class="text-danger font-weight-bold small">
-
-                                    Rp {{ number_format($menu->harga_diskon) }}
-
-                                </span>
-
-                                @else
-
-                                <span class="text-success font-weight-bold small">
-
-                                    Rp {{ number_format($menu->harga) }}
-
-                                </span>
-
-                                @endif
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
+                {{-- 4. Area Harga --}}
+                <div>
+                    @if($menu->ada_diskon)
+                        <div class="text-muted" style="font-size:70%;"><del>Rp {{ number_format($menu->harga) }}</del></div>
+                        <span class="text-danger font-weight-bold small">Rp {{ number_format($menu->harga_diskon) }}</span>
+                    @else
+                        <span class="text-success font-weight-bold small">Rp {{ number_format($menu->harga) }}</span>
+                    @endif
                 </div>
-
-                @endforeach
-
             </div>
+
+        </div>
+    </div>
+    @endforeach
+</div>
 
         </div>
 
@@ -189,15 +157,10 @@
 
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
-                                     <input type="text" 
-       name="uang_bayar" 
-       id="uang_bayar" 
-       class="form-control" 
-       inputmode="numeric" 
-       pattern="[0-9.]*" 
-       maxlength="16" 
-       autocomplete="off" 
-       required>               </div>
+                                        <input type="text" name="uang_bayar" id="uang_bayar" class="form-control"
+                                            inputmode="numeric" pattern="[0-9.]*" maxlength="16" autocomplete="off"
+                                            required>
+                                    </div>
 
                                     <div class="d-flex flex-wrap">
                                         <button type="button"
