@@ -10,6 +10,10 @@
             Cetak Struk
         </button>
 
+        <a href="{{ route('transaksi.rawbt',$transaksi->id) }}" class="btn btn-dark">
+            Cetak Bluetooth
+        </a>
+
         <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">
             Kembali
         </a>
@@ -70,39 +74,39 @@
             @foreach($transaksi->detail as $detail)
 
             @php
-                $hargaAsli = $detail->menu->harga;
-                $hargaJual = $detail->harga;
-                $subtotal = $detail->subtotal;
+            $hargaAsli = $detail->menu->harga;
+            $hargaJual = $detail->harga;
+            $subtotal = $detail->subtotal;
             @endphp
 
             <div class="font-weight-bold">
                 {{ $detail->menu->nama }}
             </div>
 
-           @if($detail->menu->ada_diskon)
-<small class="d-block mb-1">
+            @if($detail->menu->ada_diskon)
+            <small class="d-block mb-1">
 
-    <span class="text-danger font-weight-bold">
-        Diskon
-        @if($detail->menu->diskon->tipe_diskon == 'Persen')
-            {{ $detail->menu->diskon->diskon_persen }}%
-        @else
-            Rp{{ number_format($detail->menu->diskon->diskon_nominal) }}
-        @endif
-    </span>
+                <span class="text-danger font-weight-bold">
+                    Diskon
+                    @if($detail->menu->diskon->tipe_diskon == 'Persen')
+                    {{ $detail->menu->diskon->diskon_persen }}%
+                    @else
+                    Rp{{ number_format($detail->menu->diskon->diskon_nominal) }}
+                    @endif
+                </span>
 
-    <br>
+                <br>
 
-    <del class="text-muted">
-        Rp{{ number_format($hargaAsli) }}
-    </del>
+                <del class="text-muted">
+                    Rp{{ number_format($hargaAsli) }}
+                </del>
 
-    <span class="font-weight-bold">
-        → Rp{{ number_format($hargaJual) }}
-    </span>
+                <span class="font-weight-bold">
+                    → Rp{{ number_format($hargaJual) }}
+                </span>
 
-</small>
-@endif
+            </small>
+            @endif
 
             <table class="table table-borderless table-sm mb-2">
                 <tr>
@@ -180,31 +184,31 @@
 
 {{-- KHUSUS PRINT --}}
 <style>
-.struk-container{
+.struk-container {
     max-width: 380px;
 }
 
-.border-dashed{
+.border-dashed {
     border-top: 1px dashed #000 !important;
 }
 
 @media print {
 
-    @page{
+    @page {
         size: 58mm auto;
         margin: 0;
     }
 
-    body *{
+    body * {
         visibility: hidden;
     }
 
     .struk-container,
-    .struk-container *{
+    .struk-container * {
         visibility: visible;
     }
 
-    .struk-container{
+    .struk-container {
         position: absolute;
         left: 0;
         top: 0;
@@ -215,27 +219,27 @@
         border: none !important;
     }
 
-    .aksi-area{
+    .aksi-area {
         display: none !important;
     }
 
-    .card-body{
+    .card-body {
         padding: 4px !important;
     }
 
-    table{
+    table {
         margin-bottom: 2px !important;
     }
 
-    td{
+    td {
         font-size: 11px !important;
     }
 
-    small{
+    small {
         font-size: 9px !important;
     }
 
-    h5{
+    h5 {
         font-size: 14px !important;
     }
 }

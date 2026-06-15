@@ -142,49 +142,17 @@ class TransaksiController extends Controller
         );
     }
 
-    private function generateRawBT($transaksi)
+  public function rawbt($id)
 {
-    $struk = "";
+    $transaksi = Transaksi::with([
+        'detail.menu',
+        'user',
+        'customer'
+    ])->findOrFail($id);
 
-    // HEADER TOKO
-    $struk .= "TOKO BUNDLING\n";
-    $struk .= "Jl. Ahmad Yani No.10\n";
-    $struk .= "08123456789\n";
-    $struk .= "==============================\n";
-
-    // INFO TRANSAKSI
-    $struk .= "INV : ".$transaksi->kode_transaksi."\n";
-    $struk .= "TGL : ".$transaksi->created_at->format('d/m/Y H:i')."\n";
-    $struk .= "Kasir : ".auth()->user()->name."\n";
-    $struk .= "==============================\n";
-
-    // DETAIL BARANG
-    foreach ($transaksi->detailTransaksi as $item) {
-
-        $struk .= $item->menu->nama_menu."\n";
-
-        $struk .= $item->jumlah
-                ." x "
-                .number_format($item->harga,0,',','.')
-                ." = "
-                .number_format($item->subtotal,0,',','.')
-                ."\n";
-    }
-
-    $struk .= "==============================\n";
-
-    // PEMBAYARAN
-    $struk .= "Total    : Rp ".number_format($transaksi->total_harga,0,',','.')."\n";
-    $struk .= "Bayar    : Rp ".number_format($transaksi->uang_bayar,0,',','.')."\n";
-    $struk .= "Kembali  : Rp ".number_format($transaksi->kembalian,0,',','.')."\n";
-
-    $struk .= "==============================\n";
-
-    // FOOTER
-    $struk .= "Terima Kasih\n";
-    $struk .= "Sudah Berbelanja\n";
-
-    return $struk;
+    return view(
+        'transaksi.rawbt',
+        compact('transaksi')
+    );
 }
-
 }

@@ -39,6 +39,10 @@ Route::middleware(['auth'])->group(function () {
     // 🔹 Transaksi (Kasir & Admin)
     Route::resource('transaksi', TransaksiController::class);
     // Route::get('/transaksi/{id}/thermal',[TransaksiController::class, 'thermalPrint'])->name('transaksi.thermal');
+    Route::get(
+    '/transaksi/{id}/rawbt',
+    [TransaksiController::class, 'rawbt']
+)->name('transaksi.rawbt');
 
     // 🔹 Customer (biar bisa dipakai kasir juga)
     Route::resource('customer', CustomerController::class);
