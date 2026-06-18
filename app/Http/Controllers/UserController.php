@@ -36,7 +36,7 @@ class UserController extends Controller
             'role_id' => 'required',
             'nama' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
+            'password' => 'required|min:8'
         ]);
 
         $data = $request->all();
