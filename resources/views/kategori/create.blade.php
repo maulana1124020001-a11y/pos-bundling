@@ -1,65 +1,101 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-5">
+
+<!-- SB Admin 2 pakai container-fluid, bukan container biasa -->
+<div class="container-fluid">
+
+    <!-- Judul halaman (style SB Admin 2) -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-plus-circle text-primary"></i> Tambah Kategori
+        </h1>
+    </div>
+
+    <!-- Row untuk posisi tengah -->
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            
-            <div class="card shadow-sm border-0">
-                {{-- Card Header --}}
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="mb-0 fw-bold text-dark">
-                        <i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Kategori
-                    </h5>
+        <div class="col-lg-6">
+
+            <!-- Card utama (style SB Admin 2) -->
+           
+                 <div class="card shadow mb-4 border-left-primary">
+
+                
+                <!-- Header card -->
+                <div class="card-header py-3">
+                    <!-- class text-primary = warna biru khas SB Admin -->
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Form Tambah Kategori
+                    </h6>
                 </div>
 
-                <div class="card-body p-4">
-                    {{-- Alert Error --}}
+                <!-- Body card -->
+                <div class="card-body">
+
+                    <!-- VALIDASI ERROR berbentuk daftar -->
                     @if ($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm mb-4">
-                            <div class="d-flex">
-                                <i class="fas fa-exclamation-circle me-2 mt-1"></i>
-                                <ul class="mb-0 ps-3">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                        <!-- alert bootstrap -->
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <!-- looping semua error -->
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
+                    <!-- FORM -->
                     <form action="{{ route('kategori.store') }}" method="POST">
-                        @csrf
+                        @csrf <!-- wajib di Laravel untuk keamanan -->
 
-                        <div class="mb-4">
-                            <label for="nama_kategori" class="form-label fw-bold text-muted small">NAMA KATEGORI</label>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Nama Kategori</label>
+
                             <input type="text" 
-                                   name="nama_kategori" 
-                                   id="nama_kategori"
-                                   value="{{ old('nama_kategori') }}" 
-                                   class="form-control @error('nama_kategori') is-invalid @enderror shadow-sm"
-                                   placeholder="Misal: Makanan, Coffee, Tea dll"
-                                   required>
-                            @error('nama_kategori')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                                   name="nama_kategori"
+                                   value="{{ old('nama_kategori') }}"
+                                   class="form-control @error('nama_kategori') is-invalid @enderror"
+                                   placeholder="Contoh: Makanan, Minuman"
+                                   2>
+                                   {{-- is-invalid = otomatis merah kalau error --}}
+
+                            <!-- tampilkan error di bawah form -->
+                            {{-- @error('nama_kategori')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror --}}
                         </div>
 
-                        <hr class="my-4 opacity-25">
+                        <!-- GARIS PEMBATAS -->
+                        <hr>
 
-                        {{-- Tombol Aksi --}}
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('kategori.index') }}" class="btn btn-outline-secondary px-4">
-                                Batal
+                        <!-- TOMBOL AKSI -->
+                        <div class="text-right">
+                            
+                            <!-- tombol kembali -->
+                            <a href="{{ route('kategori.index') }}" 
+                               class="btn btn-secondary">
+                                <!-- icon -->
+                                <i class="fas fa-arrow-left"></i> Batal
                             </a>
-                            <button type="submit" class="btn btn-primary px-4 shadow-sm">
-                                <i class="fas fa-save me-2"></i>Simpan Kategori
+
+                            <!-- tombol simpan -->
+                            <button type="submit" 
+                                    class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan
                             </button>
+
                         </div>
                     </form>
+
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>
+
 @endsection

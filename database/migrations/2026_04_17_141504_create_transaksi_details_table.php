@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('transaksi_id')->constrained('transaksis');
             $table->foreignId('menu_id')->constrained('menus');
             $table->integer('jumlah');
-            $table->decimal('harga', 10, 2);
-            $table->decimal('subtotal', 10, 2);
+            $table->decimal('harga', 20 ,0);
+            $table->decimal('subtotal', 20 ,0);
             $table->timestamps();
         });
     }

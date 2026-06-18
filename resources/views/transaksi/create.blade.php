@@ -1,205 +1,440 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-5">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5><i class="fa fa-shopping-cart"></i> Keranjang Belanja</h5>
-                    </div>
-                    <div class="card-body" style="height: 400px; overflow-y: auto;">
-                        <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
-                            @csrf
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Menu</th>
-                                        <th>Qty</th>
-                                        <th>Subtotal</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cart-table">
-                                </tbody>
-                            </table>
-                    </div>
-                    <div class="card-footer">
-                        <div class="form-group row">
-                            <label class="col-sm-4">Total Harga</label>
-                            <div class="col-sm-8">
-                                <input type="number" name="total_harga" id="total_harga"
-                                    class="form-control-plaintext font-weight-bold" readonly value="0">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4">Bayar</label>
-                            <div class="col-sm-8">
-                                <input type="number" name="uang_bayar" id="uang_bayar" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4">Kembalian</label>
-                            <div class="col-sm-8">
-                                <input type="number" id="kembalian" class="form-control-plaintext" readonly value="0">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4">Metode Pembayaran</label>
-                            <div class="col-sm-8">
-                                <select name="metode_pembayaran" id="metode_pembayaran" class="form-control-plaintext">
-                                    <option value="cash">Cash</option>
-                                    <option value="qris">Qris</option>
-                                    <option value="transfer">Transfer</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4">Customer</label>
-                            <div class="col-sm-8">
-                                <select name="customer_id" id="customer_id" class="form-control-plaintext">
 
-                                    <option value=""></option>
+<div class="container-fluid px-2 px-md-3">
 
-                                    @foreach ($customers as $customer)
-                                        <option value="{{ $customer->id }}">
-                                            {{ $customer->nama }}
-                                        </option>
-                                    @endforeach
+    <div class="row">
 
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block btn-lg">PROSES TRANSAKSI</button>
-                        </form>
-                    </div>
+        <!-- MENU -->
+        <div class="col-12 col-lg-7 mb-3">
+
+            <!-- SEARCH & FILTER -->
+            <div class="row mb-3">
+                <div class="col-12 col-sm-6 mb-2 mb-sm-0">
+                    <input type="text" id="search" class="form-control form-control-sm" placeholder="Cari menu...">
+                </div>
+
+                <div class="col-12 col-sm-6">
+                    <select id="filter-kategori" class="form-control form-control-sm">
+                        <option value="">Semua Kategori</option>
+
+                        @foreach($kategoris as $k)
+                        <option value="{{ strtolower($k->nama_kategori) }}">
+                            {{ $k->nama_kategori }}
+                        </option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- LIST MENU -->
+         <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-2" id="menu-wrapper">
+    @foreach($menus as $menu)
+    <div class="col mb-2 menu-item-target">
+        <div class="card h-100 shadow-sm border-0 menu-card btn-add position-relative"
+            style="cursor:pointer;" 
+            data-id="{{ $menu->id }}" 
+            data-nama="{{ $menu->nama }}"
+            data-kategori="{{ strtolower($menu->kategori->nama_kategori ?? '') }}"
+            data-harga="{{ $menu->harga_diskon }}">
+
+            {{-- 1. Badge Diskon --}}
+            @if($menu->ada_diskon)
+            <span class="badge badge-danger position-absolute" style="top:6px; left:6px; z-index:5; font-size:70%;">
+                {{ $menu->diskon->tipe_diskon == 'Persen' ? $menu->diskon->diskon_persen . '%' : 'Rp ' . number_format($menu->diskon->diskon_nominal) }}
+            </span>
+            @endif
+
+            {{-- 2. Gambar Menu --}}
+            @php
+                $gambarMenu = $menu->gambar && file_exists(public_path('images/' . $menu->gambar)) 
+                    ? asset('images/' . $menu->gambar) 
+                    : 'https://logodix.com/logo/1993885.png';
+            @endphp
+            <img src="{{ $gambarMenu }}" class="card-img-top" style="height:140px; object-fit:cover;" onerror="this.onerror=null;this.src='https://logodix.com/logo/1993885.png';">
+
+            {{-- 3. Konten Card --}}
+            <div class="card-body p-2 text-center" style="line-height:1.2;">
+                <span class="font-weight-bold d-block text-truncate small mb-1" title="{{ $menu->nama }}">
+                    {{ $menu->nama }}
+                </span>
+
+                {{-- 4. Area Harga --}}
+                <div>
+                    @if($menu->ada_diskon)
+                        <div class="text-muted" style="font-size:70%;"><del>Rp {{ number_format($menu->harga) }}</del></div>
+                        <span class="text-danger font-weight-bold small">Rp {{ number_format($menu->harga_diskon) }}</span>
+                    @else
+                        <span class="text-success font-weight-bold small">Rp {{ number_format($menu->harga) }}</span>
+                    @endif
                 </div>
             </div>
 
-            <div class="col-md-7">
-                <div class="card">
-                    <div class="card-header bg-light">
-                        <input type="text" id="search-menu" class="form-control" placeholder="Cari menu...">
-                    </div>
-                    <div class="card-body" style="height: 600px; overflow-y: auto;">
-                        <div class="row" id="menu-list">
-                            @foreach ($menus as $menu)
-                                @php
-                                    // Hitung harga akhir (setelah diskon jika ada)
-                                    $hargaAkhir = $menu->harga_diskon;
-                                    $punyaDiskon = $hargaAkhir < $menu->harga;
-                                @endphp
-
-                                <div class="col-md-4 mb-3 menu-item" data-nama="{{ strtolower($menu->nama) }}">
-                                    <div class="card h-100 shadow-sm btn-add-to-cart" style="cursor:pointer;"
-                                        data-id="{{ $menu->id }}" data-nama="{{ $menu->nama }}"
-                                        data-harga="{{ $hargaAkhir }}">
-
-                                        <img src="{{ asset('images/' . $menu->gambar) }}" class="card-img-top"
-                                            style="height: 120px; object-fit: cover;">
-
-                                        <div class="card-body p-2 text-center">
-                                            <h6 class="card-title mb-1">{{ $menu->nama }}</h6>
-
-                                            @if ($punyaDiskon)
-                                                <small class="text-danger"><strike>Rp
-                                                        {{ number_format($menu->harga) }}</strike></small><br>
-                                                <span class="badge badge-danger">Rp {{ number_format($hargaAkhir) }}</span>
-                                            @else
-                                                <span class="badge badge-success">Rp
-                                                    {{ number_format($menu->harga) }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
+    @endforeach
+</div>
 
-    <script>
-        let cart = [];
+        </div>
 
-        // Fungsi Tambah ke Keranjang
-        document.querySelectorAll('.btn-add-to-cart').forEach(card => {
-            card.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const nama = this.dataset.nama;
-                const harga = parseInt(this.dataset.harga);
+        <!-- TRANSAKSI -->
+        <div class="col-12 col-lg-5 mb-4">
 
-                const existingItem = cart.find(item => item.menu_id === id);
+            <div class="card shadow-sm border-0">
 
-                if (existingItem) {
-                    existingItem.jumlah++;
-                } else {
-                    cart.push({
-                        menu_id: id,
-                        nama: nama,
-                        harga: harga,
-                        jumlah: 1
-                    });
-                }
-                renderCart();
+                <div class="card-header bg-primary text-white p-2 p-md-3">
+
+                    <h6 class="mb-0 font-weight-bold">
+                        Keranjang
+                    </h6>
+
+                </div>
+
+                <form action="{{ route('transaksi.store') }}" method="POST" id="form-transaksi">
+
+                    @csrf
+
+                    <input type="hidden" name="menu" id="menu">
+
+                    <div class="card-body p-1 p-sm-2">
+
+                        <div class="table-responsive" style="max-height:320px; overflow-y:auto; overflow-x:hidden;">
+
+                            <table class="table table-bordered table-sm mb-0 text-center small">
+
+                                <thead class="bg-light">
+
+                                    <tr>
+                                        <th class="text-left">Menu</th>
+                                        <th style="width:25%">Qty</th>
+                                        <th>Subtotal</th>
+                                        <th>Hapus</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="cart-table"></tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PEMBAYARAN -->
+                    <div class="card-footer bg-white">
+
+                        <!-- TOTAL -->
+                        <div class="form-group mb-2">
+
+                            <label class="small font-weight-bold mb-1">
+                                Total Harga
+                            </label>
+
+                            <div class="input-group">
+
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Rp</span>
+                                </div>
+
+                                <input type="text" name="total_harga" id="total_harga"
+                                    class="form-control font-weight-bold text-danger" value="0" readonly>
+
+                            </div>
+
+                        </div>
+
+                        <!-- BAYAR -->
+                        <div class="row">
+
+                            <div class="col-12 col-md-6 mb-2">
+
+                                <div class="form-group mb-0">
+
+                                    <label class="small font-weight-bold mb-1">Uang Bayar</label>
+
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
+                                        <input type="text" name="uang_bayar" id="uang_bayar" class="form-control"
+                                            inputmode="numeric" pattern="[0-9.]*" maxlength="16" autocomplete="off"
+                                            required>
+                                    </div>
+
+                                    <div class="d-flex flex-wrap">
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1"
+                                            onclick="document.getElementById('uang_bayar').value = 20000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">20k</button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1"
+                                            onclick="document.getElementById('uang_bayar').value = 50000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">50k</button>
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-secondary font-weight-bold mr-1 mb-1"
+                                            onclick="document.getElementById('uang_bayar').value = 100000; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true }));">100k</button>
+                                        <button type="button" class="btn btn-sm btn-primary font-weight-bold mb-1"
+                                            onclick="let total = document.getElementById('total_harga').value.replace(/[^0-9]/g, ''); if(total > 0) { document.getElementById('uang_bayar').value = total; document.getElementById('uang_bayar').dispatchEvent(new Event('input', { bubbles: true })); }">Uang
+                                            Pas</button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- KEMBALIAN -->
+                            <div class="col-12 col-md-6">
+
+                                <div class="form-group mb-0">
+
+                                    <label class="small font-weight-bold mb-1">
+                                        Kembalian
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Rp</span>
+                                        </div>
+
+                                        <input type="text" id="kembalian" class="form-control" value="0" readonly>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- METODE -->
+                        <div class="row mt-2">
+
+                            <div class="col-12 col-md-6 mb-2">
+
+                                <div class="form-group mb-0">
+
+                                    <label class="small font-weight-bold mb-1">
+                                        Metode
+                                    </label>
+
+                                    <select name="metode_pembayaran" class="form-control">
+
+                                        <option value="cash">Cash</option>
+                                        <option value="qris">QRIS</option>
+                                        <option value="transfer">Transfer</option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CUSTOMER -->
+                            <div class="col-12 col-md-6">
+
+                                <div class="form-group mb-0">
+
+                                    <label class="small font-weight-bold mb-1">
+                                        Customer
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <select name="customer_id" id="customer_id" class="form-control">
+
+                                            <option value="">-- Umum --</option>
+
+                                            @foreach ($customers as $customer)
+
+                                            <option value="{{ $customer->id }}">
+                                                {{ $customer->nama }}
+                                            </option>
+
+                                            @endforeach
+
+                                        </select>
+
+                                        <div class="input-group-append">
+
+                                            <button type="button" class="btn btn-primary" id="btnTambahCustomer">
+
+                                                +
+
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- BUTTON -->
+                        <button type="submit" class="btn btn-success btn-block font-weight-bold shadow-sm py-2 mt-3">
+
+                            PROSES TRANSAKSI
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL CUSTOMER -->
+<div class="modal fade" id="modalCustomer" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header bg-light p-2 px-3">
+
+                <h6 class="modal-title font-weight-bold">
+                    Tambah Customer
+                </h6>
+
+            </div>
+
+            <div class="modal-body p-3">
+
+                <div class="form-group mb-2">
+
+                    <label class="small font-weight-bold mb-1">
+                        Nama Customer
+                    </label>
+
+                    <input type="text" id="inputNamaCustomer" class="form-control form-control-sm" placeholder="Nama">
+
+                    <small class="text-danger d-block mt-1" id="textErrorCustomer"></small>
+
+                </div>
+
+                <div class="form-group mb-0">
+
+                    <label class="small font-weight-bold mb-1">
+                        No HP
+                    </label>
+
+                    <input type="text" id="inputNoHpCustomer" class="form-control form-control-sm" placeholder="No HP">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer bg-light p-2">
+
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">
+
+                    Batal
+
+                </button>
+
+                <button type="button" class="btn btn-sm btn-success" id="btnSimpanCustomer">
+
+                    Simpan
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- AJAX CUSTOMER -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const ambilElemen = (id) => document.getElementById(id);
+
+    ambilElemen('btnTambahCustomer').addEventListener('click', function() {
+
+        ambilElemen('inputNamaCustomer').value = '';
+        ambilElemen('inputNoHpCustomer').value = '';
+        ambilElemen('textErrorCustomer').innerText = '';
+
+        $('#modalCustomer').modal('show');
+
+    });
+
+    ambilElemen('btnSimpanCustomer').addEventListener('click', function() {
+
+        let namaCustomer =
+            ambilElemen('inputNamaCustomer').value.trim();
+
+        let nomorHpCustomer =
+            ambilElemen('inputNoHpCustomer').value.trim();
+
+        if (!namaCustomer) {
+
+            return ambilElemen('textErrorCustomer').innerText =
+                'Nama customer wajib diisi';
+
+        }
+
+        fetch('/customer/store-ajax', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]')
+                        .content
+                },
+
+                body: JSON.stringify({
+                    nama: namaCustomer,
+                    no_hp: nomorHpCustomer
+                })
+
+            })
+
+            .then(res => res.json())
+
+            .then(dataCustomerBaru => {
+
+                ambilElemen('customer_id')
+                    .add(new Option(
+                        dataCustomerBaru.nama,
+                        dataCustomerBaru.id
+                    ));
+
+                ambilElemen('customer_id').value =
+                    dataCustomerBaru.id;
+
+                $('#modalCustomer').modal('hide');
+
+            })
+
+            .catch(errorSistem => {
+
+                console.log(
+                    "Terjadi kesalahan:",
+                    errorSistem
+                );
+
             });
-        });
 
-        // Render Tabel Keranjang
-        function renderCart() {
-            const tbody = document.getElementById('cart-table');
-            tbody.innerHTML = '';
-            let total = 0;
+    });
 
-            cart.forEach((item, index) => {
-                const subtotal = item.harga * item.jumlah;
-                total += subtotal;
+});
+</script>
 
-                tbody.innerHTML += `
-                <tr>
-                    <td>${item.nama}</td>
-                    <td>
-                        <input type="hidden" name="items[${index}][menu_id]" value="${item.menu_id}">
-                        <input type="hidden" name="items[${index}][harga]" value="${item.harga}">
-                        <input type="number" name="items[${index}][jumlah]" value="${item.jumlah}" class="form-control form-control-sm" min="1" onchange="updateQty(${index}, this.value)">
-                    </td>
-                    <td>Rp ${subtotal.toLocaleString()}</td>
-                    <td><button type="button" class="btn btn-danger btn-sm" onclick="removeItem(${index})">x</button></td>
-                </tr>
-            `;
-            });
+<script src="{{ asset('js/transaksi.js') }}"></script>
+<script src="{{ asset('js/filter.js') }}"></script>
 
-            document.getElementById('total_harga').value = total;
-            hitungKembalian();
-        }
-
-        function updateQty(index, val) {
-            cart[index].jumlah = parseInt(val);
-            renderCart();
-        }
-
-        function removeItem(index) {
-            cart.splice(index, 1);
-            renderCart();
-        }
-
-        // Hitung Kembalian Otomatis
-        document.getElementById('uang_bayar').addEventListener('input', hitungKembalian);
-
-        function hitungKembalian() {
-            const total = parseInt(document.getElementById('total_harga').value);
-            const bayar = parseInt(document.getElementById('uang_bayar').value) || 0;
-            document.getElementById('kembalian').value = bayar - total;
-        }
-
-        // Filter Pencarian Menu
-        document.getElementById('search-menu').addEventListener('keyup', function() {
-            const keyword = this.value.toLowerCase();
-            document.querySelectorAll('.menu-item').forEach(item => {
-                const nama = item.dataset.nama;
-                item.style.display = nama.includes(keyword) ? 'block' : 'none';
-            });
-        });
-    </script>
 @endsection

@@ -1,111 +1,169 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            
-            <div class="card shadow-sm border-0">
-                {{-- Card Header --}}
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 font-weight-bold text-warning">
-                        <i class="fas fa-edit me-1"></i> Edit Menu
-                    </h5>
-                </div>
+    <div class="container-fluid">
 
-                <div class="card-body p-4">
-                    {{-- Validasi Error --}}
-                    @if ($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm">
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+        <!-- Judul -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-edit text-warning"></i> Edit Menu
+            </h1>
+        </div>
 
-                    <form action="{{ route('menu.update', $menu->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
 
-                        {{-- Kategori --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Kategori</label>
-                            <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror form-control">
-                                @foreach($kategoris as $k)
-                                    <option value="{{ $k->id }}" {{ $menu->kategori_id == $k->id ? 'selected' : '' }}>
-                                        {{ $k->nama_kategori }}
+                <div class="card shadow mb-4 border-left-warning">
+
+                    <!-- Header -->
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-warning">
+                            Form Edit Menu
+                        </h6>
+                    </div>
+
+                    <div class="card-body">
+
+                        {{-- Error --}}
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('menu.update', $menu->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="row">
+                                {{-- Kategori --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Kategori</label>
+                                        <select name="kategori_id" class="form-control">
+                                            @foreach($kategoris as $k)
+                                                <option value="{{ $k->id }}" {{ $menu->kategori_id == $k->id ? 'selected' : '' }}>
+                                                    {{ $k->nama_kategori }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Nama --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Nama Menu</label>
+                                        <input type="text" name="nama" value="{{ old('nama', $menu->nama) }}"
+                                            class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                {{-- Modal --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Harga Modal</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Rp</span>
+                                            </div>
+
+                                            <!-- Input Tampilan (Text agar bisa pakai titik) -->
+                                            <input type="text" class="form-control" id="modal_tampilan"
+                                                placeholder="Masukkan harga modal"
+                                                value="{{ number_format(old('modal', $menu->modal ?? 0), 0, ',', '.') }}"
+                                                oninput="formatRupiah(this, 'modal_asli')" required>
+
+                                            <!-- Input Hidden (Untuk dikirim ke Database) -->
+                                            <input type="hidden" name="modal" id="modal_asli"
+                                                value="{{ old('modal', $menu->modal ?? 0) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {{-- Harga --}}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Harga Jual</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Rp</span>
+                                            </div>
+
+                                            <!-- Input Tampilan (Text agar bisa pakai titik) -->
+                                            <input type="text" class="form-control" id="harga_tampilan"
+                                                placeholder="Masukkan harga jual"
+                                                value="{{ number_format(old('harga', $menu->harga ?? 0), 0, ',', '.') }}"
+                                                oninput="formatRupiah(this, 'harga_asli')" required>
+
+                                            <!-- Input Hidden (Untuk dikirim ke Database) -->
+                                            <input type="hidden" name="harga" id="harga_asli"
+                                                value="{{ old('harga', $menu->harga ?? 0) }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Status --}}
+                            <div class="form-group">
+                                <label class="font-weight-bold">Status</label>
+                                <select name="status" class="form-control">
+                                    <option value="tersedia" {{ $menu->status == 'tersedia' ? 'selected' : '' }}>Tersedia
                                     </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Nama Menu --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Menu</label>
-                            <input type="text" name="nama" value="{{ old('nama', $menu->nama) }}" 
-                                   class="form-control @error('nama') is-invalid @enderror"
-                                   placeholder="Masukkan nama menu">
-                        </div>
-
-                        {{-- Row untuk Modal & Harga --}}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Modal</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="modal" value="{{ old('modal', $menu->modal) }}" 
-                                           class="form-control @error('modal') is-invalid @enderror">
-                                </div>
+                                    <option value="tidak tersedia" {{ $menu->status == 'tidak tersedia' ? 'selected' : '' }}>
+                                        Tidak Tersedia</option>
+                                </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Harga</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="number" name="harga" value="{{ old('harga', $menu->harga) }}" 
-                                           class="form-control @error('harga') is-invalid @enderror">
-                                </div>
-                            </div>
-                        </div>
 
-                        {{-- Status --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Status</label>
-                            <select name="status" class="form-control">
-                                <option value="tersedia" {{ $menu->status == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                                <option value="tidak tersedia" {{ $menu->status == 'tidak tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
-                            </select>
-                        </div
+                            {{-- Gambar --}}
+                            <div class="form-group">
+                                <label class="font-weight-bold">Gambar</label>
 
-                        {{-- Gambar & Preview --}}
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Gambar</label>
-                            @if($menu->gambar)
                                 <div class="mb-3">
-                                    <img src="{{ asset('images/'.$menu->gambar) }}" 
-                                         class="rounded img-thumbnail shadow-sm" 
-                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    @if($menu->gambar)
+                                        <!-- ID "preview" diletakkan di sini agar bisa diubah oleh JavaScript -->
+                                        <img id="preview" src="{{ asset('images/' . $menu->gambar) }}"
+                                           class="img-fluid rounded" style="max-height: 130px; object-fit: cover;">
+                                    @else
+                                        <img id="preview" src="https://placehold.co" class="img-thumbnail shadow"
+                                            style="width:120px;height:120px;object-fit:cover;">
+                                    @endif
+                                      
                                 </div>
-                            @endif
-                            <input type="file" name="gambar" class="form-control @error('gambar') is-invalid @enderror">
-                            <div class="form-text mt-2 text-muted small">
-                                * Kosongkan jika tidak ingin mengganti gambar.
+                            
+
+                                <!-- Tambahkan onchange="previewImage(event)" -->
+                                <input type="file" name="gambar" class="form-control" onchange="previewImage(event)">
+                                <small class="text-muted">
+                                    Kosongkan jika tidak ingin mengganti gambar
+                                </small>
                             </div>
-                        </div>
 
-                        <hr class="text-muted mb-4">
+                            <div class="text-right">
+                                <a href="{{ route('menu.index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Batal
+                                </a>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('menu.index') }}" class="btn btn-light border px-4">Kembali</a>
-                            <button type="submit" class="btn btn-warning px-4">
-                                <i class="fas fa-save me-1"></i> Update Data
-                            </button>
-                        </div>
-                    </form>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
+
             </div>
         </div>
+
     </div>
-</div>
 @endsection
+
+<script src="{{ asset('js/format-harga.js') }}"></script>

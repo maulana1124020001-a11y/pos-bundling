@@ -1,23 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
+
+<!-- container-fluid = standar layout SB Admin 2 -->
+<div class="container-fluid">
+
+    <!-- Judul halaman -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-edit text-warning"></i> Edit Kategori
+        </h1>
+    </div>
+
+    <!-- Row -->
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            
-            <div class="card shadow-sm border-0">
-                {{-- Card Header --}}
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 font-weight-bold text-warning">
-                        <i class="fas fa-edit me-1"></i> Edit Kategori
-                    </h5>
+        <div class="col-lg-6">
+
+            <!-- Card utama -->
+            <div class="card shadow mb-4 border-left-warning">
+
+                 <!-- Header Card -->
+
+                <!-- Header Card -->
+                <div class="card-header py-3">
+                    <!-- text-warning = warna kuning (edit biasanya beda warna) -->
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        Form Edit Kategori
+                    </h6>
                 </div>
 
-                <div class="card-body p-4">
-                    {{-- Alert Error Validation --}}
+                <!-- Body Card -->
+                <div class="card-body">
+
+                    <!-- VALIDASI ERROR berbentuk daftar -->
                     @if ($errors->any())
-                        <div class="alert alert-danger border-0 shadow-sm">
+                        <!-- alert bootstrap -->
+                        <div class="alert alert-danger">
                             <ul class="mb-0">
+                                <!-- looping semua error -->
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -25,45 +45,57 @@
                         </div>
                     @endif
 
+                    <!-- FORM UPDATE -->
                     <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
                         @csrf
-                        @method('PUT')
+                        @method('PUT') <!-- method PUT untuk update data -->
 
-                        <div class="mb-4">
-                            <label for="nama_kategori" class="form-label fw-bold">Nama Kategori</label>
-                            <input type="text" 
-                                   name="nama_kategori" 
-                                   id="nama_kategori"
-                                   value="{{ old('nama_kategori', $kategori->nama_kategori) }}" 
+                        <div class="form-group">
+                            <label class="font-weight-bold">Nama Kategori</label>
+
+                            <input type="text"
+                                   name="nama_kategori"
+                                   value="{{ old('nama_kategori', $kategori->nama_kategori) }}"
                                    class="form-control @error('nama_kategori') is-invalid @enderror"
                                    placeholder="Masukkan nama kategori"
                                    required>
-                            
-                            @error('nama_kategori')
+                                   {{-- is-invalid = otomatis merah kalau error --}}
+
+                            <!-- tampilkan error di bawah form -->
+                            {{-- @error('nama_kategori')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
-                            @enderror
+                            @enderror --}}
                         </div>
 
-                        <hr class="text-muted">
+                        <!-- garis pembatas -->
+                        <hr>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('kategori.index') }}" class="btn btn-light border">
-                                Kembali
+                        <!-- tombol aksi -->
+                        <div class="text-right">
+
+                            <!-- tombol kembali -->
+                            <a href="{{ route('kategori.index') }}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
                             </a>
-                            <button type="submit" class="btn btn-warning px-4">
-                                <i class="fas fa-check-circle me-1"></i> Update Data
+
+                            <!-- tombol update -->
+                            <button type="submit" 
+                                    class="btn btn-warning">
+                                <i class="fas fa-check-circle"></i> Update
                             </button>
+
                         </div>
                     </form>
+
                 </div>
             </div>
 
-            <small class="text-muted mt-3 d-block text-center">
-                ID Kategori: #{{ $kategori->id }}
-            </small>
         </div>
     </div>
+
 </div>
+
 @endsection

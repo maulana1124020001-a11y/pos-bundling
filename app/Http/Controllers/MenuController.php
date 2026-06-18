@@ -9,27 +9,18 @@ use Illuminate\Support\Facades\File;
 
 class MenuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $menus = Menu::with('kategori')->get();
+        $menus = Menu::with('kategori')->latest()->get();
         return view('menu.index', compact('menus'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $kategoris = Kategori::all();
         return view('menu.create', compact('kategoris'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -37,7 +28,7 @@ class MenuController extends Controller
             'nama' => 'required',
             'modal' => 'required|numeric',
             'harga' => 'required|numeric',
-            'gambar' => 'image|mimes:jpg,jpeg,png|max:2048'
+            'gambar' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $data = $request->all();
@@ -58,26 +49,17 @@ class MenuController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Menu $menu)
     {
         return view('menu.show', compact('menu'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Menu $menu)
     {
         $kategoris = Kategori::all();
         return view('menu.edit', compact('menu', 'kategoris'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Menu $menu)
     {
 
@@ -111,20 +93,39 @@ class MenuController extends Controller
         return redirect()->route('menu.index')->with('success', 'Menu berhasil diupdate');
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Menu $menu)
     {
-        // 1. Hapus file fisik di public/images
-        if ($menu->gambar) {
-            File::delete(public_path('images/' . $menu->gambar));
-        }
-
-        // 2. Hapus data di database
         $menu->delete();
 
         return redirect()->route('menu.index')->with('success', 'Menu dan gambar terhapus');
     }
+
+    // public function trash()
+    // {
+    // $menus = Menu::onlyTrashed()->get();
+
+    // return view('menu.trash', compact('menus'));
+    // }
+
+    // public function restore($id)
+    // {
+    //     $menu = Menu::onlyTrashed()->findOrFail($id);
+    //     $menu->restore();
+
+    //     return redirect()->route('menu.trash')->with('success', 'Menu berhasil direstore');
+    // }
+
+    // public function forceDelete($id)
+    // {
+    // // Cari data termasuk yang sudah di-soft delete
+    // $menu = Menu::withTrashed()->findOrFail($id);
+    //   if ($menu->gambar) {
+    //         File::delete(public_path('images/' . $menu->gambar));
+    //     }
+    // // Hapus permanen dari database
+    // $menu->forceDelete();
+
+    // return redirect()->back()->with('success', 'Data berhasil dimusnahkan!');
+    // }
+
 }

@@ -5,17 +5,21 @@
 <div class="container-fluid">
 
     <!-- Judul -->
-    <h1 class="h3 mb-3 text-gray-800">Data Kategori</h1>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-tags text-primary"></i> Data Kategori
+        </h1>
+    </div>
 
     <!-- Card -->
     <div class="card shadow mb-4">
 
         <!-- Header -->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel Kategori</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Kategori</h6>
 
             <a href="{{ route('kategori.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah
+                <i class="fas fa-plus"></i> Tambah Kategori
             </a>
         </div>
 
@@ -41,10 +45,12 @@
                             <td>{{ $k->nama_kategori }}</td>
                             <td class="text-center">
 
+                                {{-- button edit --}}
                                 <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
 
+                                {{-- button delete --}}
                                 <form action="{{ route('kategori.destroy', $k->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

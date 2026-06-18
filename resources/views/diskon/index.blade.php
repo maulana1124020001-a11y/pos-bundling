@@ -1,94 +1,116 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid">
 
-        <!-- Judul -->
-        <h1 class="h3 mb-3 text-gray-800">Data Diskon</h1>
+<div class="container-fluid">
 
-        <!-- Card -->
-        <div class="card shadow mb-4">
+    <!-- Judul -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-percent text-primary"></i> Data Diskon Menu
+        </h1>
+    </div>
 
-            <!-- Header -->
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Tabel Diskon</h6>
+    <!-- Card -->
+    <div class="card shadow mb-4">
 
-                <a href="{{ route('diskon.create') }}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Tambah
-                </a>
-            </div>
+        <!-- Header -->
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Daftar Diskon</h6>
 
-            <!-- Body -->
-            <div class="card-body">
+            <a href="{{ route('diskon.create') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Tambah Diskon
+            </a>
+        </div>
 
-                <div class="table-responsive">
+        <!-- Body -->
+        <div class="card-body">
 
-                    <table class="table table-bordered table-hover" id="dataTable" width="100%">
+            <div class="table-responsive">
 
-                        <thead class="thead-light">
-                            <tr>
-                                <th width="50">No</th>
-                                <th>Menu</th>
-                                <th>Tipe</th>
-                                <th>Nilai Diskon</th>
-                                <th>Periode</th>
-                                <th width="150">Aksi</th>
-                            </tr>
-                        </thead>
+                <table class="table table-bordered table-hover" id="dataTable" width="100%">
+                    
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="50" class="text-center">No</th>
+                            <th>Menu</th>
+                            <th>Tipe</th>
+                            <th>Potongan</th>
+                            <th>Periode</th>
+                            <th>Status</th>
+                            <th width="170" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
 
-                        <tbody>
-                            @forelse($diskons as $d)
-                                <tr>
-                                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <tbody>
+                        @forelse($diskons as $d)
+                        <tr>
+                            <td class="text-center">{{ $loop->iteration }}</td>
 
-                                    <td>{{ $d->menu->nama ?? '-' }}</td>
+                            <td>{{ $d->menu?->nama }}</td>
 
-                                    <td>{{ $d->tipe_diskon }}</td>
+                            <td>
+                                <span class="badge bg-info text-white">
+                                    {{ $d->tipe_diskon }}
+                                </span>
+                            </td>
 
-                                    <td>
-                                        @if ($d->tipe_diskon == 'Persen')
-                                            {{ $d->diskon_persen }}%
-                                        @else
-                                            Rp {{ number_format($d->diskon_nominal, 0, ',', '.') }}
-                                        @endif
-                                    </td>
+                            <td>
+                                {{ $d->tipe_diskon == 'Persen' 
+                                    ? $d->diskon_persen . '%' 
+                                    : 'Rp ' . number_format($d->diskon_nominal) }}
+                            </td>
 
-                                    <td>
-                                        {{ $d->mulai_diskon }} <br>
-                                        s/d <br>
-                                        {{ $d->akhir_diskon }}
-                                    </td>
+                            <td>
+                                <small>
+                                    {{ date('d M Y', strtotime($d->mulai_diskon)) }} s/d 
+                                    {{ date('d M Y', strtotime($d->akhir_diskon)) }}
+                                </small>
+                            </td>
 
-                                    <td class="text-center">
-                                        <a href="{{ route('diskon.edit', $d->id) }}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                            <td>
+                                @if(now()->between($d->mulai_diskon, $d->akhir_diskon))
+                                    <span class="badge bg-success text-white">Aktif</span>
+                                @elseif(now()->lt($d->mulai_diskon))
+                                    <span class="badge bg-warning text-white">Mendatang</span>
+                                @else
+                                    <span class="badge bg-danger text-white">Berakhir</span>
+                                @endif
+                            </td>
 
+                            <td class="text-center">
 
-                                        <form action="{{ route('diskon.destroy', $d->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                <a href="{{ route('diskon.edit', $d->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center">
-                                        Data diskon belum tersedia
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
+                                <form action="{{ route('diskon.destroy', $d->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
 
-                    </table>
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Hapus diskon ini?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
 
-                </div>
+                            </td>
+                        </tr>
+
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                Data diskon belum tersedia
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+
+                </table>
+
             </div>
         </div>
     </div>
+
+</div>
+
 @endsection

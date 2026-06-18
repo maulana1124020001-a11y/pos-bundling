@@ -4,54 +4,72 @@
 
 <div class="container-fluid">
 
-    <!-- Judul -->
-    <h1 class="h3 mb-3 text-gray-800">Data Menu</h1>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-utensils text-primary"></i> Data Menu
+        </h1>
+    </div>
 
-    <!-- Card -->
     <div class="card shadow mb-4">
 
-        <!-- Header -->
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Tabel Menu</h6>
-
-            <a href="{{ route('menu.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah Menu
-            </a>
+            <h6 class="m-0 font-weight-bold text-primary">
+                Daftar Menu
+            </h6>
+            <div>
+                <a href="{{ route('menu.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Tambah Menu
+                </a>
+            </div>
         </div>
 
-        <!-- Body -->
         <div class="card-body">
             <div class="table-responsive">
-
                 <table class="table table-bordered table-hover" id="dataTable" width="100%">
-                    
                     <thead class="thead-light">
                         <tr>
-                            <th>No</th>
-                            
+                            <th width="50" class="text-center">No</th>
                             <th>Nama</th>
                             <th>Kategori</th>
                             <th>Harga</th>
                             <th>Gambar</th>
                             <th>Status</th>
-                            <th>Aksi</th>
+                            <th width="170" class="text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach($menus as $m)
+                        @forelse($menus as $m)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td class="text-center">{{ $loop->iteration }}</td>
                             <td>{{ $m->nama }}</td>
-                            <td>{{ $m->kategori->nama_kategori }}</td>
+                            <td>{{ $m?->kategori->nama_kategori ?? '-' }}</td>
                             
-                            <td>Rp {{ number_format($m->harga) }}</td>
+                            <td>
+                                @if($m->ada_diskon)
+                                    <div class="text-muted small" style="font-size: 80%;">
+                                        <del>Rp {{ number_format($m->harga) }}</del>
+                                    </div>
+                                    <span class="text-danger font-weight-bold">
+                                        Rp {{ number_format($m->harga_diskon) }}
+                                    </span>
+                                    <span class="badge badge-danger ml-1" style="font-size: 75%;">
+                                        {{ $m->diskon->tipe_diskon == 'Persen' ? $m->diskon->diskon_persen . '%' : 'Potongan Rp ' . number_format($m->diskon->diskon_nominal) }}
+                                    </span>
+                                @else
+                                    <span class="text-dark">
+                                        Rp {{ number_format($m->harga) }}
+                                    </span>
+                                @endif
+                            </td>
 
                             <td>
-                                @if($m->gambar)
-                                    <img src="{{ asset('images/'.$m->gambar) }}" width="70">
+                                @if($m->gambar && file_exists(public_path('images/'.$m->gambar)))
+                                    <img src="{{ asset('images/'.$m->gambar) }}"
+                                        style="width: 70px; height: 50px; object-fit: cover;" alt="Gambar">
                                 @else
-                                    -
+                                    <img src="https://logodix.com/logo/1993885.png"
+                                        style="width: 70px; height: 50px; object-fit: cover;" alt="Default Image">
                                 @endif
                             </td>
 
@@ -63,10 +81,11 @@
                                 @endif
                             </td>
 
-                            <td>
-                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-info"></i>
+                            <td class="text-center">
+                                <a href="{{ route('menu.show', $m->id) }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
                                 </a>
+
                                 <a href="{{ route('menu.edit', $m->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -80,11 +99,15 @@
                                 </form>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                Data menu belum tersedia
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
-
                 </table>
-
             </div>
         </div>
     </div>

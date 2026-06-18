@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bundlings', function (Blueprint $table) {
-            $table->id();
-            
-            $table->foreignId('menu_id')->constrained('menus');
-            $table->foreignId('menu_non_bundling_id')->constrained('menus');
-            $table->decimal('harga', 10, 2);
-            $table->timestamps();
-        });
+           
+        $table->id();
+        $table->string('nama_bundling');
+        $table->foreignId('menu_a_id')->constrained('menus')->onDelete('cascade');
+        $table->foreignId('menu_b_id')->constrained('menus')->onDelete('cascade');
+        $table->timestamps();
+    });
+     
     }
 
     /**

@@ -72,7 +72,8 @@ class UserController extends Controller
         $request->validate([
             'role_id' => 'required',
             'nama' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'required|min:8'
         ]);
 
         $data = $request->all();
@@ -91,10 +92,22 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
-    {
-         $user->delete();
-
-       return redirect()->route('user.index')->with('success', 'User berhasil dihapus.');
+  public function destroy($id)
+{
+    // 1. KUNCI UTAMA: Jika ID yang dikirim adalah 1, langsung tolak penolakan keras
+    if ($id == 1) {
+        return back()->with('error', 'User Master (ID: 1) dilindungi oleh sistem dan tidak dapat dihapus!');
     }
+
+    // 2. Kunci Tambahan: Mencegah user yang sedang login menghapus dirinya sendiri
+    if ($id == auth()->id()) {
+        return back()->with('error', 'Kamu tidak bisa menghapus akunmu sendiri yang sedang digunakan.');
+    }
+
+    // Cari datanya, jika lolos pengecekan di atas baru hapus
+    $user = User::findOrFail($id);
+    $user->delete();
+
+    return redirect()->route('user.index')->with('success', 'User berhasil dihapus.');
+}
 }

@@ -80,5 +80,16 @@
                 document.getElementById('input_nominal').style.display = 'block';
             }
         });
+<<<<<<< HEAD
     </script>
 @endsection
+=======
+
+        // Trigger fungsi saat halaman dimuat ulang (menjaga state jika ada error dari server)
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('tipe_diskon').dispatchEvent(new Event('change'));
+        });
+    </script>
+
+@endsection
+>>>>>>> fff8c854a36844b55a847045d3c135f17a333129

@@ -10,17 +10,17 @@ class AdminMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-      // Cek jika user sudah login dan role-nya adalah Admin (ID 1)
-    if (auth()->check() && auth()->user()->role_id == 1) {
-        return $next($request);
-    }
+        // cek login + role admin
+        if (auth()->check() && auth()->user()->role_id == 1) {
+            return $next($request);
+        }
 
-    // Jika bukan admin, tendang ke halaman transaksi dengan pesan error
-    return redirect('/transaksi/create')->with('error', 'Anda tidak memiliki akses Admin.');
+        // jika bukan admin
+        return redirect()
+            ->route('transaksi.create')
+            ->with('error', 'anda tidak memiliki akses admin.');
     }
 }

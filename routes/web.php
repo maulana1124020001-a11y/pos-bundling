@@ -7,8 +7,13 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiskonController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RekomendasibandlingController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,13 +30,26 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 | SETELAH LOGIN
 |--------------------------------------------------------------------------
 */
+Route::get('/', function () {
+    return view('auth.login');
+});
+
 Route::middleware(['auth'])->group(function () {
 
     // 🔹 Transaksi (Kasir & Admin)
     Route::resource('transaksi', TransaksiController::class);
+    // Route::get('/transaksi/{id}/thermal',[TransaksiController::class, 'thermalPrint'])->name('transaksi.thermal');
+    Route::get(
+    '/transaksi/{id}/rawbt',
+    [TransaksiController::class, 'rawbt']
+)->name('transaksi.rawbt');
 
     // 🔹 Customer (biar bisa dipakai kasir juga)
     Route::resource('customer', CustomerController::class);
+    Route::post('/customer/store-ajax', [CustomerController::class, 'storeAjax']);
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
@@ -42,8 +60,26 @@ Route::middleware(['auth'])->group(function () {
 
         Route::resource('kategori', KategoriController::class);
         Route::resource('menu', MenuController::class);
+
+        Route::get('/menu-trash', [MenuController::class, 'trash'])
+            ->name('menu.trash');
+        Route::get('/menu-restore/{id}', [MenuController::class, 'restore'])
+            ->name('menu.restore');
+        Route::delete('/menu/{id}/force', [MenuController::class, 'forceDelete'])->name('menu.forceDelete');
+
+
         Route::resource('user', UserController::class);
         Route::resource('diskon', DiskonController::class);
+        
+
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/rekomendasi', [RekomendasibandlingController::class, 'index'])->name('rekomendasi.index');
+
+        
+// Taruh baris ini di bawah route rekomendasi index Anda
+Route::post('/rekomendasi/simpan-bundling', [RekomendasibandlingController::class, 'simpanBundling'])
+     ->name('rekomendasi.simpan-bundling');
+
 
     });
 

@@ -15,7 +15,7 @@
 
                 <div class="card-body p-4">
                     {{-- Alert Error Validation --}}
-                    @if ($errors->any())
+                    <!-- @if ($errors->any())
                         <div class="alert alert-danger border-0 shadow-sm">
                             <ul class="mb-0">
                                 @foreach ($errors->all() as $error)
@@ -23,7 +23,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif -->
 
                     <form action="{{ route('customer.update', $customer->id) }}" method="POST">
                         @csrf
@@ -54,15 +54,9 @@
                                    name="no_hp" 
                                    id="no_hp"
                                    value="{{ old('no_hp', $customer->no_hp) }}" 
-                                   class="form-control @error('no_hp') is-invalid @enderror"
+                                   class="form-control "
                                    placeholder="Contoh: 08123456789"
-                                   required>
-
-                            @error('no_hp')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
+                                  >
                         </div>
 
                         <hr class="text-muted">
