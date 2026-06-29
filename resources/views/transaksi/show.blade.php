@@ -2,179 +2,146 @@
 
 @section('content')
 
-<div class="container py-3">
+<div class="container py-4">
 
-    {{-- 🔝 TOMBOL AKSI --}}
-    <div class="text-center mb-3 aksi-area">
-        <button onclick="window.print()" class="btn btn-success">
-            Cetak Struk
-        </button>
+    {{-- 🔝 TOMBOL AKSI (Disembunyikan otomatis saat cetak/save PDF) --}}
+    <div class="row justify-content-center mb-4 d-print-none aksi-area">
+        <div class="col-md-6 text-center">
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <a href="{{ route('transaksi.print', $transaksi->id) }}" target="_blank" class="btn btn-success">
+                    Cetak / Simpan PDF
+                </a>
 
-        <a href="{{ route('transaksi.rawbt',$transaksi->id) }}" class="btn btn-dark">
-            Cetak Bluetooth
-        </a>
+                <a href="{{ route('transaksi.rawbt',$transaksi->id) }}"
+                    class="btn btn-dark px-4 py-2 shadow-sm flex-fill flex-md-grow-0">
+                    <i class="fab fa-bluetooth me-1"></i> Cetak Bluetooth
+                </a>
 
-        <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">
-            Kembali
-        </a>
+                <a href="{{ route('transaksi.index') }}"
+                    class="btn btn-secondary px-4 py-2 shadow-sm flex-fill flex-md-grow-0">
+                    <i class="fas fa-arrow-left me-1"></i> Kembali
+                </a>
 
-        <a href="{{ route('transaksi.create') }}" class="btn btn-primary">
-            Transaksi Baru
-        </a>
+                <a href="{{ route('transaksi.create') }}"
+                    class="btn btn-primary px-4 py-2 shadow-sm flex-fill flex-md-grow-0">
+                    <i class="fas fa-plus me-1"></i> Transaksi Baru
+                </a>
+            </div>
+        </div>
     </div>
 
-    {{-- STRUK --}}
+    {{-- STRUK DOKUMEN --}}
     <div class="card shadow-sm border-0 mx-auto struk-container">
 
-        <div class="card-body p-3">
+        <div class="card-body p-4">
 
             {{-- HEADER --}}
+
             <div class="text-center">
-                <h5 class="font-weight-bold mb-1">
-                    TITIK TEMU
-                </h5>
+                <h4 class="mb-0 font-weight-bold">TITIK TEMU</h4>
+                <div>Coffee & Eatery</div>
+            </div>
+            <hr class="border-dark border-dashed my-3">
 
-                <small class="text-muted d-block">
-                    COFFEE & EATERY
-                </small>
+            <div class="small">
+                <div class="d-flex justify-content-between">
+                    <span>No</span>
+                    <span>#{{ $transaksi->kode_transaksi ?? $transaksi->id }}</span>
+                </div>
 
-                <small class="text-muted d-block">
-                    Jl. Kom. Yos Sudarso No.33, Pacitan
-                </small>
+                <div class="d-flex justify-content-between">
+                    <span>Tanggal</span>
+                    <span>{{ date('d/m/Y H:i', strtotime($transaksi->waktu)) }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span>Kasir</span>
+                    <span>{{ $transaksi->user->nama ?? '-' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span>Pelanggan</span>
+                    <span>{{ $transaksi->customer->nama ?? '-' }}</span>
+                </div>
             </div>
 
-            <hr class="border-dark border-dashed">
-
-            {{-- INFO TRANSAKSI --}}
-            <table class="table table-borderless table-sm mb-1">
-                <tr>
-                    <td class="p-0 small">
-                        #{{ $transaksi->kode_transaksi ?? $transaksi->id }}
-                    </td>
-
-                    <td class="p-0 text-right small">
-                        {{ date('d/m/y H:i', strtotime($transaksi->waktu)) }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="p-0 small">
-                        KSR: {{ $transaksi->user->nama ?? '-' }}
-                    </td>
-
-                    <td class="p-0 text-right small">
-                        PLG: {{ $transaksi->customer->nama ?? '-' }}
-                    </td>
-                </tr>
-            </table>
-
-            <hr class="border-dark border-dashed">
+            <hr class="border-dark border-dashed my-3">
 
             {{-- DETAIL MENU --}}
-            @foreach($transaksi->detail as $detail)
+            <div class="menu-items-area">
+                @foreach($transaksi->detail as $detail)
 
-            @php
-            $hargaAsli = $detail->menu->harga;
-            $hargaJual = $detail->harga;
-            $subtotal = $detail->subtotal;
-            @endphp
+                @php
+                $hargaAsli = $detail->harga_asli;
+                $hargaJual = $detail->harga;
+                $subtotal = $detail->subtotal;
+                @endphp
 
-            <div class="font-weight-bold">
-                {{ $detail->menu->nama }}
+                <div class="mb-3 item-row text-dark">
+                    <div class="font-weight-bold mb-1">
+                        {{ $detail->menu->nama }}
+                    </div>
+
+
+
+                    @if(!is_null($detail->diskon))
+                    <div class="small text-muted">
+                        Rp{{ number_format($hargaAsli) }}
+                        →
+                        <strong>Rp{{ number_format($hargaJual) }}</strong>
+
+                        (
+                        @if($detail->tipe_diskon=='Persen')
+                        -{{ $detail->diskon }}%
+                        @else
+                        -Rp{{ number_format($detail->diskon) }}
+                        @endif
+                        )
+                    </div>
+                    @endif
+
+                    <div class="d-flex justify-content-between small">
+                        <span class="text-muted">
+                            {{ $detail->jumlah }} x Rp{{ number_format($hargaJual) }}
+                        </span>
+                        <strong class="text-dark">
+                            Rp{{ number_format($subtotal) }}
+                        </strong>
+                    </div>
+                </div>
+
+                @endforeach
             </div>
 
-            @if($detail->menu->ada_diskon)
-            <small class="d-block mb-1">
-
-                <span class="text-danger font-weight-bold">
-                    Diskon
-                    @if($detail->menu->diskon->tipe_diskon == 'Persen')
-                    {{ $detail->menu->diskon->diskon_persen }}%
-                    @else
-                    Rp{{ number_format($detail->menu->diskon->diskon_nominal) }}
-                    @endif
-                </span>
-
-                <br>
-
-                <del class="text-muted">
-                    Rp{{ number_format($hargaAsli) }}
-                </del>
-
-                <span class="font-weight-bold">
-                    → Rp{{ number_format($hargaJual) }}
-                </span>
-
-            </small>
-            @endif
-
-            <table class="table table-borderless table-sm mb-2">
-                <tr>
-                    <td class="p-0 small">
-                        {{ $detail->jumlah }} x {{ number_format($hargaJual) }}
-                    </td>
-
-                    <td class="p-0 text-right">
-                        {{ number_format($subtotal) }}
-                    </td>
-                </tr>
-            </table>
-
-            @endforeach
-
-            <hr class="border-dark border-dashed">
+            <hr class="border-dark border-dashed my-3">
 
             {{-- TOTAL --}}
-            <table class="table table-borderless table-sm mb-0">
+            <div class="d-flex justify-content-between">
+                <strong>TOTAL</strong>
+                <strong>Rp{{ number_format($transaksi->total_harga) }}</strong>
+            </div>
 
-                <tr class="font-weight-bold">
-                    <td class="p-0">
-                        TOTAL
-                    </td>
+            <div class="d-flex justify-content-between">
+                <span>BAYAR</span>
+                <span>Rp{{ number_format($transaksi->uang_bayar) }}</span>
+            </div>
 
-                    <td class="p-0 text-right">
-                        Rp {{ number_format($transaksi->total_harga) }}
-                    </td>
-                </tr>
+            <div class="d-flex justify-content-between">
+                <span>METODE</span>
+                <span>{{ $transaksi->metode_pembayaran }}</span>
+            </div>
 
-                <tr>
-                    <td class="p-0 small">
-                        METODE
-                    </td>
+            <div class="d-flex justify-content-between">
+                <strong>KEMBALI</strong>
+                <strong>Rp{{ number_format($transaksi->kembalian) }}</strong>
+            </div>
 
-                    <td class="p-0 text-right small">
-                        {{ strtoupper($transaksi->metode_pembayaran) }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="p-0">
-                        BAYAR
-                    </td>
-
-                    <td class="p-0 text-right">
-                        Rp {{ number_format($transaksi->uang_bayar ?? 0) }}
-                    </td>
-                </tr>
-
-                <tr class="font-weight-bold">
-                    <td class="p-0">
-                        KEMBALI
-                    </td>
-
-                    <td class="p-0 text-right">
-                        Rp {{ number_format($transaksi->kembalian ?? 0) }}
-                    </td>
-                </tr>
-
-            </table>
-
-            <hr class="border-dark border-dashed">
+            <hr class="border-dark border-dashed my-3">
 
             {{-- FOOTER --}}
-            <div class="text-center small text-muted mt-2">
-                TERIMA KASIH ATAS KUNJUNGAN ANDA
-            </div>
+            <div class="text-center mt-3">
+    Terima Kasih Atas Kunjungan Anda
+</div>
 
         </div>
 
@@ -182,65 +149,83 @@
 
 </div>
 
-{{-- KHUSUS PRINT --}}
+{{-- CONFIGURASI STYLE & CETAK PDF/BIASA --}}
 <style>
+/* Style Tampilan Layar (Web Browser) */
 .struk-container {
-    max-width: 380px;
+    max-width: 480px;
+    /* Diperlebar sedikit agar proposional untuk cetak PDF/Kertas Biasa */
+    background: #ffffff;
+    border-radius: 8px;
 }
 
 .border-dashed {
-    border-top: 1px dashed #000 !important;
+    border-top: 1px dashed #495057 !important;
 }
 
+.tracking-wider {
+    letter-spacing: 0.1em;
+}
+
+/* Flex gap fallback untuk bootstrap versi lama */
+.gap-2 {
+    gap: 0.5rem !important;
+}
+
+/* Style Khusus saat dicetak ke PDF / Printer Biasa */
 @media print {
-
     @page {
-        size: 58mm auto;
-        margin: 0;
+        size: A4 portrait;
+        /* Set ke kertas standar (Bisa diganti 'letter' atau 'auto') */
+        margin: 20mm 15mm;
+        /* Memberikan margin dokumen yang bersih */
     }
 
-    body * {
-        visibility: hidden;
+    /* Sembunyikan semua elemen default aplikasi seperti navbar, sidebar, tombol */
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-family: Arial, sans-serif;
     }
 
-    .struk-container,
-    .struk-container * {
-        visibility: visible;
-    }
-
-    .struk-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 58mm !important;
-        max-width: 58mm !important;
-        margin: 0;
-        box-shadow: none !important;
-        border: none !important;
-    }
-
+    header,
+    footer,
+    .navbar,
+    .main-sidebar,
+    .d-print-none,
     .aksi-area {
         display: none !important;
     }
 
+    /* Penyesuaian container agar pas di kertas */
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .struk-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
     .card-body {
-        padding: 4px !important;
+        padding: 0 !important;
     }
 
-    table {
-        margin-bottom: 2px !important;
+    /* Pastikan warna teks tajam saat dicetak */
+    .text-muted {
+        color: #555555 !important;
     }
 
-    td {
-        font-size: 11px !important;
-    }
-
-    small {
-        font-size: 9px !important;
-    }
-
-    h5 {
-        font-size: 14px !important;
+    .text-danger {
+        color: #000000 !important;
+        /* Ubah ke hitam jika printer hitam putih */
     }
 }
 </style>

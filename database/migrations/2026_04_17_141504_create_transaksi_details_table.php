@@ -16,7 +16,17 @@ return new class extends Migration
             $table->foreignId('transaksi_id')->constrained('transaksis');
             $table->foreignId('menu_id')->constrained('menus');
             $table->integer('jumlah');
-            $table->decimal('harga', 20 ,0);
+           
+    $table->decimal('harga_asli',20,0)->nullable();
+
+  
+    $table->decimal('harga',20,0);
+
+    
+    $table->decimal('diskon',20,0)->nullable();
+
+    $table->enum('tipe_diskon',['Persen','Nominal'])->nullable();
+           
             $table->decimal('subtotal', 20 ,0);
             $table->timestamps();
         });

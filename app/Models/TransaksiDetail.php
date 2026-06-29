@@ -9,13 +9,16 @@ class TransaksiDetail extends Model
 {
     protected $table = 'transaksi_details';
 
-    protected $fillable = [
-        'transaksi_id',
-        'menu_id',
-        'jumlah',
-        'harga',
-        'subtotal'
-    ];
+   protected $fillable = [
+    'transaksi_id',
+    'menu_id',
+    'jumlah',
+    'harga_asli',
+    'harga',
+    'diskon',
+    'tipe_diskon',
+    'subtotal'
+];
 
     public function transaksi()
     {

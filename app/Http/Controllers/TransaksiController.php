@@ -108,21 +108,46 @@ class TransaksiController extends Controller
     // =========================
 
     foreach ($menu as $m) {
+         $menuDb = Menu::find($m['id']);
+         $hargaAsli = $menuDb->harga;
+         $diskon = null;
+$tipeDiskon = null;
 
-        TransaksiDetail::create([
+if ($menuDb->diskon) {
 
-            'transaksi_id' => $transaksi->id,
+    $tipeDiskon = $menuDb->diskon->tipe_diskon;
 
-            'menu_id' => $m['id'],
+    if ($tipeDiskon == 'Persen') {
 
-            'jumlah' => $m['jumlah'],
+        $diskon = $menuDb->diskon->diskon_persen;
 
-            'harga' => $m['harga'],
+    } else {
 
-            'subtotal' =>
-                $m['jumlah'] * $m['harga']
+        $diskon = $menuDb->diskon->diskon_nominal;
 
-        ]);
+    }
+
+}
+
+      TransaksiDetail::create([
+
+    'transaksi_id' => $transaksi->id,
+
+    'menu_id' => $m['id'],
+
+    'jumlah' => $m['jumlah'],
+
+    'harga_asli' => $hargaAsli,
+
+    'harga' => $m['harga'],
+
+    'diskon' => $diskon,
+
+    'tipe_diskon' => $tipeDiskon,
+
+    'subtotal' => $m['jumlah'] * $m['harga']
+
+]);
 
     }
 
@@ -154,5 +179,16 @@ class TransaksiController extends Controller
         'transaksi.rawbt',
         compact('transaksi')
     );
+}
+
+public function print($id)
+{
+    $transaksi = Transaksi::with([
+        'user',
+        'customer',
+        'detail.menu'
+    ])->findOrFail($id);
+
+    return view('transaksi.print', compact('transaksi'));
 }
 }
