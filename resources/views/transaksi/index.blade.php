@@ -17,9 +17,7 @@
                 Tabel Transaksi
             </h6>
 
-            <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Transaksi Baru
-            </a>
+           
 
         </div>
 
