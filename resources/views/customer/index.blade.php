@@ -5,7 +5,7 @@
 <div class="container-fluid">
 
     <!-- Judul -->
-      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-users text-primary"></i> Data Customer
         </h1>
@@ -26,7 +26,7 @@
             <div class="table-responsive">
 
                 <table class="table table-bordered table-hover" id="dataTable" width="100%">
-                    
+
                     <thead class="thead-light">
                         <tr>
                             <th width="50">No</th>
@@ -46,6 +46,10 @@
 
                                 <a href="{{ route('customer.edit', $c->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
+                                </a>
+
+                                <a href="{{ route('customer.show',$c->id) }}" class="btn btn-info btn-sm">
+                                    Riwayat
                                 </a>
 
                                 <form action="{{ route('customer.destroy', $c->id) }}" method="POST" class="d-inline">
