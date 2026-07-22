@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
+
 
 class CustomerController extends Controller
 {
@@ -30,9 +32,24 @@ class CustomerController extends Controller
     }
 
     public function show(Customer $customer)
-    {
-        return view('customer.show', compact('customer'));
+{
+    if (auth()->user()->role_id == 1) {
+        // Admin melihat semua transaksi customer
+        $transaksi = $customer->transaksis()
+            ->with('user')
+            ->latest()
+            ->get();
+    } else {
+        // Kasir hanya melihat transaksi yang dia layani
+        $transaksi = $customer->transaksis()
+            ->with('user')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
     }
+
+    return view('customer.show', compact('customer', 'transaksi'));
+}
 
     public function edit(Customer $customer)
     {
@@ -51,6 +68,9 @@ class CustomerController extends Controller
         return redirect()->route('customer.index')
             ->with('success', 'Customer berhasil diupdate');
     }
+    
+   
+
 
     public function destroy(Customer $customer)
     {
