@@ -128,12 +128,7 @@
                 </a>
             </li>
 
-            <li class="nav-item {{ Request::is('rekomendasi*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('rekomendasi.index') }}">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Rekomendasi Bundling</span>
-                </a>
-            </li>
+            
         @endif
             <hr class="sidebar-divider d-none d-md-block">
 

@@ -291,7 +291,7 @@
 
 </div>
 
-<!-- MODAL CUSTOMER -->
+
 <div class="modal fade" id="modalCustomer" tabindex="-1">
 
     <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -360,8 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const ambilElemen = (id) => document.getElementById(id);
 
-    ambilElemen('btnTambahCustomer').addEventListener('click', function() {
-
+    ambilElemen('btnTambahCustomer').addEventListener('click', function() { // Klik tombol -> memanggil modal customer
         ambilElemen('inputNamaCustomer').value = '';
         ambilElemen('inputNoHpCustomer').value = '';
         ambilElemen('textErrorCustomer').innerText = '';
@@ -370,27 +369,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
-    ambilElemen('btnSimpanCustomer').addEventListener('click', function() {
+    ambilElemen('btnSimpanCustomer').addEventListener('click', function() { // klik simpan
 
         let namaCustomer =
-            ambilElemen('inputNamaCustomer').value.trim();
+            ambilElemen('inputNamaCustomer').value.trim();                  // nilai hasil inputan
 
         let nomorHpCustomer =
             ambilElemen('inputNoHpCustomer').value.trim();
 
         if (!namaCustomer) {
 
-            return ambilElemen('textErrorCustomer').innerText =
+            return ambilElemen('textErrorCustomer').innerText =         // jika nama customer tidak diisi muncul pesan eror
                 'Nama customer wajib diisi';
 
         }
 
-        fetch('/customer/store-ajax', {
-
+        fetch('/customer/store-ajax', {                                    // jika valid kirim dengan fetch ke route 
+                                                                            // dengan metode post
                 method: 'POST',
 
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',                     //kirim kode keamanan CSRF dan data customer berupa json
                     'X-CSRF-TOKEN': document
                         .querySelector('meta[name="csrf-token"]')
                         .content
@@ -403,11 +402,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             })
 
-            .then(res => res.json())
+            .then(res => res.json())                    //menerima respo dari controler store
 
-            .then(dataCustomerBaru => {
+            .then(dataCustomerBaru => {                 // simpan ke variabel data customer baru
 
-                ambilElemen('customer_id')
+                ambilElemen('customer_id')              //menampilkan nama customer
                     .add(new Option(
                         dataCustomerBaru.nama,
                         dataCustomerBaru.id
